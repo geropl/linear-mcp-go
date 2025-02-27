@@ -262,6 +262,67 @@ func GetUserIssuesHandler(linearClient *linear.LinearClient) func(ctx context.Co
 	}
 }
 
+// GetIssueHandler handles the linear_get_issue tool
+func GetIssueHandler(linearClient *linear.LinearClient) func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	return func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		// Extract arguments
+		args := request.Params.Arguments
+
+		// Validate required arguments
+		issueID, ok := args["issueId"].(string)
+		if !ok || issueID == "" {
+			return mcp.NewToolResultError("issueId must be a non-empty string"), nil
+		}
+
+		// Get the issue
+		issue, err := linearClient.GetIssue(issueID)
+		if err != nil {
+			return mcp.NewToolResultError(fmt.Sprintf("Failed to get issue: %v", err)), nil
+		}
+
+		// Format the result
+		priorityStr := "None"
+		if issue.Priority > 0 {
+			priorityStr = strconv.Itoa(issue.Priority)
+		}
+
+		statusStr := "None"
+		if issue.Status != "" {
+			statusStr = issue.Status
+		} else if issue.State != nil {
+			statusStr = issue.State.Name
+		}
+
+		assigneeStr := "None"
+		if issue.Assignee != nil {
+			assigneeStr = issue.Assignee.Name
+		}
+
+		teamStr := "None"
+		if issue.Team != nil {
+			teamStr = issue.Team.Name
+		}
+
+		resultText := fmt.Sprintf("Issue %s: %s\n", issue.Identifier, issue.Title)
+		resultText += fmt.Sprintf("URL: %s\n", issue.URL)
+		resultText += fmt.Sprintf("Priority: %s\n", priorityStr)
+		resultText += fmt.Sprintf("Status: %s\n", statusStr)
+		resultText += fmt.Sprintf("Assignee: %s\n", assigneeStr)
+		resultText += fmt.Sprintf("Team: %s\n", teamStr)
+		
+		if issue.Description != "" {
+			resultText += fmt.Sprintf("\nDescription:\n%s\n", issue.Description)
+		}
+
+		// Add API metrics
+		metrics := linearClient.GetMetrics()
+		resultText += fmt.Sprintf("\nAPI Metrics:\n  Requests in last hour: %d\n  Remaining requests: %d\n  Average request time: %s",
+			metrics.RequestsInLastHour, metrics.RemainingRequests, metrics.AverageRequestTime)
+
+		return mcp.NewToolResultText(resultText), nil
+	}
+}
+
 // AddCommentHandler handles the linear_add_comment tool
 func AddCommentHandler(linearClient *linear.LinearClient) func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 	return func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
@@ -356,6 +417,13 @@ func RegisterTools(s *server.MCPServer, linearClient *linear.LinearClient) {
 		mcp.WithNumber("limit", mcp.Description("Maximum number of issues to return (default: 50)")),
 	)
 	s.AddTool(getUserIssuesTool, GetUserIssuesHandler(linearClient))
+
+	// Get Issue Tool
+	getIssueTool := mcp.NewTool("linear_get_issue",
+		mcp.WithDescription("Retrieves a single Linear issue by its ID. Returns detailed information about the issue including title, description, priority, status, assignee, and team."),
+		mcp.WithString("issueId", mcp.Required(), mcp.Description("ID of the issue to retrieve")),
+	)
+	s.AddTool(getIssueTool, GetIssueHandler(linearClient))
 
 	// Add Comment Tool
 	addCommentTool := mcp.NewTool("linear_add_comment",

@@ -93,6 +93,13 @@ Retrieves issues assigned to a specific user or the authenticated user.
 - `includeArchived`: Include archived issues in results
 - `limit`: Maximum number of issues to return (default: 50)
 
+### linear_get_issue
+
+Retrieves a single Linear issue by its ID.
+
+**Parameters:**
+- `issueId` (required): ID of the issue to retrieve
+
 ### linear_add_comment
 
 Adds a comment to an existing Linear issue.
