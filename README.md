@@ -1,2 +1,108 @@
-# linear-mcp-go
-linear MCP server based on mcp-go
+# Linear MCP Server
+
+A Model Context Protocol (MCP) server for Linear, written in Go. This server provides tools for interacting with the Linear API through the MCP protocol.
+
+## Features
+
+- Create, update, and search Linear issues
+- Get issues assigned to a user
+- Add comments to issues
+- Rate-limited API requests to respect Linear's API limits
+
+## Prerequisites
+
+- Go 1.23 or higher
+- Linear API key
+
+## Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/geropl/linear-mcp-go.git
+cd linear-mcp-go
+```
+
+2. Build the server:
+
+```bash
+go build
+```
+
+## Usage
+
+1. Set your Linear API key as an environment variable:
+
+```bash
+export LINEAR_API_KEY=your_linear_api_key
+```
+
+2. Run the server:
+
+```bash
+./linear-mcp-go
+```
+
+The server will start and listen for MCP requests on stdin/stdout.
+
+## Available Tools
+
+### linear_create_issue
+
+Creates a new Linear issue with specified details.
+
+**Parameters:**
+- `title` (required): Issue title
+- `teamId` (required): Team ID
+- `description`: Issue description
+- `priority`: Priority (0-4)
+- `status`: Issue status
+
+### linear_update_issue
+
+Updates an existing Linear issue's properties.
+
+**Parameters:**
+- `id` (required): Issue ID
+- `title`: New title
+- `description`: New description
+- `priority`: New priority (0-4)
+- `status`: New status
+
+### linear_search_issues
+
+Searches Linear issues using flexible criteria.
+
+**Parameters:**
+- `query`: Optional text to search in title and description
+- `teamId`: Filter by team ID
+- `status`: Filter by status name (e.g., 'In Progress', 'Done')
+- `assigneeId`: Filter by assignee's user ID
+- `labels`: Filter by label names (comma-separated)
+- `priority`: Filter by priority (1=urgent, 2=high, 3=normal, 4=low)
+- `estimate`: Filter by estimate points
+- `includeArchived`: Include archived issues in results (default: false)
+- `limit`: Max results to return (default: 10)
+
+### linear_get_user_issues
+
+Retrieves issues assigned to a specific user or the authenticated user.
+
+**Parameters:**
+- `userId`: Optional user ID. If not provided, returns authenticated user's issues
+- `includeArchived`: Include archived issues in results
+- `limit`: Maximum number of issues to return (default: 50)
+
+### linear_add_comment
+
+Adds a comment to an existing Linear issue.
+
+**Parameters:**
+- `issueId` (required): ID of the issue to comment on
+- `body` (required): Comment text in markdown format
+- `createAsUser`: Optional custom username to show for the comment
+- `displayIconUrl`: Optional avatar URL for the comment
+
+## License
+
+MIT
