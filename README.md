@@ -7,6 +7,7 @@ A Model Context Protocol (MCP) server for Linear, written in Go. This server pro
 - Create, update, and search Linear issues
 - Get issues assigned to a user
 - Add comments to issues
+- Retrieve team information
 - Rate-limited API requests to respect Linear's API limits
 
 ## Prerequisites
@@ -15,6 +16,8 @@ A Model Context Protocol (MCP) server for Linear, written in Go. This server pro
 - Linear API key
 
 ## Installation
+
+### From Source
 
 1. Clone the repository:
 
@@ -28,6 +31,19 @@ cd linear-mcp-go
 ```bash
 go build
 ```
+
+### From Releases
+
+Pre-built binaries are available for Linux, macOS, and Windows on the [GitHub Releases page](https://github.com/geropl/linear-mcp-go/releases).
+
+1. Download the appropriate binary for your platform
+2. Make it executable (Linux/macOS):
+
+```bash
+chmod +x linear-mcp-go-*
+```
+
+3. Run the binary as described in the Usage section
 
 ## Usage
 
@@ -110,6 +126,13 @@ Adds a comment to an existing Linear issue.
 - `createAsUser`: Optional custom username to show for the comment
 - `displayIconUrl`: Optional avatar URL for the comment
 
+### linear_get_teams
+
+Retrieves Linear teams with an optional name filter.
+
+**Parameters:**
+- `name`: Optional team name filter. Returns teams whose names contain this string.
+
 ## Test
 Tests are implemented using [`go-vcr`](https://github.com/dnaeon/go-vcr), and executed against https://linear.app/linear-mcp-go-test.
 
@@ -139,6 +162,26 @@ This will re-run all tests, including some that might alter the outcome of other
 go test -v -golden=true ./...
 ```
 Updates all .golden fields.
+
+## Release Process
+
+The project uses GitHub Actions for automated testing and releases:
+
+1. All pushes to the main branch and pull requests are automatically tested
+2. When a tag matching the pattern `v*` (e.g., `v1.0.0`) is pushed, a new release is automatically created
+3. Binaries for Linux, macOS, and Windows are built and attached to the release
+
+To create a new release:
+
+1. Update the version in `pkg/server/server.go`
+2. Commit the changes
+3. Create and push a tag matching the version:
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+The GitHub Actions workflow will automatically create a release with the appropriate binaries.
 
 ## License
 
