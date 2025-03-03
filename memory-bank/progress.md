@@ -55,6 +55,7 @@
 - **Test Coverage**: Good, all tools have test fixtures
 - **Documentation**: Basic documentation in README.md
 - **Release Process**: In progress, GitHub Actions workflow created
+- **Security**: Write access control implemented (disabled by default)
 
 ## Known Issues
 1. **API Key Management**:
@@ -73,6 +74,7 @@
 - ✅ Initial implementation of all core tools
 - ✅ Test fixtures for all tools
 - ✅ GitHub Actions workflow for testing and releases
+- ✅ Write access control implementation (--write-access flag, default: false)
 
 ## Upcoming Milestones
 - [ ] First automated release with GitHub Actions

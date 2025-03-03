@@ -2,6 +2,19 @@
 
 # This script installs the Linear MCP server and registers it for use with the cline VSCode extension: https://github.com/cline/cline
 # Note: to use this, you need to have a) cline installed, and b) set LINEAR_API_KEY in your environment
+#
+# Usage:
+#   ./register-cline.sh [write-access]
+#
+# Parameters:
+#   write-access: Optional. Set to "true" to enable write operations. Default is "false".
+#
+# Examples:
+#   ./register-cline.sh                # Install with read-only mode (default)
+#   ./register-cline.sh true           # Install with write operations enabled
+
+# Get the write-access parameter (default: false)
+WRITE_ACCESS=${1:-false}
 
 MCP_SERVERS_DIR="$HOME/mcp-servers"
 mkdir -p $MCP_SERVERS_DIR
@@ -39,13 +52,20 @@ mkdir -p $CLINE_CONFIG_DIR
 
 CLINE_MCP_SETTINGS="$CLINE_CONFIG_DIR/cline_mcp_settings.json"
 
+# Determine args based on write-access parameter
+if [ "$WRITE_ACCESS" = "true" ]; then
+  SERVER_ARGS='["--write-access=true"]'
+else
+  SERVER_ARGS='[]'
+fi
+
 # Merge the existing settings with the new MCP server configuration
 cat <<EOF > $CLINE_MCP_SETTINGS.new
 {
    "mcpServers": {
     "linear": {
       "command": "$LINEAR_MCP_BINARY",
-      "args": [],
+      "args": $SERVER_ARGS,
       "disabled": false,
       "autoApprove": []
     }

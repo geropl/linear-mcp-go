@@ -384,30 +384,10 @@ func GetTeamsHandler(linearClient *linear.LinearClient) func(ctx context.Context
 }
 
 // RegisterTools registers all Linear tools with the MCP server
-func RegisterTools(s *server.MCPServer, linearClient *linear.LinearClient) {
-	// Create Issue Tool
-	createIssueTool := mcp.NewTool("linear_create_issue",
-		mcp.WithDescription("Creates a new Linear issue with specified details. Use this to create tickets for tasks, bugs, or feature requests. Returns the created issue's identifier and URL. Required fields are title and teamId, with optional description, priority (0-4, where 0 is no priority and 1 is urgent), and status."),
-		mcp.WithString("title", mcp.Required(), mcp.Description("Issue title")),
-		mcp.WithString("teamId", mcp.Required(), mcp.Description("Team ID")),
-		mcp.WithString("description", mcp.Description("Issue description")),
-		mcp.WithNumber("priority", mcp.Description("Priority (0-4)")),
-		mcp.WithString("status", mcp.Description("Issue status")),
-	)
-	s.AddTool(createIssueTool, CreateIssueHandler(linearClient))
+func RegisterTools(s *server.MCPServer, linearClient *linear.LinearClient, writeAccess bool) {
+	// Register read-only tools (always available)
 
-	// Update Issue Tool
-	updateIssueTool := mcp.NewTool("linear_update_issue",
-		mcp.WithDescription("Updates an existing Linear issue's properties. Use this to modify issue details like title, description, priority, or status. Requires the issue ID and accepts any combination of updatable fields. Returns the updated issue's identifier and URL."),
-		mcp.WithString("id", mcp.Required(), mcp.Description("Issue ID")),
-		mcp.WithString("title", mcp.Description("New title")),
-		mcp.WithString("description", mcp.Description("New description")),
-		mcp.WithNumber("priority", mcp.Description("New priority (0-4)")),
-		mcp.WithString("status", mcp.Description("New status")),
-	)
-	s.AddTool(updateIssueTool, UpdateIssueHandler(linearClient))
-
-	// Search Issues Tool
+	// Search Issues Tool (read-only)
 	searchIssuesTool := mcp.NewTool("linear_search_issues",
 		mcp.WithDescription("Searches Linear issues using flexible criteria. Supports filtering by any combination of: title/description text, team, status, assignee, labels (comma-separated), priority (1=urgent, 2=high, 3=normal, 4=low), and estimate. Returns up to 10 issues by default (configurable via limit)."),
 		mcp.WithString("query", mcp.Description("Optional text to search in title and description")),
@@ -422,7 +402,7 @@ func RegisterTools(s *server.MCPServer, linearClient *linear.LinearClient) {
 	)
 	s.AddTool(searchIssuesTool, SearchIssuesHandler(linearClient))
 
-	// Get User Issues Tool
+	// Get User Issues Tool (read-only)
 	getUserIssuesTool := mcp.NewTool("linear_get_user_issues",
 		mcp.WithDescription("Retrieves issues assigned to a specific user or the authenticated user if no userId is provided. Returns issues sorted by last updated, including priority, status, and other metadata. Useful for finding a user's workload or tracking assigned tasks."),
 		mcp.WithString("userId", mcp.Description("Optional user ID. If not provided, returns authenticated user's issues")),
@@ -431,27 +411,53 @@ func RegisterTools(s *server.MCPServer, linearClient *linear.LinearClient) {
 	)
 	s.AddTool(getUserIssuesTool, GetUserIssuesHandler(linearClient))
 
-	// Get Issue Tool
+	// Get Issue Tool (read-only)
 	getIssueTool := mcp.NewTool("linear_get_issue",
 		mcp.WithDescription("Retrieves a single Linear issue by its ID. Returns detailed information about the issue including title, description, priority, status, assignee, and team."),
 		mcp.WithString("issueId", mcp.Required(), mcp.Description("ID of the issue to retrieve")),
 	)
 	s.AddTool(getIssueTool, GetIssueHandler(linearClient))
 
-	// Add Comment Tool
-	addCommentTool := mcp.NewTool("linear_add_comment",
-		mcp.WithDescription("Adds a comment to an existing Linear issue. Supports markdown formatting in the comment body. Can optionally specify a custom user name and avatar for the comment. Returns the created comment's details including its URL."),
-		mcp.WithString("issueId", mcp.Required(), mcp.Description("ID of the issue to comment on")),
-		mcp.WithString("body", mcp.Required(), mcp.Description("Comment text in markdown format")),
-		mcp.WithString("createAsUser", mcp.Description("Optional custom username to show for the comment")),
-		mcp.WithString("displayIconUrl", mcp.Description("Optional avatar URL for the comment")),
-	)
-	s.AddTool(addCommentTool, AddCommentHandler(linearClient))
 
-	// Get Teams Tool
+	// Get Teams Tool (read-only)
 	getTeamsTool := mcp.NewTool("linear_get_teams",
 		mcp.WithDescription("Retrieves Linear teams with an optional name filter. If no name is provided, returns all teams. Returns team details including ID, name, and key."),
 		mcp.WithString("name", mcp.Description("Optional team name filter. Returns teams whose names contain this string.")),
 	)
 	s.AddTool(getTeamsTool, GetTeamsHandler(linearClient))
+	
+	// Register write tools (only if writeAccess is true)
+	if writeAccess {
+		// Create Issue Tool
+		createIssueTool := mcp.NewTool("linear_create_issue",
+			mcp.WithDescription("Creates a new Linear issue with specified details. Use this to create tickets for tasks, bugs, or feature requests. Returns the created issue's identifier and URL. Required fields are title and teamId, with optional description, priority (0-4, where 0 is no priority and 1 is urgent), and status."),
+			mcp.WithString("title", mcp.Required(), mcp.Description("Issue title")),
+			mcp.WithString("teamId", mcp.Required(), mcp.Description("Team ID")),
+			mcp.WithString("description", mcp.Description("Issue description")),
+			mcp.WithNumber("priority", mcp.Description("Priority (0-4)")),
+			mcp.WithString("status", mcp.Description("Issue status")),
+		)
+		s.AddTool(createIssueTool, CreateIssueHandler(linearClient))
+
+		// Update Issue Tool
+		updateIssueTool := mcp.NewTool("linear_update_issue",
+			mcp.WithDescription("Updates an existing Linear issue's properties. Use this to modify issue details like title, description, priority, or status. Requires the issue ID and accepts any combination of updatable fields. Returns the updated issue's identifier and URL."),
+			mcp.WithString("id", mcp.Required(), mcp.Description("Issue ID")),
+			mcp.WithString("title", mcp.Description("New title")),
+			mcp.WithString("description", mcp.Description("New description")),
+			mcp.WithNumber("priority", mcp.Description("New priority (0-4)")),
+			mcp.WithString("status", mcp.Description("New status")),
+		)
+		s.AddTool(updateIssueTool, UpdateIssueHandler(linearClient))
+
+		// Add Comment Tool
+		addCommentTool := mcp.NewTool("linear_add_comment",
+			mcp.WithDescription("Adds a comment to an existing Linear issue. Supports markdown formatting in the comment body. Can optionally specify a custom user name and avatar for the comment. Returns the created comment's details including its URL."),
+			mcp.WithString("issueId", mcp.Required(), mcp.Description("ID of the issue to comment on")),
+			mcp.WithString("body", mcp.Required(), mcp.Description("Comment text in markdown format")),
+			mcp.WithString("createAsUser", mcp.Description("Optional custom username to show for the comment")),
+			mcp.WithString("displayIconUrl", mcp.Description("Optional avatar URL for the comment")),
+		)
+		s.AddTool(addCommentTool, AddCommentHandler(linearClient))
+	}
 }

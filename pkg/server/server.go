@@ -19,10 +19,11 @@ const (
 type LinearMCPServer struct {
 	mcpServer    *mcpserver.MCPServer
 	linearClient *linear.LinearClient
+	writeAccess  bool // Controls whether write operations are enabled
 }
 
 // NewLinearMCPServer creates a new Linear MCP server
-func NewLinearMCPServer() (*LinearMCPServer, error) {
+func NewLinearMCPServer(writeAccess bool) (*LinearMCPServer, error) {
 	// Create the Linear client
 	linearClient, err := linear.NewLinearClientFromEnv()
 	if err != nil {
@@ -36,10 +37,11 @@ func NewLinearMCPServer() (*LinearMCPServer, error) {
 	server := &LinearMCPServer{
 		mcpServer:    mcpServer,
 		linearClient: linearClient,
+		writeAccess:  writeAccess,
 	}
 
 	// Register tools
-	RegisterTools(mcpServer, linearClient)
+	RegisterTools(mcpServer, linearClient, writeAccess)
 
 	return server, nil
 }

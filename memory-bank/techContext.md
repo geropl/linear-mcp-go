@@ -36,9 +36,17 @@
 # Build the server
 go build
 
-# Run the server
+# Run the server in read-only mode (default)
 ./linear-mcp-go
+
+# Run the server with write operations enabled
+./linear-mcp-go --write-access
 ```
+
+### Command-Line Flags
+- `--write-access`: Controls whether write operations are enabled (default: false)
+  - When false, write tools (`linear_create_issue`, `linear_update_issue`, `linear_add_comment`) are disabled
+  - When true, all tools are available
 
 ### Testing
 ```bash

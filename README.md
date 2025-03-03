@@ -56,10 +56,21 @@ export LINEAR_API_KEY=your_linear_api_key
 2. Run the server:
 
 ```bash
+# Run in read-only mode (default)
 ./linear-mcp-go
+
+# Run with write access enabled
+./linear-mcp-go --write-access=true
 ```
 
 The server will start and listen for MCP requests on stdin/stdout.
+
+By default, the server runs in read-only mode, which means the following tools are disabled:
+- `linear_create_issue`
+- `linear_update_issue`
+- `linear_add_comment`
+
+To enable these tools, use the `--write-access=true` flag.
 
 ## Available Tools
 

@@ -7,14 +7,20 @@ The current focus is on implementing a GitHub Actions workflow for automated tes
 3. Build binaries for multiple platforms (Linux, macOS, Windows)
 
 ## Recent Changes
-1. Created a GitHub Actions workflow file (`.github/workflows/release.yml`) that:
+1. Implemented write access control feature:
+   - Added a `--write-access` flag (default: false) to control whether write operations are enabled
+   - Modified server to conditionally register write tools based on this flag
+   - Updated documentation and install script to support the new flag
+   - Write operations (`linear_create_issue`, `linear_update_issue`, `linear_add_comment`) are disabled by default
+
+2. Created a GitHub Actions workflow file (`.github/workflows/release.yml`) that:
    - Runs on push events to main branch and tags matching "v*"
    - Tests the build on all pushes
    - Creates a GitHub release when a tag matching "v*" is pushed
    - Builds binaries for Linux, macOS, and Windows
    - Uploads the binaries as release assets
 
-2. Fixed GitHub Actions workflow permissions issue:
+3. Fixed GitHub Actions workflow permissions issue:
    - Added explicit `contents: write` permission to the `create-release` job
    - This resolves the "Resource not accessible by integration" error
    - Allows the workflow to create releases and upload assets
@@ -35,6 +41,12 @@ The current focus is on implementing a GitHub Actions workflow for automated tes
    - Add configuration file support
 
 ## Active Decisions and Considerations
+
+### Write Access Control Design
+- **Decision**: Implement write access control with a command-line flag
+  - **Rationale**: Provides a simple way to control access to write operations
+  - **Alternatives Considered**: Environment variable, configuration file
+  - **Implications**: Users can easily control whether write operations are enabled
 
 ### Release Workflow Design
 - **Decision**: Use GitHub Actions for automated releases

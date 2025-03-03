@@ -5,8 +5,8 @@ The Linear MCP Server follows a modular architecture with clear separation of co
 
 ```mermaid
 flowchart TD
-    Main[main.go] --> Server[pkg/server/server.go]
-    Server --> Tools[pkg/server/tools.go]
+    Main[main.go] --> |writeAccess| Server[pkg/server/server.go]
+    Server --> |writeAccess| Tools[pkg/server/tools.go]
     Server --> LinearClient[pkg/linear/client.go]
     LinearClient --> RateLimiter[pkg/linear/rate_limiter.go]
     LinearClient --> Models[pkg/linear/models.go]
@@ -18,6 +18,11 @@ flowchart TD
 3. **Linear Client Module** (`pkg/linear`): Manages communication with the Linear API.
 
 ## Key Technical Decisions
+
+### 1. Write Access Control
+- Implements write access control (default: disabled) to control access to write operations.
+- Command-line flag `--write-access` determines whether write tools are registered.
+- Write operations (`linear_create_issue`, `linear_update_issue`, `linear_add_comment`) are only available when write access is enabled.
 
 ### 1. MCP Protocol Implementation
 - Uses the `github.com/mark3labs/mcp-go` library for MCP server implementation.

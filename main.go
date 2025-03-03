@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 
@@ -8,8 +9,12 @@ import (
 )
 
 func main() {
+	// Parse command-line flags
+	writeAccess := flag.Bool("write-access", false, "Enable tools that modify Linear data (create/update issues, add comments)")
+	flag.Parse()
+
 	// Create the Linear MCP server
-	linearServer, err := server.NewLinearMCPServer()
+	linearServer, err := server.NewLinearMCPServer(*writeAccess)
 	if err != nil {
 		fmt.Printf("Failed to create Linear MCP server: %v\n", err)
 		os.Exit(1)
