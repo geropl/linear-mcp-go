@@ -2,7 +2,10 @@ package server
 
 import (
 	"context"
+	"encoding/json"
 	"flag"
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/geropl/linear-mcp-go/pkg/linear"
@@ -12,6 +15,7 @@ import (
 
 var record = flag.Bool("record", false, "Record HTTP interactions (excluding writes)")
 var recordWrites = flag.Bool("recordWrites", false, "Record HTTP interactions (incl. writes)")
+var golden = flag.Bool("golden", false, "Update all golden files and recordings")
 
 const (
 	TEAM_NAME = "Test Team"
@@ -22,18 +26,17 @@ const (
 
 // expectation defines the expected output and error for a test case
 type expectation struct {
-	err    string // Empty string means no error expected
-	output string // Expected complete output
+	Err    string `json:"err"`    // Empty string means no error expected
+	Output string `json:"output"` // Expected complete output
 }
 
 func TestHandlers(t *testing.T) {
 	// Define test cases
 	tests := []struct {
-		handler     string
-		name        string
-		args        map[string]interface{}
-		write       bool
-		expectation expectation
+		handler string
+		name    string
+		args    map[string]interface{}
+		write   bool
 	}{
 		// GetTeamsHandler test cases
 		{
@@ -41,10 +44,6 @@ func TestHandlers(t *testing.T) {
 			name:    "Get Teams",
 			args: map[string]interface{}{
 				"name": TEAM_NAME,
-			},
-			expectation: expectation{
-				err:    "",
-				output: "Found 1 teams:\n- Test Team (Key: TEST)\n  ID: 234c5451-a839-4c8f-98d9-da00973f1060\n",
 			},
 		},
 		// CreateIssueHandler test cases
@@ -56,10 +55,6 @@ func TestHandlers(t *testing.T) {
 				"teamId": TEAM_ID,
 			},
 			write: true,
-			expectation: expectation{
-				err:    "",
-				output: "Created issue TEST-10: Test Issue\nURL: https://linear.app/linear-mcp-go-test/issue/TEST-10/test-issue",
-			},
 		},
 		{
 			handler: "create_issue",
@@ -67,20 +62,12 @@ func TestHandlers(t *testing.T) {
 			args: map[string]interface{}{
 				"teamId": TEAM_ID,
 			},
-			expectation: expectation{
-				err:    "title must be a non-empty string",
-				output: "",
-			},
 		},
 		{
 			handler: "create_issue",
 			name:    "Missing teamId",
 			args: map[string]interface{}{
 				"title": "Test Issue",
-			},
-			expectation: expectation{
-				err:    "teamId must be a non-empty string",
-				output: "",
 			},
 		},
 
@@ -93,20 +80,12 @@ func TestHandlers(t *testing.T) {
 				"title": "Updated Test Issue",
 			},
 			write: true,
-			expectation: expectation{
-				err:    "",
-				output: "Updated issue TEST-10\nURL: https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue",
-			},
 		},
 		{
 			handler: "update_issue",
 			name:    "Missing id",
 			args: map[string]interface{}{
 				"title": "Updated Test Issue",
-			},
-			expectation: expectation{
-				err:    "id must be a non-empty string",
-				output: "",
 			},
 		},
 
@@ -118,10 +97,6 @@ func TestHandlers(t *testing.T) {
 				"teamId": TEAM_ID,
 				"limit":  float64(5),
 			},
-			expectation: expectation{
-				err:    "",
-				output: "Found 5 issues:\n- TEST-11: Test Issue\n  Priority: None\n  Status: Backlog\n  https://linear.app/linear-mcp-go-test/issue/TEST-11/test-issue\n- TEST-10: Updated Test Issue\n  Priority: None\n  Status: Backlog\n  https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue\n- TEST-9: Next steps\n  Priority: 4\n  Status: Todo\n  https://linear.app/linear-mcp-go-test/issue/TEST-9/next-steps\n- TEST-3: Connect to Slack\n  Priority: 3\n  Status: Todo\n  https://linear.app/linear-mcp-go-test/issue/TEST-3/connect-to-slack\n- TEST-1: Welcome to Linear 👋\n  Priority: 2\n  Status: Todo\n  https://linear.app/linear-mcp-go-test/issue/TEST-1/welcome-to-linear\n",
-			},
 		},
 		{
 			handler: "search_issues",
@@ -129,10 +104,6 @@ func TestHandlers(t *testing.T) {
 			args: map[string]interface{}{
 				"query": "test",
 				"limit": float64(5),
-			},
-			expectation: expectation{
-				err:    "",
-				output: "Found 0 issues:\n",
 			},
 		},
 
@@ -143,10 +114,6 @@ func TestHandlers(t *testing.T) {
 			args: map[string]interface{}{
 				"limit": float64(5),
 			},
-			expectation: expectation{
-				err:    "",
-				output: "Found 1 issues:\n- TEST-1: Welcome to Linear 👋\n  Priority: 2\n  Status: Todo\n  https://linear.app/linear-mcp-go-test/issue/TEST-1/welcome-to-linear\n",
-			},
 		},
 		{
 			handler: "get_user_issues",
@@ -154,10 +121,6 @@ func TestHandlers(t *testing.T) {
 			args: map[string]interface{}{
 				"userId": USER_ID,
 				"limit":  float64(5),
-			},
-			expectation: expectation{
-				err:    "",
-				output: "Found 1 issues:\n- TEST-1: Welcome to Linear 👋\n  Priority: 2\n  Status: Todo\n  https://linear.app/linear-mcp-go-test/issue/TEST-1/welcome-to-linear\n",
 			},
 		},
 
@@ -168,19 +131,11 @@ func TestHandlers(t *testing.T) {
 			args: map[string]interface{}{
 				"issueId": ISSUE_ID, // Using constant instead of hardcoded string
 			},
-			expectation: expectation{
-				err:    "",
-				output: "Issue TEST-10: Updated Test Issue\nURL: https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue\nPriority: None\nStatus: Backlog\nAssignee: None\nTeam: Test Team\n",
-			},
 		},
 		{
 			handler: "get_issue",
 			name:    "Missing issueId",
 			args:    map[string]interface{}{},
-			expectation: expectation{
-				err:    "issueId must be a non-empty string",
-				output: "",
-			},
 		},
 
 		// AddCommentHandler test cases
@@ -191,10 +146,6 @@ func TestHandlers(t *testing.T) {
 				"issueId": ISSUE_ID, // Using constant instead of hardcoded string
 				"body":    "Test comment",
 			},
-			expectation: expectation{
-				err:    "",
-				output: "Added comment to issue TEST-10\nURL: https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue#comment-4339c849",
-			},
 		},
 		{
 			handler: "add_comment",
@@ -202,20 +153,12 @@ func TestHandlers(t *testing.T) {
 			args: map[string]interface{}{
 				"body": "Test comment",
 			},
-			expectation: expectation{
-				err:    "issueId must be a non-empty string",
-				output: "",
-			},
 		},
 		{
 			handler: "add_comment",
 			name:    "Missing body",
 			args: map[string]interface{}{
 				"issueId": ISSUE_ID, // Using constant instead of hardcoded string
-			},
-			expectation: expectation{
-				err:    "body must be a non-empty string",
-				output: "",
 			},
 		},
 	}
@@ -226,6 +169,9 @@ func TestHandlers(t *testing.T) {
 				t.Skip("Skipping write test when recordWrites=false")
 				return
 			}
+
+			// Generate golden file path
+			goldenPath := filepath.Join("../../testdata/golden", tt.handler+"_handler_"+tt.name+".golden")
 
 			// Create test client
 			client, cleanup := linear.NewTestClient(t, tt.handler+"_handler_"+tt.name, *record || *recordWrites)
@@ -285,17 +231,75 @@ func TestHandlers(t *testing.T) {
 				}
 			}
 
+			// If golden flag is set, update the golden file
+			if *golden {
+				writeGoldenFile(t, goldenPath, expectation{
+					Err:    actualErr,
+					Output: actualOutput,
+				})
+				return
+			}
+
+			// Otherwise, read the golden file and compare
+			expected := readGoldenFile(t, goldenPath)
+
 			// Compare error
-			if diff := cmp.Diff(tt.expectation.err, actualErr); diff != "" {
+			if diff := cmp.Diff(expected.Err, actualErr); diff != "" {
 				t.Errorf("Error mismatch (-want +got):\n%s", diff)
 			}
 
 			// Compare output (only if no error is expected)
-			if tt.expectation.err == "" {
-				if diff := cmp.Diff(tt.expectation.output, actualOutput); diff != "" {
+			if expected.Err == "" {
+				if diff := cmp.Diff(expected.Output, actualOutput); diff != "" {
 					t.Errorf("Output mismatch (-want +got):\n%s", diff)
 				}
 			}
 		})
+	}
+}
+
+// readGoldenFile reads an expectation from a golden file
+func readGoldenFile(t *testing.T, path string) expectation {
+	t.Helper()
+
+	// Check if the golden file exists
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		t.Fatalf("Golden file %s does not exist", path)
+	}
+
+	// Read the golden file
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("Failed to read golden file %s: %v", path, err)
+	}
+
+	// Parse the golden file
+	var exp expectation
+	if err := json.Unmarshal(data, &exp); err != nil {
+		t.Fatalf("Failed to parse golden file %s: %v", path, err)
+	}
+
+	return exp
+}
+
+// writeGoldenFile writes an expectation to a golden file
+func writeGoldenFile(t *testing.T, path string, exp expectation) {
+	t.Helper()
+
+	// Create the directory if it doesn't exist
+	dir := filepath.Dir(path)
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		t.Fatalf("Failed to create directory %s: %v", dir, err)
+	}
+
+	// Marshal the expectation
+	data, err := json.MarshalIndent(exp, "", "  ")
+	if err != nil {
+		t.Fatalf("Failed to marshal expectation: %v", err)
+	}
+
+	// Write the golden file
+	if err := os.WriteFile(path, data, 0644); err != nil {
+		t.Fatalf("Failed to write golden file %s: %v", path, err)
 	}
 }

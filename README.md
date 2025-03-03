@@ -135,6 +135,11 @@ go test -v -recordWrites=true ./...
 ```
 This will re-run all tests, including some that might alter the outcome of other tests cases, which might require further manual work to adjust.
 
+```
+go test -v -golden=true ./...
+```
+Updates all .golden fields.
+
 ## License
 
 MIT
