@@ -14,6 +14,11 @@ The current focus is on implementing a GitHub Actions workflow for automated tes
    - Builds binaries for Linux, macOS, and Windows
    - Uploads the binaries as release assets
 
+2. Fixed GitHub Actions workflow permissions issue:
+   - Added explicit `contents: write` permission to the `create-release` job
+   - This resolves the "Resource not accessible by integration" error
+   - Allows the workflow to create releases and upload assets
+
 ## Next Steps
 1. **Testing the Workflow**:
    - Push the changes to GitHub

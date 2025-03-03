@@ -29,6 +29,7 @@
 ### High Priority
 1. **Release Automation**:
    - ✅ GitHub Actions workflow for testing and releases
+   - ✅ Fixed workflow permissions for release creation
    - Testing the workflow with a real release
 
 ### Medium Priority
