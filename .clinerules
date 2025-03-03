@@ -1,0 +1,92 @@
+# Linear MCP Server - Project Intelligence
+
+## Project Patterns
+
+### Go Code Style
+- Use standard Go formatting (gofmt)
+- Follow Go best practices for error handling (return errors, don't panic)
+- Use descriptive variable and function names
+- Add comments for exported functions and types
+
+### Git Workflow
+- Main branch is protected
+- Development happens in feature branches
+- Pull requests are used for code review
+- Version tags follow semantic versioning with "v" prefix (e.g., v1.0.0)
+
+### Release Process
+- Releases are created automatically when tags matching "v*" are pushed
+- GitHub Actions workflow builds and tests the code
+- Binaries are built for Linux, macOS, and Windows
+- Release assets are uploaded to GitHub releases
+
+## Project-Specific Patterns
+
+### MCP Tool Registration
+- Tools are registered in the `RegisterTools` function in `pkg/server/tools.go`
+- Each tool has a handler function that processes requests
+- Tool parameters are defined using the MCP schema format
+- Required parameters are marked with `mcp.Required()`
+
+### Linear API Integration
+- The Linear client is in `pkg/linear/client.go`
+- API requests are rate-limited to respect Linear's quotas
+- Authentication is via the LINEAR_API_KEY environment variable
+- API responses are parsed into Go structs defined in `pkg/linear/models.go`
+
+### Testing
+- Tests use `go-vcr` to record and replay HTTP interactions
+- Test fixtures are stored in `testdata/fixtures/`
+- Tests can be run without a Linear API key using recorded fixtures
+- To re-record tests, use the `-record=true` or `-recordWrites=true` flags
+
+## Known Challenges
+
+### API Key Management
+- The LINEAR_API_KEY environment variable must be set
+- No support for other authentication methods
+- API key is not validated until the first API request
+
+### Rate Limiting
+- Linear API has rate limits that must be respected
+- The server implements a simple rate limiter
+- Rate limits are not configurable
+
+## Tool Usage Patterns
+
+### Building the Project
+```bash
+go build
+```
+
+### Running Tests
+```bash
+go test -v ./...
+```
+
+### Creating a Release
+1. Update the version in `pkg/server/server.go`
+2. Commit the changes
+3. Create and push a tag matching the version:
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+4. The GitHub Actions workflow will create a release automatically
+
+## Evolution of Project Decisions
+
+### Initial Implementation
+- Started with basic Linear API integration
+- Implemented core MCP tools for issue management
+- Added test fixtures for all tools
+
+### Current Focus
+- Adding automated release process
+- Improving documentation
+- Planning for additional features
+
+### Future Direction
+- Add more Linear API features
+- Improve error handling and reporting
+- Consider Docker container support
