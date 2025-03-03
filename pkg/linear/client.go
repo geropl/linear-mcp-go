@@ -110,7 +110,7 @@ func (c *LinearClient) executeGraphQL(query string, variables map[string]interfa
 // GetIssue gets an issue by ID
 func (c *LinearClient) GetIssue(issueID string) (*Issue, error) {
 	query := `
-		query GetIssue($id: ID!) {
+		query GetIssue($id: String!) {
 			issue(id: $id) {
 				id
 				identifier
@@ -251,7 +251,7 @@ func (c *LinearClient) CreateIssue(input CreateIssueInput) (*Issue, error) {
 // UpdateIssue updates an existing issue
 func (c *LinearClient) UpdateIssue(input UpdateIssueInput) (*Issue, error) {
 	query := `
-		mutation UpdateIssue($id: ID!, $input: IssueUpdateInput!) {
+		mutation UpdateIssue($id: String!, $input: IssueUpdateInput!) {
 			issueUpdate(id: $id, input: $input) {
 				success
 				issue {
@@ -491,7 +491,7 @@ func (c *LinearClient) GetUserIssues(input GetUserIssuesInput) ([]LinearIssueRes
 	}
 
 	query := `
-		query GetUserIssues($userId: ID!, $first: Int, $includeArchived: Boolean) {
+		query GetUserIssues($userId: String!, $first: Int, $includeArchived: Boolean) {
 			user(id: $userId) {
 				assignedIssues(first: $first, includeArchived: $includeArchived) {
 					nodes {
@@ -596,12 +596,12 @@ func (c *LinearClient) AddComment(input AddCommentInput) (*Comment, *Issue, erro
 						id
 						name
 					}
-				}
-				issue {
-					id
-					identifier
-					title
-					url
+					issue {
+						id
+						identifier
+						title
+						url
+					}
 				}
 			}
 		}
@@ -646,7 +646,7 @@ func (c *LinearClient) AddComment(input AddCommentInput) (*Comment, *Issue, erro
 		return nil, nil, errors.New("failed to create comment")
 	}
 
-	issueData, ok := commentCreateData["issue"].(map[string]interface{})
+	issueData, ok := commentData["issue"].(map[string]interface{})
 	if !ok || issueData == nil {
 		return nil, nil, errors.New("failed to get issue for comment")
 	}
@@ -1040,6 +1040,74 @@ func (c *LinearClient) getCurrentUserID() (string, error) {
 	}
 
 	return id, nil
+}
+
+// GetTeams gets teams by name (optional filter)
+func (c *LinearClient) GetTeams(name string) ([]Team, error) {
+	query := `
+		query GetTeams($filter: TeamFilter) {
+			teams(filter: $filter) {
+				nodes {
+					id
+					name
+					key
+					description
+					states {
+						nodes {
+							id
+							name
+						}
+					}
+				}
+			}
+		}
+	`
+
+	// Build the filter
+	variables := map[string]interface{}{}
+
+	if name != "" {
+		variables["filter"] = map[string]interface{}{
+			"name": map[string]interface{}{
+				"contains": name,
+			},
+		}
+	}
+
+	resp, err := c.executeGraphQL(query, variables)
+	if err != nil {
+		return nil, err
+	}
+
+	// Extract the teams from the response
+	teamsData, ok := resp.Data["teams"].(map[string]interface{})
+	if !ok || teamsData == nil {
+		return []Team{}, nil
+	}
+
+	nodesData, ok := teamsData["nodes"].([]interface{})
+	if !ok || nodesData == nil {
+		return []Team{}, nil
+	}
+
+	// Parse the teams data
+	teams := make([]Team, 0, len(nodesData))
+	for _, nodeData := range nodesData {
+		teamData, ok := nodeData.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		team := Team{
+			ID:   getStringValue(teamData, "id"),
+			Name: getStringValue(teamData, "name"),
+			Key:  getStringValue(teamData, "key"),
+		}
+
+		teams = append(teams, team)
+	}
+
+	return teams, nil
 }
 
 // GetMetrics returns metrics about the API usage

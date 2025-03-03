@@ -110,6 +110,31 @@ Adds a comment to an existing Linear issue.
 - `createAsUser`: Optional custom username to show for the comment
 - `displayIconUrl`: Optional avatar URL for the comment
 
+## Test
+Tests are implemented using [`go-vcr`](https://github.com/dnaeon/go-vcr), and executed against https://linear.app/linear-mcp-go-test.
+
+### Execute tests
+
+Using the existing recordings (cassettes):
+```
+go test -v ./...
+```
+
+#### Re-recording test:
+
+Requires `LINEAR_API_KEY` to be set.
+
+```
+go test -v -record=true ./...
+```
+This will update all tests that don't alter remote state.
+
+
+```
+go test -v -recordWrites=true ./...
+```
+This will re-run all tests, including some that might alter the outcome of other tests cases, which might require further manual work to adjust.
+
 ## License
 
 MIT

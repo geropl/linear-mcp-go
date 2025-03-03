@@ -198,11 +198,6 @@ func SearchIssuesHandler(linearClient *linear.LinearClient) func(ctx context.Con
 				issue.Identifier, issue.Title, priorityStr, statusStr, issue.URL)
 		}
 
-		// Add API metrics
-		metrics := linearClient.GetMetrics()
-		resultText += fmt.Sprintf("\nAPI Metrics:\n  Requests in last hour: %d\n  Remaining requests: %d\n  Average request time: %s",
-			metrics.RequestsInLastHour, metrics.RemainingRequests, metrics.AverageRequestTime)
-
 		return mcp.NewToolResultText(resultText), nil
 	}
 }
@@ -252,11 +247,6 @@ func GetUserIssuesHandler(linearClient *linear.LinearClient) func(ctx context.Co
 			resultText += fmt.Sprintf("- %s: %s\n  Priority: %s\n  Status: %s\n  %s\n",
 				issue.Identifier, issue.Title, priorityStr, statusStr, issue.URL)
 		}
-
-		// Add API metrics
-		metrics := linearClient.GetMetrics()
-		resultText += fmt.Sprintf("\nAPI Metrics:\n  Requests in last hour: %d\n  Remaining requests: %d\n  Average request time: %s",
-			metrics.RequestsInLastHour, metrics.RemainingRequests, metrics.AverageRequestTime)
 
 		return mcp.NewToolResultText(resultText), nil
 	}
@@ -314,11 +304,6 @@ func GetIssueHandler(linearClient *linear.LinearClient) func(ctx context.Context
 			resultText += fmt.Sprintf("\nDescription:\n%s\n", issue.Description)
 		}
 
-		// Add API metrics
-		metrics := linearClient.GetMetrics()
-		resultText += fmt.Sprintf("\nAPI Metrics:\n  Requests in last hour: %d\n  Remaining requests: %d\n  Average request time: %s",
-			metrics.RequestsInLastHour, metrics.RemainingRequests, metrics.AverageRequestTime)
-
 		return mcp.NewToolResultText(resultText), nil
 	}
 }
@@ -366,6 +351,34 @@ func AddCommentHandler(linearClient *linear.LinearClient) func(ctx context.Conte
 
 		// Return the result
 		resultText := fmt.Sprintf("Added comment to issue %s\nURL: %s", issue.Identifier, comment.URL)
+		return mcp.NewToolResultText(resultText), nil
+	}
+}
+
+// GetTeamsHandler handles the linear_get_teams tool
+func GetTeamsHandler(linearClient *linear.LinearClient) func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	return func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		// Extract arguments
+		args := request.Params.Arguments
+
+		// Extract optional name filter
+		name := ""
+		if nameArg, ok := args["name"].(string); ok {
+			name = nameArg
+		}
+
+		// Get teams
+		teams, err := linearClient.GetTeams(name)
+		if err != nil {
+			return mcp.NewToolResultError(fmt.Sprintf("Failed to get teams: %v", err)), nil
+		}
+
+		// Format the result
+		resultText := fmt.Sprintf("Found %d teams:\n", len(teams))
+		for _, team := range teams {
+			resultText += fmt.Sprintf("- %s (Key: %s)\n  ID: %s\n", team.Name, team.Key, team.ID)
+		}
+
 		return mcp.NewToolResultText(resultText), nil
 	}
 }
@@ -434,4 +447,11 @@ func RegisterTools(s *server.MCPServer, linearClient *linear.LinearClient) {
 		mcp.WithString("displayIconUrl", mcp.Description("Optional avatar URL for the comment")),
 	)
 	s.AddTool(addCommentTool, AddCommentHandler(linearClient))
+
+	// Get Teams Tool
+	getTeamsTool := mcp.NewTool("linear_get_teams",
+		mcp.WithDescription("Retrieves Linear teams with an optional name filter. If no name is provided, returns all teams. Returns team details including ID, name, and key."),
+		mcp.WithString("name", mcp.Description("Optional team name filter. Returns teams whose names contain this string.")),
+	)
+	s.AddTool(getTeamsTool, GetTeamsHandler(linearClient))
 }

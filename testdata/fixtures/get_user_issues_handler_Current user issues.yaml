@@ -1,0 +1,102 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 88
+        transfer_encoding: []
+        trailer: {}
+        host: api.linear.app
+        remote_addr: ""
+        request_uri: ""
+        body: '{"query":"\n\t\tquery GetCurrentUser {\n\t\t\tviewer {\n\t\t\t\tid\n\t\t\t}\n\t\t}\n\t"}'
+        form: {}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - linear-mcp-go/1.0.0
+        url: https://api.linear.app/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: |
+            {"data":{"viewer":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85"}}}
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=86400
+            Cache-Control:
+                - no-store
+            Cf-Cache-Status:
+                - DYNAMIC
+            Content-Type:
+                - application/json; charset=utf-8
+            Etag:
+                - W/"42-6PvRWCcs8jOXFygoL3FhQP+PK3o"
+            Server:
+                - cloudflare
+            Vary:
+                - Accept-Encoding
+            Via:
+                - 1.1 google
+        status: 200 OK
+        code: 200
+        duration: 57.573643ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 556
+        transfer_encoding: []
+        trailer: {}
+        host: api.linear.app
+        remote_addr: ""
+        request_uri: ""
+        body: '{"query":"\n\t\tquery GetUserIssues($userId: String!, $first: Int, $includeArchived: Boolean) {\n\t\t\tuser(id: $userId) {\n\t\t\t\tassignedIssues(first: $first, includeArchived: $includeArchived) {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tidentifier\n\t\t\t\t\t\ttitle\n\t\t\t\t\t\tdescription\n\t\t\t\t\t\tpriority\n\t\t\t\t\t\turl\n\t\t\t\t\t\tstate {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tname\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"first":5,"includeArchived":false,"userId":"cc24eee4-9edc-4bfe-b91b-fedde125ba85"}}'
+        form: {}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - linear-mcp-go/1.0.0
+        url: https://api.linear.app/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: "{\"data\":{\"user\":{\"assignedIssues\":{\"nodes\":[{\"id\":\"c58953c5-a31d-4c5a-9427-6d6ebd9a1a4e\",\"identifier\":\"TEST-1\",\"title\":\"Welcome to Linear \U0001F44B\",\"description\":\"Hi there. Complete these issues to learn how to use Linear and discover ✨**ProTips.** When you're done, delete them or move them to another team for others to view.\\n\\n### **To start, type** `C` to **create your first issue.**\\n\\nCreate issues from any view using `C` or by clicking the `New issue` button.\\n\\n \\n\\n[1189b618-97f2-4e2c-ae25-4f25467679e7](https://uploads.linear.app/fe63b3e2-bf87-46c0-8784-cd7d639287c8/532d146d-bcd6-4602-bf1f-83f674b70fff/1189b618-97f2-4e2c-ae25-4f25467679e7)\\n\\nOur issue editor and comments support Markdown. You can also: \\n\\n* @mention a teammate\\n* Drag & drop images or video (Loom & YouTube embed automatically)\\n* Use emoji ✅\\n* Type `/` to bring up more formatting options\",\"priority\":2,\"url\":\"https://linear.app/linear-mcp-go-test/issue/TEST-1/welcome-to-linear\",\"state\":{\"id\":\"cffb8999-f10e-447d-9672-8faf5b06ac67\",\"name\":\"Todo\"}}]}}}}\n"
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=86400
+            Cache-Control:
+                - no-store
+            Cf-Cache-Status:
+                - DYNAMIC
+            Content-Type:
+                - application/json; charset=utf-8
+            Etag:
+                - W/"413-x68G/UHqSqo2nd39aYj+kYb3/SY"
+            Server:
+                - cloudflare
+            Vary:
+                - Accept-Encoding
+            Via:
+                - 1.1 google
+        status: 200 OK
+        code: 200
+        duration: 95.839165ms
