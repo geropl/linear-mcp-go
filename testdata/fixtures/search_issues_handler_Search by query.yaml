@@ -52,4 +52,4 @@ interactions:
                 - 1.1 google
         status: 200 OK
         code: 200
-        duration: 66.729017ms
+        duration: 0s
