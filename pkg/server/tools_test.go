@@ -21,7 +21,9 @@ const (
 	TEAM_NAME = "Test Team"
 	TEAM_ID   = "234c5451-a839-4c8f-98d9-da00973f1060"
 	ISSUE_ID  = "TEST-10"
-	USER_ID   = "cc24eee4-9edc-4bfe-b91b-fedde125ba85" //a6ac53b5-d345-449f-bba2-e0b3b09ed2e3"
+	// COMMENT ISSUE ID is used for testing the add_comment handler
+	COMMENT_ISSUE_ID = "TEST-12"
+	USER_ID          = "cc24eee4-9edc-4bfe-b91b-fedde125ba85"
 )
 
 // expectation defines the expected output and error for a test case
@@ -129,7 +131,14 @@ func TestHandlers(t *testing.T) {
 			handler: "get_issue",
 			name:    "Valid issue",
 			args: map[string]interface{}{
-				"issueId": ISSUE_ID, // Using constant instead of hardcoded string
+				"issueId": ISSUE_ID,
+			},
+		},
+		{
+			handler: "get_issue",
+			name:    "Get comment issue",
+			args: map[string]interface{}{
+				"issueId": COMMENT_ISSUE_ID,
 			},
 		},
 		{
@@ -142,8 +151,9 @@ func TestHandlers(t *testing.T) {
 		{
 			handler: "add_comment",
 			name:    "Valid comment",
+			write:   true,
 			args: map[string]interface{}{
-				"issueId": ISSUE_ID, // Using constant instead of hardcoded string
+				"issueId": ISSUE_ID,
 				"body":    "Test comment",
 			},
 		},
@@ -158,7 +168,7 @@ func TestHandlers(t *testing.T) {
 			handler: "add_comment",
 			name:    "Missing body",
 			args: map[string]interface{}{
-				"issueId": ISSUE_ID, // Using constant instead of hardcoded string
+				"issueId": ISSUE_ID,
 			},
 		},
 	}

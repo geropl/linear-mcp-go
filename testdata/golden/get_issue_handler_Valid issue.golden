@@ -1,4 +1,4 @@
 {
   "err": "",
-  "output": "Issue TEST-10: Updated Test Issue\nURL: https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue\nPriority: None\nStatus: Backlog\nAssignee: None\nTeam: Test Team\n"
+  "output": "Issue TEST-10: Updated Test Issue\nURL: https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue\nPriority: None\nStatus: Backlog\nAssignee: None\nTeam: Test Team\n\nDescription: None\n\nAttachments: None\n\nComments:\n- [2025-03-03 13:32:18] Gero Leinemann: new test comment\n- [2025-03-03 13:32:43] Gero Leinemann: Test comment\n- [2025-03-04 08:37:42] Gero Leinemann: Test comment\n\nRelated Issues: None\n"
 }

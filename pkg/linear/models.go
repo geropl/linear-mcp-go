@@ -4,21 +4,24 @@ import "time"
 
 // Issue represents a Linear issue
 type Issue struct {
-	ID          string     `json:"id"`
-	Identifier  string     `json:"identifier"`
-	Title       string     `json:"title"`
-	Description string     `json:"description"`
-	Priority    int        `json:"priority"`
-	Status      string     `json:"status"`
-	Assignee    *User      `json:"assignee,omitempty"`
-	Team        *Team      `json:"team,omitempty"`
-	URL         string     `json:"url"`
-	CreatedAt   time.Time  `json:"createdAt"`
-	UpdatedAt   time.Time  `json:"updatedAt"`
-	Labels      []Label    `json:"labels,omitempty"`
-	State       *State     `json:"state,omitempty"`
-	Estimate    *float64   `json:"estimate,omitempty"`
-	Comments    []Comment  `json:"comments,omitempty"`
+	ID              string                   `json:"id"`
+	Identifier      string                   `json:"identifier"`
+	Title           string                   `json:"title"`
+	Description     string                   `json:"description"`
+	Priority        int                      `json:"priority"`
+	Status          string                   `json:"status"`
+	Assignee        *User                    `json:"assignee,omitempty"`
+	Team            *Team                    `json:"team,omitempty"`
+	URL             string                   `json:"url"`
+	CreatedAt       time.Time                `json:"createdAt"`
+	UpdatedAt       time.Time                `json:"updatedAt"`
+	Labels          []Label                  `json:"labels,omitempty"`
+	State           *State                   `json:"state,omitempty"`
+	Estimate        *float64                 `json:"estimate,omitempty"`
+	Comments        *CommentConnection       `json:"comments,omitempty"`
+	Relations       *IssueRelationConnection `json:"relations,omitempty"`
+	InverseRelations *IssueRelationConnection `json:"inverseRelations,omitempty"`
+	Attachments     *AttachmentConnection    `json:"attachments,omitempty"`
 }
 
 // User represents a Linear user
@@ -48,13 +51,49 @@ type Label struct {
 	Name string `json:"name"`
 }
 
+// CommentConnection represents a connection of comments
+type CommentConnection struct {
+	Nodes []Comment `json:"nodes"`
+}
+
 // Comment represents a comment on a Linear issue
 type Comment struct {
-	ID        string    `json:"id"`
-	Body      string    `json:"body"`
-	User      *User     `json:"user,omitempty"`
-	CreatedAt time.Time `json:"createdAt"`
-	URL       string    `json:"url"`
+	ID        string            `json:"id"`
+	Body      string            `json:"body"`
+	User      *User             `json:"user,omitempty"`
+	CreatedAt time.Time         `json:"createdAt"`
+	URL       string            `json:"url,omitempty"`
+	Parent    *Comment          `json:"parent,omitempty"`
+	Children  *CommentConnection `json:"children,omitempty"`
+}
+
+// IssueRelationConnection represents a connection of issue relations
+type IssueRelationConnection struct {
+	Nodes []IssueRelation `json:"nodes"`
+}
+
+// IssueRelation represents a relation between two issues
+type IssueRelation struct {
+	ID           string `json:"id"`
+	Type         string `json:"type"`
+	RelatedIssue *Issue `json:"relatedIssue,omitempty"`
+	Issue        *Issue `json:"issue,omitempty"`
+}
+
+// AttachmentConnection represents a connection of attachments
+type AttachmentConnection struct {
+	Nodes []Attachment `json:"nodes"`
+}
+
+// Attachment represents an external resource linked to an issue
+type Attachment struct {
+	ID         string                 `json:"id"`
+	Title      string                 `json:"title"`
+	Subtitle   string                 `json:"subtitle,omitempty"`
+	URL        string                 `json:"url"`
+	SourceType string                 `json:"sourceType,omitempty"`
+	Metadata   map[string]interface{} `json:"metadata,omitempty"`
+	CreatedAt  time.Time              `json:"createdAt"`
 }
 
 // Organization represents a Linear organization

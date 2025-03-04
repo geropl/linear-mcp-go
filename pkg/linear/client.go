@@ -134,6 +134,66 @@ func (c *LinearClient) GetIssue(issueID string) (*Issue, error) {
 					name
 					key
 				}
+				comments(first: 100) {
+					nodes {
+						id
+						body
+						createdAt
+						parent {
+							id
+						}
+						user {
+							id
+							name
+						}
+						children(first: 100) {
+							nodes {
+								id
+								body
+								createdAt
+								user {
+									id
+									name
+								}
+							}
+						}
+					}
+				}
+				relations(first: 20) {
+					nodes {
+						id
+						type
+						relatedIssue {
+							id
+							identifier
+							title
+							url
+						}
+					}
+				}
+				inverseRelations(first: 20) {
+					nodes {
+						id
+						type
+						issue {
+							id
+							identifier
+							title
+							url
+						}
+					}
+				}
+				attachments(first: 50) {
+					nodes {
+						id
+						title
+						subtitle
+						url
+						sourceType
+						metadata
+						createdAt
+					}
+				}
 			}
 		}
 	`

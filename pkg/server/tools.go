@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -299,9 +300,103 @@ func GetIssueHandler(linearClient *linear.LinearClient) func(ctx context.Context
 		resultText += fmt.Sprintf("Status: %s\n", statusStr)
 		resultText += fmt.Sprintf("Assignee: %s\n", assigneeStr)
 		resultText += fmt.Sprintf("Team: %s\n", teamStr)
-		
+
 		if issue.Description != "" {
 			resultText += fmt.Sprintf("\nDescription:\n%s\n", issue.Description)
+		} else {
+			resultText += "\nDescription: None\n"
+		}
+
+		// Add attachments section if there are attachments
+		if issue.Attachments != nil && len(issue.Attachments.Nodes) > 0 {
+			resultText += "\nAttachments:\n"
+
+			// Display all attachments in a simple list without grouping by source type
+			for _, attachment := range issue.Attachments.Nodes {
+				resultText += fmt.Sprintf("- %s: %s\n", attachment.Title, attachment.URL)
+				if attachment.Subtitle != "" {
+					resultText += fmt.Sprintf("  %s\n", attachment.Subtitle)
+				}
+			}
+		} else {
+			resultText += "\nAttachments: None\n"
+		}
+
+		// Add comments section
+		if issue.Comments != nil && len(issue.Comments.Nodes) > 0 {
+			resultText += "\nComments:\n"
+
+			// Create a temporary slice to hold comments in reversed order (oldest first)
+			reversedComments := slices.Clone(issue.Comments.Nodes)
+			slices.Reverse(reversedComments)
+
+			// Use the reversed comments for display
+			for _, comment := range reversedComments {
+				if comment.Parent != nil {
+					// Skip nested comments (they will be displayed with their parent)
+					continue
+				}
+
+				userName := "Unknown"
+				if comment.User != nil {
+					userName = comment.User.Name
+				}
+				createdAt := comment.CreatedAt.Format("2006-01-02 15:04:05")
+				resultText += fmt.Sprintf("- [%s] %s: %s\n", createdAt, userName, comment.Body)
+
+				// Add nested comments if there are any
+				if comment.Children != nil && len(comment.Children.Nodes) > 0 {
+					// Create a temporary slice to hold child comments in reversed order (oldest first)
+					reversedChildComments := slices.Clone(comment.Children.Nodes)
+					slices.Reverse(reversedChildComments)
+
+					// Use the reversed child comments for display
+					for _, childComment := range reversedChildComments {
+						childUserName := "Unknown"
+						if childComment.User != nil {
+							childUserName = childComment.User.Name
+						}
+						childCreatedAt := childComment.CreatedAt.Format("2006-01-02 15:04:05")
+						resultText += fmt.Sprintf("  - [%s] %s: %s\n", childCreatedAt, childUserName, childComment.Body)
+					}
+				}
+			}
+		} else {
+			resultText += "\nComments: None\n"
+		}
+
+		// Add related issues section
+		if (issue.Relations != nil && len(issue.Relations.Nodes) > 0) ||
+			(issue.InverseRelations != nil && len(issue.InverseRelations.Nodes) > 0) {
+			resultText += "\nRelated Issues:\n"
+
+			// Add direct relations
+			if issue.Relations != nil && len(issue.Relations.Nodes) > 0 {
+				for _, relation := range issue.Relations.Nodes {
+					if relation.RelatedIssue != nil {
+						resultText += fmt.Sprintf("- %s: %s\n  RelationType: %s\n  URL: %s\n",
+							relation.RelatedIssue.Identifier,
+							relation.RelatedIssue.Title,
+							relation.Type,
+							relation.RelatedIssue.URL)
+					}
+				}
+			}
+
+			// Add inverse relations
+			if issue.InverseRelations != nil && len(issue.InverseRelations.Nodes) > 0 {
+				for _, relation := range issue.InverseRelations.Nodes {
+					if relation.Issue != nil {
+						resultText += fmt.Sprintf("- %s: %s\n  RelationType: %s (inverse)\n  URL: %s\n",
+							relation.Issue.Identifier,
+							relation.Issue.Title,
+							relation.Type,
+							relation.Issue.URL)
+					}
+				}
+			}
+		} else {
+			resultText += "\nRelated Issues: None\n"
 		}
 
 		return mcp.NewToolResultText(resultText), nil
@@ -413,11 +508,10 @@ func RegisterTools(s *server.MCPServer, linearClient *linear.LinearClient, write
 
 	// Get Issue Tool (read-only)
 	getIssueTool := mcp.NewTool("linear_get_issue",
-		mcp.WithDescription("Retrieves a single Linear issue by its ID. Returns detailed information about the issue including title, description, priority, status, assignee, and team."),
+		mcp.WithDescription("Retrieves a single Linear issue by its ID. Returns detailed information about the issue including title, description, priority, status, assignee, team, full comment history (including nested comments), related issues, and all attachments (pull requests, design files, documents, etc.)."),
 		mcp.WithString("issueId", mcp.Required(), mcp.Description("ID of the issue to retrieve")),
 	)
 	s.AddTool(getIssueTool, GetIssueHandler(linearClient))
-
 
 	// Get Teams Tool (read-only)
 	getTeamsTool := mcp.NewTool("linear_get_teams",
@@ -425,7 +519,7 @@ func RegisterTools(s *server.MCPServer, linearClient *linear.LinearClient, write
 		mcp.WithString("name", mcp.Description("Optional team name filter. Returns teams whose names contain this string.")),
 	)
 	s.AddTool(getTeamsTool, GetTeamsHandler(linearClient))
-	
+
 	// Register write tools (only if writeAccess is true)
 	if writeAccess {
 		// Create Issue Tool

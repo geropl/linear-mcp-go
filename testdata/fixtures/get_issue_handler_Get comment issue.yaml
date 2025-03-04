@@ -1,0 +1,53 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1667
+        transfer_encoding: []
+        trailer: {}
+        host: api.linear.app
+        remote_addr: ""
+        request_uri: ""
+        body: '{"query":"\n\t\tquery GetIssue($id: String!) {\n\t\t\tissue(id: $id) {\n\t\t\t\tid\n\t\t\t\tidentifier\n\t\t\t\ttitle\n\t\t\t\tdescription\n\t\t\t\tpriority\n\t\t\t\turl\n\t\t\t\tcreatedAt\n\t\t\t\tupdatedAt\n\t\t\t\tstate {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t}\n\t\t\t\tassignee {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\temail\n\t\t\t\t}\n\t\t\t\tteam {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\tkey\n\t\t\t\t}\n\t\t\t\tcomments(first: 100) {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tbody\n\t\t\t\t\t\tcreatedAt\n\t\t\t\t\t\tparent {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t}\n\t\t\t\t\t\tuser {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tname\n\t\t\t\t\t\t}\n\t\t\t\t\t\tchildren(first: 100) {\n\t\t\t\t\t\t\tnodes {\n\t\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\t\tbody\n\t\t\t\t\t\t\t\tcreatedAt\n\t\t\t\t\t\t\t\tuser {\n\t\t\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\t\t\tname\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\trelations(first: 20) {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\ttype\n\t\t\t\t\t\trelatedIssue {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tidentifier\n\t\t\t\t\t\t\ttitle\n\t\t\t\t\t\t\turl\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tinverseRelations(first: 20) {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\ttype\n\t\t\t\t\t\tissue {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tidentifier\n\t\t\t\t\t\t\ttitle\n\t\t\t\t\t\t\turl\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tattachments(first: 50) {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\ttitle\n\t\t\t\t\t\tsubtitle\n\t\t\t\t\t\turl\n\t\t\t\t\t\tsourceType\n\t\t\t\t\t\tmetadata\n\t\t\t\t\t\tcreatedAt\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"id":"TEST-12"}}'
+        form: {}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - linear-mcp-go/1.0.0
+        url: https://api.linear.app/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: |
+            {"data":{"issue":{"id":"9407c793-5fd8-4730-9280-0e17ffddf320","identifier":"TEST-12","title":"Comments issue","description":"This is the description","priority":0,"url":"https://linear.app/linear-mcp-go-test/issue/TEST-12/comments-issue","createdAt":"2025-03-04T08:40:53.877Z","updatedAt":"2025-03-04T08:43:37.989Z","state":{"id":"cffb8999-f10e-447d-9672-8faf5b06ac67","name":"Todo"},"assignee":null,"team":{"id":"234c5451-a839-4c8f-98d9-da00973f1060","name":"Test Team","key":"TEST"},"comments":{"nodes":[{"id":"a7ab2134-03cd-464b-b03f-b9743863dc48","body":"comment 3.1","createdAt":"2025-03-04T08:41:47.204Z","parent":null,"user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"},"children":{"nodes":[]}},{"id":"f310e556-5556-4f82-ac35-2a06450a4e83","body":"comment 2.2","createdAt":"2025-03-04T08:41:41.648Z","parent":{"id":"211b4596-4b97-47f5-a452-8ade259543bc"},"user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"},"children":{"nodes":[]}},{"id":"211b4596-4b97-47f5-a452-8ade259543bc","body":"This is comment 2.1","createdAt":"2025-03-04T08:41:33.404Z","parent":null,"user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"},"children":{"nodes":[{"id":"f310e556-5556-4f82-ac35-2a06450a4e83","body":"comment 2.2","createdAt":"2025-03-04T08:41:41.648Z","user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"}}]}},{"id":"771ad0b4-97ee-471a-b487-ba7d93b2fc3c","body":"This is comment 1.3","createdAt":"2025-03-04T08:41:27.918Z","parent":{"id":"88732f37-9771-4979-a54b-a0a84a7280de"},"user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"},"children":{"nodes":[]}},{"id":"46f239ce-f427-472f-859a-938986ff6eaa","body":"This is comment 1.2","createdAt":"2025-03-04T08:41:21.280Z","parent":{"id":"88732f37-9771-4979-a54b-a0a84a7280de"},"user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"},"children":{"nodes":[]}},{"id":"88732f37-9771-4979-a54b-a0a84a7280de","body":"This is comment 1.1","createdAt":"2025-03-04T08:41:12.545Z","parent":null,"user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"},"children":{"nodes":[{"id":"771ad0b4-97ee-471a-b487-ba7d93b2fc3c","body":"This is comment 1.3","createdAt":"2025-03-04T08:41:27.918Z","user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"}},{"id":"46f239ce-f427-472f-859a-938986ff6eaa","body":"This is comment 1.2","createdAt":"2025-03-04T08:41:21.280Z","user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"}}]}}]},"relations":{"nodes":[]},"inverseRelations":{"nodes":[]},"attachments":{"nodes":[{"id":"cf677e8d-955f-430e-b281-4ee9bde7df79","title":"[docs] Getting Started","subtitle":"Gitpod Documentation: Learn how to start your first Gitpod workspace for free, set up a gitpod.yml configuration file and enable Prebuilds.","url":"https://www.gitpod.io/docs/introduction/getting-started","sourceType":"api","metadata":{},"createdAt":"2025-03-04T08:43:37.989Z"}]}}}}
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=86400
+            Cache-Control:
+                - no-store
+            Cf-Cache-Status:
+                - DYNAMIC
+            Content-Type:
+                - application/json; charset=utf-8
+            Etag:
+                - W/"bbe-6D2WXj66uC5Jj8nQYOTpSFNFkEo"
+            Server:
+                - cloudflare
+            Vary:
+                - Accept-Encoding
+            Via:
+                - 1.1 google
+        status: 200 OK
+        code: 200
+        duration: 159.804848ms
