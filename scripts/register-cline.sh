@@ -4,17 +4,25 @@
 # Note: to use this, you need to have a) cline installed, and b) set LINEAR_API_KEY in your environment
 #
 # Usage:
-#   ./register-cline.sh [write-access]
+#   ./register-cline.sh linear-api-key [write-access]
 #
 # Parameters:
+#   linear-api-key: Mandatory. The Linear API key to use for the MCP server.
 #   write-access: Optional. Set to "true" to enable write operations. Default is "false".
 #
 # Examples:
 #   ./register-cline.sh                # Install with read-only mode (default)
 #   ./register-cline.sh true           # Install with write operations enabled
 
+# LINEAR_API_KEY (mandatory)
+LINEAR_API_KEY=$1
+if [ -z "$LINEAR_API_KEY" ]; then
+    echo "LINEAR_API_KEY is not set, skipping setup."
+    exit 1
+fi
+
 # Get the write-access parameter (default: false)
-WRITE_ACCESS=${1:-false}
+WRITE_ACCESS=${2:-false}
 
 MCP_SERVERS_DIR="$HOME/mcp-servers"
 mkdir -p $MCP_SERVERS_DIR
@@ -66,6 +74,9 @@ cat <<EOF > "$CLINE_MCP_SETTINGS.new"
     "linear": {
       "command": "$LINEAR_MCP_BINARY",
       "args": $SERVER_ARGS,
+      "env": {
+        "LINEAR_API_KEY": "$LINEAR_API_KEY"
+      },
       "disabled": false,
       "autoApprove": []
     }
