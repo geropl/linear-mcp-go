@@ -37,6 +37,7 @@ chmod +x linear-mcp-go-*
 RELEASE=$(curl -s https://api.github.com/repos/geropl/linear-mcp-go/releases/latest)
 DOWNLOAD_URL=$(echo $RELEASE | jq -r '.assets[] | select(.name | contains("linux")) | .browser_download_url')
 curl -L -o ./linear-mcp-go $DOWNLOAD_URL
+chmod +x ./linear-mcp-go
 
 # Setup the mcp server (.gitpod.yml, dotfiles repo, etc.)
 ./linear-mcp-go setup --tool=cline

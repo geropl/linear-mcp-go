@@ -135,6 +135,11 @@ func copySelfToBinaryPath(binaryPath string) error {
 	}
 	defer sourceFile.Close()
 
+	err = os.MkdirAll(filepath.Dir(binaryPath), 0755)
+	if err != nil {
+		return fmt.Errorf("failed to create destination directory: %w", err)
+	}
+
 	destFile, err := os.Create(binaryPath)
 	if err != nil {
 		return fmt.Errorf("failed to create destination file: %w", err)
