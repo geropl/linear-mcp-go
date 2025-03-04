@@ -51,7 +51,7 @@ Currently supported tools: cline`,
 		// Check if the Linear MCP binary is already on the path
 		binaryPath, found := checkBinary()
 		if !found {
-			fmt.Println("Linear MCP binary not found on path, copying current binary...")
+			fmt.Printf("Linear MCP binary not found on path, copying current binary to '%s'...\n", binaryPath)
 			err := copySelfToBinaryPath(binaryPath)
 			if err != nil {
 				fmt.Printf("Error copying Linear MCP binary: %v\n", err)
@@ -110,7 +110,7 @@ func checkBinary() (string, bool) {
 		return binaryPath, true
 	}
 
-	return "", false
+	return binaryPath, false
 }
 
 // copySelfToBinaryPath copies the current executable to the specified path
