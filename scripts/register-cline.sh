@@ -62,9 +62,9 @@ CLINE_MCP_SETTINGS="$CLINE_CONFIG_DIR/cline_mcp_settings.json"
 
 # Determine args based on write-access parameter
 if [ "$WRITE_ACCESS" = "true" ]; then
-  SERVER_ARGS='["--write-access=true"]'
+  SERVER_ARGS='["serve", "--write-access=true"]'
 else
-  SERVER_ARGS='[]'
+  SERVER_ARGS='["serve"]'
 fi
 
 # Merge the existing settings with the new MCP server configuration

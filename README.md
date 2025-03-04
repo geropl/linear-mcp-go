@@ -17,21 +17,6 @@ A Model Context Protocol (MCP) server for Linear, written in Go. This server pro
 
 ## Installation
 
-### From Source
-
-1. Clone the repository:
-
-```bash
-git clone https://github.com/geropl/linear-mcp-go.git
-cd linear-mcp-go
-```
-
-2. Build the server:
-
-```bash
-go build
-```
-
 ### From Releases
 
 Pre-built binaries are available for Linux, macOS, and Windows on the [GitHub Releases page](https://github.com/geropl/linear-mcp-go/releases).
@@ -45,7 +30,21 @@ chmod +x linear-mcp-go-*
 
 3. Run the binary as described in the Usage section
 
+### Automated
+
+```
+# Download linux binary for the latest release
+RELEASE=$(curl -s https://api.github.com/repos/geropl/linear-mcp-go/releases/latest)
+DOWNLOAD_URL=$(echo $RELEASE | jq -r '.assets[] | select(.name | contains("linux")) | .browser_download_url')
+curl -L -o ./linear-mcp-go $DOWNLOAD_URL
+
+# Setup the mcp server (.gitpod.yml, dotfiles repo, etc.)
+./linear-mcp-go setup --tool=cline
+```
+
 ## Usage
+
+### Running the Server
 
 1. Set your Linear API key as an environment variable:
 
@@ -57,13 +56,39 @@ export LINEAR_API_KEY=your_linear_api_key
 
 ```bash
 # Run in read-only mode (default)
-./linear-mcp-go
+./linear-mcp-go serve
 
 # Run with write access enabled
-./linear-mcp-go --write-access=true
+./linear-mcp-go serve --write-access
 ```
 
 The server will start and listen for MCP requests on stdin/stdout.
+
+### Setting Up for AI Assistants
+
+The `setup` command automates the installation and configuration process for various AI assistants:
+
+```bash
+# Set your Linear API key as an environment variable
+export LINEAR_API_KEY=your_linear_api_key
+
+# Set up for Cline (default)
+./linear-mcp-go setup
+
+# Set up with write access enabled
+./linear-mcp-go setup --write-access
+
+# Set up for a different tool (only "cline" supported for now)
+./linear-mcp-go setup --tool=cline
+```
+
+This command:
+1. Checks if the Linear MCP binary is already installed
+2. Copies the current binary to the installation directory if needed
+3. Configures the AI assistant to use the Linear MCP server
+
+Currently supported AI assistants:
+- Cline (VSCode extension)
 
 By default, the server runs in read-only mode, which means the following tools are disabled:
 - `linear_create_issue`

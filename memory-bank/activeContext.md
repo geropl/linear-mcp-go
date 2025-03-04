@@ -1,75 +1,80 @@
 # Active Context: Linear MCP Server
 
 ## Current Work Focus
-The current focus is on implementing a GitHub Actions workflow for automated testing and release creation. This workflow will:
-1. Run tests on all pushes to ensure code quality
-2. Create releases automatically when version tags are pushed
-3. Build binaries for multiple platforms (Linux, macOS, Windows)
+The current focus is on improving the user experience by adding a setup command that simplifies the installation and configuration process. This includes:
+1. Implementing a CLI framework with subcommands
+2. Creating a setup command that automates the installation and configuration process
+3. Supporting multiple AI assistants (starting with Cline)
+4. Ensuring cross-platform compatibility
 
 ## Recent Changes
-1. Implemented write access control feature:
-   - Added a `--write-access` flag (default: false) to control whether write operations are enabled
-   - Modified server to conditionally register write tools based on this flag
-   - Updated documentation and install script to support the new flag
-   - Write operations (`linear_create_issue`, `linear_update_issue`, `linear_add_comment`) are disabled by default
+1. Implemented CLI framework with subcommands:
+   - Added the Cobra library for command-line handling
+   - Restructured the main.go file to support subcommands
+   - Created a root command that serves as the base for all subcommands
+   - Moved the existing server functionality to a server subcommand
 
-2. Created a GitHub Actions workflow file (`.github/workflows/release.yml`) that:
-   - Runs on push events to main branch and tags matching "v*"
-   - Tests the build on all pushes
-   - Creates a GitHub release when a tag matching "v*" is pushed
-   - Builds binaries for Linux, macOS, and Windows
-   - Uploads the binaries as release assets
+2. Created a setup command:
+   - Implemented a setup command that automates the installation and configuration process
+   - Added support for the Cline AI assistant
+   - Implemented binary discovery and download functionality
+   - Added configuration file management for AI assistants
 
-3. Fixed GitHub Actions workflow permissions issue:
-   - Added explicit `contents: write` permission to the `create-release` job
-   - This resolves the "Resource not accessible by integration" error
-   - Allows the workflow to create releases and upload assets
+3. Updated documentation:
+   - Updated README.md with information about the new setup command
+   - Added examples of how to use the setup command
+   - Clarified the usage of the server command
 
 ## Next Steps
-1. **Testing the Workflow**:
-   - Push the changes to GitHub
-   - Create a test tag (e.g., v0.1.0) to verify the release process
-   - Verify that binaries are correctly built and attached to the release
+1. **Testing the Setup Command**:
+   - Test the setup command on different platforms (Linux, macOS, Windows)
+   - Verify that the configuration files are correctly created
+   - Ensure that the binary download works correctly
 
-2. **Documentation Updates**:
-   - Update README.md with information about the release process
-   - Add a CONTRIBUTING.md file with development guidelines
+2. **Adding Support for More AI Assistants**:
+   - Research other AI assistants that could benefit from Linear integration
+   - Implement support for these assistants in the setup command
+   - Update documentation with information about the new assistants
 
 3. **Future Enhancements**:
    - Add more Linear API features as MCP tools
    - Improve error handling and reporting
-   - Add configuration file support
+   - Add configuration file support for the server
 
 ## Active Decisions and Considerations
 
-### Write Access Control Design
-- **Decision**: Implement write access control with a command-line flag
-  - **Rationale**: Provides a simple way to control access to write operations
-  - **Alternatives Considered**: Environment variable, configuration file
-  - **Implications**: Users can easily control whether write operations are enabled
+### CLI Framework Selection
+- **Decision**: Use the Cobra library for command-line handling
+  - **Rationale**: Cobra is a widely used library for Go CLI applications with good documentation and community support
+  - **Alternatives Considered**: urfave/cli, flag package
+  - **Implications**: Provides a consistent way to handle subcommands and flags
 
-### Release Workflow Design
-- **Decision**: Use GitHub Actions for automated releases
-  - **Rationale**: GitHub Actions provides a simple, integrated way to automate the build and release process
-  - **Alternatives Considered**: CircleCI, Travis CI, custom scripts
-  - **Implications**: Requires GitHub repository, relies on GitHub's infrastructure
+### Setup Command Design
+- **Decision**: Implement a setup command that automates the installation and configuration process
+  - **Rationale**: Simplifies the user experience by automating manual steps
+  - **Alternatives Considered**: Keeping the bash script, creating a separate tool
+  - **Implications**: Users can easily set up the server for use with AI assistants
 
-### Binary Distribution
-- **Decision**: Build binaries for Linux, macOS, and Windows
-  - **Rationale**: These are the major platforms where users might run the server
-  - **Considerations**: ARM architectures not currently supported but could be added in the future
+### AI Assistant Support
+- **Decision**: Start with Cline support and design for extensibility
+  - **Rationale**: Cline is the primary target, but the design should allow for adding more assistants
+  - **Alternatives Considered**: Supporting only Cline, supporting multiple assistants from the start
+  - **Implications**: The code is structured to easily add support for more assistants in the future
 
-### Version Tagging
-- **Decision**: Use semantic versioning with tags starting with "v" (e.g., v1.0.0)
-  - **Rationale**: Standard practice for Go projects, easy to parse in automation
-  - **Implications**: Need to ensure version in code (ServerVersion) matches release tags
+### Binary Management
+- **Decision**: Check for existing binary before downloading
+  - **Rationale**: Avoids unnecessary downloads if the binary is already installed
+  - **Alternatives Considered**: Always downloading the latest version
+  - **Implications**: Faster setup process for users who already have the binary
 
-### Testing Strategy
-- **Decision**: Run tests on all pushes, including PRs
-  - **Rationale**: Ensures code quality before merging
-  - **Considerations**: Tests use recorded HTTP interactions, so they don't require a Linear API key
+### Configuration File Management
+- **Decision**: Merge new settings with existing settings
+  - **Rationale**: Preserves user's existing configuration while adding the Linear MCP server
+  - **Alternatives Considered**: Overwriting the entire file
+  - **Implications**: Users can have multiple MCP servers configured
 
 ## Open Questions
-1. Should we add Docker container builds to the release process?
-2. Do we need to add any additional validation steps before creating releases?
-3. Should we implement automatic changelog generation based on commit messages?
+1. Should we add support for more AI assistants in the setup command?
+2. Do we need to add any additional validation steps for the API key?
+3. Should we implement automatic updates for the binary?
+4. How can we improve the error handling for network and file system operations?

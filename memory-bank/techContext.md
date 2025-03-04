@@ -12,7 +12,11 @@
    - MCP protocol implementation for Go
    - Provides server, tool registration, and request/response handling
 
-2. **gopkg.in/dnaeon/go-vcr.v4 v4.0.2**
+2. **github.com/spf13/cobra v1.9.1**
+   - Command-line interface framework for Go
+   - Provides subcommand support and flag handling
+
+3. **gopkg.in/dnaeon/go-vcr.v4 v4.0.2**
    - HTTP interaction recording and playback for testing
    - Allows tests to run without actual API calls
 
@@ -37,16 +41,34 @@
 go build
 
 # Run the server in read-only mode (default)
-./linear-mcp-go
+./linear-mcp-go server
 
 # Run the server with write operations enabled
-./linear-mcp-go --write-access
+./linear-mcp-go server --write-access
+
+# Set up for Cline (default)
+./linear-mcp-go setup --api-key=your_linear_api_key
+
+# Set up with write access enabled
+./linear-mcp-go setup --api-key=your_linear_api_key --write-access
 ```
 
+### Command-Line Structure
+- **Root Command**: Base command for the application
+- **Subcommands**:
+  - `server`: Starts the Linear MCP server
+  - `setup`: Sets up the Linear MCP server for use with an AI assistant
+
 ### Command-Line Flags
-- `--write-access`: Controls whether write operations are enabled (default: false)
-  - When false, write tools (`linear_create_issue`, `linear_update_issue`, `linear_add_comment`) are disabled
-  - When true, all tools are available
+- **Server Command**:
+  - `--write-access`: Controls whether write operations are enabled (default: false)
+    - When false, write tools (`linear_create_issue`, `linear_update_issue`, `linear_add_comment`) are disabled
+    - When true, all tools are available
+
+- **Setup Command**:
+  - `--api-key`: Linear API key (required)
+  - `--tool`: The AI assistant tool to set up for (default: cline)
+  - `--write-access`: Enable write operations (default: false)
 
 ### Testing
 ```bash
@@ -94,6 +116,7 @@ go test -v -recordWrites=true ./...
 ### Direct Dependencies
 ```
 github.com/mark3labs/mcp-go v0.8.5
+github.com/spf13/cobra v1.9.1
 gopkg.in/dnaeon/go-vcr.v4 v4.0.2
 ```
 
@@ -101,6 +124,8 @@ gopkg.in/dnaeon/go-vcr.v4 v4.0.2
 ```
 github.com/google/go-cmp v0.7.0
 github.com/google/uuid v1.6.0
+github.com/inconshreveable/mousetrap v1.1.0
+github.com/spf13/pflag v1.0.6
 gopkg.in/yaml.v3 v3.0.1
 ```
 

@@ -5,7 +5,10 @@ The Linear MCP Server follows a modular architecture with clear separation of co
 
 ```mermaid
 flowchart TD
-    Main[main.go] --> |writeAccess| Server[pkg/server/server.go]
+    Main[main.go] --> RootCmd[cmd/root.go]
+    RootCmd --> ServerCmd[cmd/server.go]
+    RootCmd --> SetupCmd[cmd/setup.go]
+    ServerCmd --> |writeAccess| Server[pkg/server/server.go]
     Server --> |writeAccess| Tools[pkg/server/tools.go]
     Server --> LinearClient[pkg/linear/client.go]
     LinearClient --> RateLimiter[pkg/linear/rate_limiter.go]
@@ -13,52 +16,77 @@ flowchart TD
     Tools --> LinearClient
 ```
 
-1. **Main Module** (`main.go`): Entry point that initializes and starts the server.
-2. **Server Module** (`pkg/server`): Handles MCP protocol implementation and tool registration.
-3. **Linear Client Module** (`pkg/linear`): Manages communication with the Linear API.
+1. **Main Module** (`main.go`): Entry point that initializes the command structure.
+2. **Command Module** (`cmd/`): Handles command-line interface and subcommands.
+   - **Root Command** (`cmd/root.go`): Base command that serves as the entry point for all subcommands.
+   - **Server Command** (`cmd/server.go`): Handles the server functionality.
+   - **Setup Command** (`cmd/setup.go`): Handles the setup functionality for AI assistants.
+3. **Server Module** (`pkg/server`): Handles MCP protocol implementation and tool registration.
+4. **Linear Client Module** (`pkg/linear`): Manages communication with the Linear API.
 
 ## Key Technical Decisions
 
-### 1. Write Access Control
+### 1. Command-Line Interface
+- Uses the Cobra library for command-line handling.
+- Implements a subcommand structure for different functionalities.
+- Provides consistent flag handling across subcommands.
+
+### 2. Write Access Control
 - Implements write access control (default: disabled) to control access to write operations.
 - Command-line flag `--write-access` determines whether write tools are registered.
 - Write operations (`linear_create_issue`, `linear_update_issue`, `linear_add_comment`) are only available when write access is enabled.
 
-### 1. MCP Protocol Implementation
+### 3. Setup Automation
+- Automates the installation and configuration process for AI assistants.
+- Checks for existing binary before downloading.
+- Merges new settings with existing settings to preserve user configuration.
+- Supports multiple AI assistants (starting with Cline).
+
+### 4. MCP Protocol Implementation
 - Uses the `github.com/mark3labs/mcp-go` library for MCP server implementation.
 - Implements the standard MCP protocol for tool registration and execution.
 
-### 2. Linear API Integration
+### 5. Linear API Integration
 - Custom Linear client implementation in the `pkg/linear` package.
 - Handles authentication, request formatting, and response parsing.
 
-### 3. Rate Limiting
+### 6. Rate Limiting
 - Implements rate limiting to respect Linear API quotas.
 - Uses a simple rate limiter to prevent API quota exhaustion.
 
-### 4. Error Handling
+### 7. Error Handling
 - Consistent error handling patterns throughout the codebase.
 - Errors are propagated up and formatted according to MCP specifications.
 
-### 5. Testing Strategy
+### 8. Testing Strategy
 - Uses `go-vcr` for recording and replaying HTTP interactions in tests.
 - Test fixtures stored in `testdata/fixtures/`.
 
 ## Design Patterns
 
-### 1. Factory Pattern
+### 1. Command Pattern
+- The Cobra library implements the Command pattern for handling CLI commands.
+- Each command is a separate object with its own run method.
+- Commands can have subcommands, creating a hierarchical command structure.
+
+### 2. Factory Pattern
 - `NewLinearMCPServer()` and `NewLinearClientFromEnv()` functions create and initialize complex objects.
 
-### 2. Dependency Injection
+### 3. Dependency Injection
 - The Linear client is injected into tool handlers, promoting testability and loose coupling.
 
-### 3. Handler Pattern
+### 4. Handler Pattern
 - Each MCP tool has a dedicated handler function that processes requests and returns results.
 
-### 4. Builder Pattern
+### 5. Builder Pattern
 - MCP tools are constructed using a builder-like pattern with the `mcp.NewTool()` function and various `With*` methods.
 
 ## Component Relationships
+
+### Commands and Subcommands
+- The root command serves as the entry point for all subcommands.
+- Subcommands handle specific functionalities (server, setup).
+- Each subcommand has its own flags and run method.
 
 ### Server and Tools
 - The server registers tools during initialization.
@@ -72,7 +100,43 @@ flowchart TD
 
 ## Data Flow
 
-1. **Request Flow**:
+1. **Command Flow**:
+   ```mermaid
+   sequenceDiagram
+       participant User
+       participant Main as main.go
+       participant Root as cmd/root.go
+       participant Cmd as Subcommand
+       participant Action as Command Action
+       
+       User->>Main: Execute Command
+       Main->>Root: Execute Root Command
+       Root->>Cmd: Parse and Execute Subcommand
+       Cmd->>Action: Execute Command Action
+       Action->>User: Return Result
+   ```
+
+2. **Setup Flow**:
+   ```mermaid
+   sequenceDiagram
+       participant User
+       participant Setup as cmd/setup.go
+       participant Binary as Binary Management
+       participant Config as Configuration Management
+       
+       User->>Setup: Execute Setup Command
+       Setup->>Binary: Check for Existing Binary
+       Binary-->>Setup: Binary Status
+       alt Binary Not Found
+           Setup->>Binary: Download Latest Release
+           Binary-->>Setup: Binary Path
+       end
+       Setup->>Config: Create/Update Configuration
+       Config-->>Setup: Configuration Status
+       Setup->>User: Setup Complete
+   ```
+
+3. **Request Flow**:
    ```mermaid
    sequenceDiagram
        participant Client as MCP Client
@@ -91,7 +155,7 @@ flowchart TD
        Server->>Client: Tool Result
    ```
 
-2. **Error Flow**:
+4. **Error Flow**:
    ```mermaid
    sequenceDiagram
        participant Client as MCP Client
@@ -111,6 +175,10 @@ flowchart TD
    ```
 
 ## Code Organization
+- **main.go**: Entry point that initializes the command structure
+- **cmd/root.go**: Root command that serves as the base for all subcommands
+- **cmd/server.go**: Server command that handles the server functionality
+- **cmd/setup.go**: Setup command that handles the setup functionality for AI assistants
 - **pkg/server/server.go**: Server initialization and management
 - **pkg/server/tools.go**: Tool definitions and handlers
 - **pkg/linear/client.go**: Linear API client implementation
