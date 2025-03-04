@@ -78,6 +78,15 @@ export LINEAR_API_KEY=your_linear_api_key
 # Set up with write access enabled
 ./linear-mcp-go setup --write-access
 
+# Set up with auto-approval for read-only tools
+./linear-mcp-go setup --auto-approve=allow-read-only
+
+# Set up with specific tools auto-approved
+./linear-mcp-go setup --auto-approve=linear_get_issue,linear_search_issues
+
+# Set up with write access and auto-approval for read-only tools
+./linear-mcp-go setup --write-access --auto-approve=allow-read-only
+
 # Set up for a different tool (only "cline" supported for now)
 ./linear-mcp-go setup --tool=cline
 ```
@@ -86,6 +95,11 @@ This command:
 1. Checks if the Linear MCP binary is already installed
 2. Copies the current binary to the installation directory if needed
 3. Configures the AI assistant to use the Linear MCP server
+4. Sets up auto-approval for specified tools if requested
+
+The `--auto-approve` flag can be used to specify which tools should be auto-approved in the Cline configuration:
+- `--auto-approve=allow-read-only`: Auto-approves all read-only tools (`linear_search_issues`, `linear_get_user_issues`, `linear_get_issue`, `linear_get_teams`)
+- `--auto-approve=tool1,tool2,...`: Auto-approves the specified comma-separated list of tools
 
 Currently supported AI assistants:
 - Cline (VSCode extension)

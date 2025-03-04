@@ -10,6 +10,7 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/geropl/linear-mcp-go/pkg/server"
 	"github.com/spf13/cobra"
 )
 
@@ -23,6 +24,7 @@ Currently supported tools: cline`,
 	Run: func(cmd *cobra.Command, args []string) {
 		tool, _ := cmd.Flags().GetString("tool")
 		writeAccess, _ := cmd.Flags().GetBool("write-access")
+		autoApprove, _ := cmd.Flags().GetString("auto-approve")
 
 		// Check if the Linear API key is provided in the environment
 		apiKey := os.Getenv("LINEAR_API_KEY")
@@ -60,7 +62,7 @@ Currently supported tools: cline`,
 		// Set up the tool-specific configuration
 		switch strings.ToLower(tool) {
 		case "cline":
-			if err := setupCline(binaryPath, apiKey, writeAccess); err != nil {
+			if err := setupCline(binaryPath, apiKey, writeAccess, autoApprove); err != nil {
 				fmt.Printf("Error setting up Cline: %v\n", err)
 				os.Exit(1)
 			}
@@ -80,6 +82,7 @@ func init() {
 	// Add flags to the setup command
 	setupCmd.Flags().String("tool", "cline", "The AI assistant tool to set up for (default: cline)")
 	setupCmd.Flags().Bool("write-access", false, "Enable write operations (default: false)")
+	setupCmd.Flags().String("auto-approve", "", "Comma-separated list of tool names to auto-approve, or 'allow-read-only' to auto-approve all read-only tools")
 }
 
 // checkBinary checks if the Linear MCP binary is already on the path
@@ -154,7 +157,7 @@ func copySelfToBinaryPath(binaryPath string) error {
 }
 
 // setupCline sets up the Linear MCP server for Cline
-func setupCline(binaryPath, apiKey string, writeAccess bool) error {
+func setupCline(binaryPath, apiKey string, writeAccess bool, autoApprove string) error {
 	// Determine the Cline config directory
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
@@ -183,6 +186,25 @@ func setupCline(binaryPath, apiKey string, writeAccess bool) error {
 		serverArgs = append(serverArgs, "--write-access=true")
 	}
 
+	// Process auto-approve flag
+	autoApproveTools := []string{}
+	if autoApprove != "" {
+		if autoApprove == "allow-read-only" {
+			// Get the list of read-only tools
+			for k := range server.GetReadOnlyToolNames() {
+				autoApproveTools = append(autoApproveTools, k)
+			}
+		} else {
+			// Split comma-separated list
+			for _, tool := range strings.Split(autoApprove, ",") {
+				trimmedTool := strings.TrimSpace(tool)
+				if trimmedTool != "" {
+					autoApproveTools = append(autoApproveTools, trimmedTool)
+				}
+			}
+		}
+	}
+
 	// Create the MCP settings file
 	settingsPath := filepath.Join(configDir, "cline_mcp_settings.json")
 	newSettings := map[string]interface{}{
@@ -192,7 +214,7 @@ func setupCline(binaryPath, apiKey string, writeAccess bool) error {
 				"args":        serverArgs,
 				"env":         map[string]string{"LINEAR_API_KEY": apiKey},
 				"disabled":    false,
-				"autoApprove": []string{},
+				"autoApprove": autoApproveTools,
 			},
 		},
 	}
