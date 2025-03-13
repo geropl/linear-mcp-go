@@ -3,7 +3,7 @@ tasks:
   
   - name: Build and test the Go project
     init: |
-    go get && go build ./... && go test ./...
+      go build ./... && go test ./...
 
   - name: Setup Linear MCP Server and Cline
     init: |      
