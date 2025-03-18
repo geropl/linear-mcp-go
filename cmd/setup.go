@@ -19,10 +19,10 @@ var setupCmd = &cobra.Command{
 	Use:   "setup",
 	Short: "Set up the Linear MCP server for use with an AI assistant",
 	Long: `Set up the Linear MCP server for use with an AI assistant.
-This command installs the Linear MCP server and configures it for use with the specified AI assistant tool.
-Currently supported tools: cline`,
+This command installs the Linear MCP server and configures it for use with the specified AI assistant tool(s).
+Currently supported tools: cline, roo-code`,
 	Run: func(cmd *cobra.Command, args []string) {
-		tool, _ := cmd.Flags().GetString("tool")
+		toolParam, _ := cmd.Flags().GetString("tool")
 		writeAccess, _ := cmd.Flags().GetBool("write-access")
 		autoApprove, _ := cmd.Flags().GetString("auto-approve")
 
@@ -59,20 +59,43 @@ Currently supported tools: cline`,
 			}
 		}
 
-		// Set up the tool-specific configuration
-		switch strings.ToLower(tool) {
-		case "cline":
-			if err := setupCline(binaryPath, apiKey, writeAccess, autoApprove); err != nil {
-				fmt.Printf("Error setting up Cline: %v\n", err)
-				os.Exit(1)
+		// Process each tool
+		tools := strings.Split(toolParam, ",")
+		hasErrors := false
+
+		for _, t := range tools {
+			t = strings.TrimSpace(t)
+			if t == "" {
+				continue
 			}
-		default:
-			fmt.Printf("Unsupported tool: %s\n", tool)
-			fmt.Println("Currently supported tools: cline")
-			os.Exit(1)
+
+			fmt.Printf("Setting up tool: %s\n", t)
+
+			// Set up the tool-specific configuration
+			var err error
+			switch strings.ToLower(t) {
+			case "cline":
+				err = setupCline(binaryPath, apiKey, writeAccess, autoApprove)
+			case "roo-code":
+				err = setupRooCode(binaryPath, apiKey, writeAccess, autoApprove)
+			default:
+				fmt.Printf("Unsupported tool: %s\n", t)
+				fmt.Println("Currently supported tools: cline, roo-code")
+				hasErrors = true
+				continue
+			}
+
+			if err != nil {
+				fmt.Printf("Error setting up %s: %v\n", t, err)
+				hasErrors = true
+			} else {
+				fmt.Printf("Linear MCP server successfully set up for %s\n", t)
+			}
 		}
 
-		fmt.Printf("Linear MCP server successfully set up for %s\n", tool)
+		if hasErrors {
+			os.Exit(1)
+		}
 	},
 }
 
@@ -80,7 +103,7 @@ func init() {
 	rootCmd.AddCommand(setupCmd)
 
 	// Add flags to the setup command
-	setupCmd.Flags().String("tool", "cline", "The AI assistant tool to set up for (default: cline)")
+	setupCmd.Flags().String("tool", "cline", "The AI assistant tool(s) to set up for (comma-separated, e.g., cline,roo-code)")
 	setupCmd.Flags().Bool("write-access", false, "Enable write operations (default: false)")
 	setupCmd.Flags().String("auto-approve", "", "Comma-separated list of tool names to auto-approve, or 'allow-read-only' to auto-approve all read-only tools")
 }
@@ -161,26 +184,8 @@ func copySelfToBinaryPath(binaryPath string) error {
 	return nil
 }
 
-// setupCline sets up the Linear MCP server for Cline
-func setupCline(binaryPath, apiKey string, writeAccess bool, autoApprove string) error {
-	// Determine the Cline config directory
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		return fmt.Errorf("failed to get user home directory: %w", err)
-	}
-
-	var configDir string
-	switch runtime.GOOS {
-	case "darwin":
-		configDir = filepath.Join(homeDir, "Library", "Application Support", "Code", "User", "globalStorage", "saoudrizwan.claude-dev", "settings")
-	case "linux":
-		configDir = filepath.Join(homeDir, ".vscode-server", "data", "User", "globalStorage", "saoudrizwan.claude-dev", "settings")
-	case "windows":
-		configDir = filepath.Join(homeDir, "AppData", "Roaming", "Code", "User", "globalStorage", "saoudrizwan.claude-dev", "settings")
-	default:
-		return fmt.Errorf("unsupported OS: %s", runtime.GOOS)
-	}
-
+// setupTool sets up the Linear MCP server for a specific tool
+func setupTool(toolName string, binaryPath, apiKey string, writeAccess bool, autoApprove string, configDir string) error {
 	// Create the config directory if it doesn't exist
 	if err := os.MkdirAll(configDir, 0755); err != nil {
 		return fmt.Errorf("failed to create config directory: %w", err)
@@ -259,6 +264,52 @@ func setupCline(binaryPath, apiKey string, writeAccess bool, autoApprove string)
 		return fmt.Errorf("failed to write settings: %w", err)
 	}
 
-	fmt.Printf("Cline MCP settings updated at %s\n", settingsPath)
+	fmt.Printf("%s MCP settings updated at %s\n", toolName, settingsPath)
 	return nil
+}
+
+// setupCline sets up the Linear MCP server for Cline
+func setupCline(binaryPath, apiKey string, writeAccess bool, autoApprove string) error {
+	// Determine the Cline config directory
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return fmt.Errorf("failed to get user home directory: %w", err)
+	}
+
+	var configDir string
+	switch runtime.GOOS {
+	case "darwin":
+		configDir = filepath.Join(homeDir, "Library", "Application Support", "Code", "User", "globalStorage", "saoudrizwan.claude-dev", "settings")
+	case "linux":
+		configDir = filepath.Join(homeDir, ".vscode-server", "data", "User", "globalStorage", "saoudrizwan.claude-dev", "settings")
+	case "windows":
+		configDir = filepath.Join(homeDir, "AppData", "Roaming", "Code", "User", "globalStorage", "saoudrizwan.claude-dev", "settings")
+	default:
+		return fmt.Errorf("unsupported OS: %s", runtime.GOOS)
+	}
+
+	return setupTool("Cline", binaryPath, apiKey, writeAccess, autoApprove, configDir)
+}
+
+// setupRooCode sets up the Linear MCP server for Roo Code
+func setupRooCode(binaryPath, apiKey string, writeAccess bool, autoApprove string) error {
+	// Determine the Roo Code config directory
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return fmt.Errorf("failed to get user home directory: %w", err)
+	}
+
+	var configDir string
+	switch runtime.GOOS {
+	case "darwin":
+		configDir = filepath.Join(homeDir, "Library", "Application Support", "Code", "User", "globalStorage", "rooveterinaryinc.roo-cline", "settings")
+	case "linux":
+		configDir = filepath.Join(homeDir, ".vscode-server", "data", "User", "globalStorage", "rooveterinaryinc.roo-cline", "settings")
+	case "windows":
+		configDir = filepath.Join(homeDir, "AppData", "Roaming", "Code", "User", "globalStorage", "rooveterinaryinc.roo-cline", "settings")
+	default:
+		return fmt.Errorf("unsupported OS: %s", runtime.GOOS)
+	}
+
+	return setupTool("Roo Code", binaryPath, apiKey, writeAccess, autoApprove, configDir)
 }
