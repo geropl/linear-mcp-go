@@ -12,7 +12,7 @@ const (
 	// ServerName is the name of the MCP server
 	ServerName = "Linear MCP Server"
 	// ServerVersion is the version of the MCP server
-	ServerVersion = "1.0.0"
+	ServerVersion = "1.3.3"
 )
 
 // LinearMCPServer represents the Linear MCP server
