@@ -14,7 +14,7 @@ const (
 	// ServerName is the name of the MCP server
 	ServerName = "Linear MCP Server"
 	// ServerVersion is the version of the MCP server
-	ServerVersion = "1.3.3"
+	ServerVersion = "1.4.0"
 )
 
 // LinearMCPServer represents the Linear MCP server
@@ -27,7 +27,7 @@ type LinearMCPServer struct {
 // NewLinearMCPServer creates a new Linear MCP server
 func NewLinearMCPServer(writeAccess bool) (*LinearMCPServer, error) {
 	// Create the Linear client
-	linearClient, err := linear.NewLinearClientFromEnv()
+	linearClient, err := linear.NewLinearClientFromEnv(ServerVersion)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create Linear client: %w", err)
 	}

@@ -15,7 +15,6 @@ import (
 
 const (
 	LinearAPIEndpoint = "https://api.linear.app/graphql"
-	UserAgent         = "linear-mcp-go/1.0.0"
 )
 
 // LinearClient is a client for the Linear API
@@ -23,10 +22,12 @@ type LinearClient struct {
 	apiKey      string
 	httpClient  *http.Client
 	rateLimiter *RateLimiter
+
+	serverVersion string
 }
 
 // NewLinearClient creates a new Linear API client
-func NewLinearClient(apiKey string) (*LinearClient, error) {
+func NewLinearClient(apiKey string, serverVersion string) (*LinearClient, error) {
 	if apiKey == "" {
 		return nil, errors.New("LINEAR_API_KEY environment variable is required")
 	}
@@ -36,14 +37,15 @@ func NewLinearClient(apiKey string) (*LinearClient, error) {
 		httpClient: &http.Client{
 			Timeout: 30 * time.Second,
 		},
-		rateLimiter: NewRateLimiter(1400), // Linear API limit is 1400 requests per hour
+		rateLimiter:   NewRateLimiter(1400), // Linear API limit is 1400 requests per hour
+		serverVersion: serverVersion,
 	}, nil
 }
 
 // NewLinearClientFromEnv creates a new Linear API client from environment variables
-func NewLinearClientFromEnv() (*LinearClient, error) {
+func NewLinearClientFromEnv(serverVersion string) (*LinearClient, error) {
 	apiKey := os.Getenv("LINEAR_API_KEY")
-	return NewLinearClient(apiKey)
+	return NewLinearClient(apiKey, serverVersion)
 }
 
 // executeGraphQL executes a GraphQL query against the Linear API
@@ -69,7 +71,7 @@ func (c *LinearClient) executeGraphQL(query string, variables map[string]interfa
 	// Set headers
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", c.apiKey)
-	req.Header.Set("User-Agent", UserAgent)
+	req.Header.Set("User-Agent", fmt.Sprintf("linear-mcp-go/%s", c.serverVersion))
 
 	// Execute the request with rate limiting
 	var resp *http.Response
@@ -275,8 +277,8 @@ func (c *LinearClient) GetIssueComments(input GetIssueCommentsInput) (*Paginated
 	commentsData, ok := issueData["comments"].(map[string]interface{})
 	if !ok || commentsData == nil {
 		return &PaginatedCommentConnection{
-			Nodes:      []Comment{},
-			PageInfo:   PageInfo{HasNextPage: false},
+			Nodes:    []Comment{},
+			PageInfo: PageInfo{HasNextPage: false},
 		}, nil
 	}
 
