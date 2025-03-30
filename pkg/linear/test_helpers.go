@@ -27,6 +27,8 @@ func NewTestClient(t *testing.T, cassetteName string, record bool) (*LinearClien
 	}
 
 	wipeChangingMetadataHook := func(i *cassette.Interaction) error {
+		delete(i.Request.Headers, "User-Agent")
+
 		delete(i.Response.Headers, "Cf-Ray")
 		delete(i.Response.Headers, "Date")
 
@@ -44,7 +46,7 @@ func NewTestClient(t *testing.T, cassetteName string, record bool) (*LinearClien
 		// don't record authorization header in cassettes
 		recorder.WithHook(wipeAuthorizationHook, recorder.AfterCaptureHook),
 		recorder.WithHook(wipeChangingMetadataHook, recorder.AfterCaptureHook),
-		recorder.WithMatcher(cassette.NewDefaultMatcher(cassette.WithIgnoreAuthorization())),
+		recorder.WithMatcher(cassette.NewDefaultMatcher(cassette.WithIgnoreAuthorization(), cassette.WithIgnoreUserAgent())),
 	}
 	if record {
 		options = append(options, recorder.WithMode(recorder.ModeRecordOnly))

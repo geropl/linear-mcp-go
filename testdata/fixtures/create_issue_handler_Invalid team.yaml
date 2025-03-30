@@ -17,8 +17,6 @@ interactions:
         headers:
             Content-Type:
                 - application/json
-            User-Agent:
-                - linear-mcp-go/1.0.0
         url: https://api.linear.app/graphql
         method: POST
       response:

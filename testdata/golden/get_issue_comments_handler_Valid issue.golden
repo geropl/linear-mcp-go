@@ -4,6 +4,31 @@ output: |
     Thread: root (top-level comments)
 
     Comments:
+    - ID: 272b238c-8065-4b61-975c-903b2fb9825a
+      User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
+      CreatedAt: 2025-03-30 14:16:58
+      HasReplies: no
+      Body: This is a reply to the comment
+    - ID: e4668cd7-c87c-4305-bfc2-a2f0167435e9
+      User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
+      CreatedAt: 2025-03-30 14:15:49
+      HasReplies: no
+      Body: This is a reply to the comment
+    - ID: 9d24080c-b7d0-4a23-8b3a-5cd7fe1eafd9
+      User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
+      CreatedAt: 2025-03-30 14:11:59
+      HasReplies: no
+      Body: This is a reply to the comment
+    - ID: 7539ff3c-1c61-4ac3-9203-bb51ec376c7e
+      User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
+      CreatedAt: 2025-03-30 13:41:41
+      HasReplies: no
+      Body: This is a reply to the comment
+    - ID: ae3d62d6-3f40-4990-867b-5c97dd265a40
+      User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
+      CreatedAt: 2025-03-30 13:37:20
+      HasReplies: yes
+      Body: Test comment
     - ID: 58e45bbb-c519-4e0a-9d84-60deef1bdf75
       User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
       CreatedAt: 2025-03-30 10:09:36
@@ -29,21 +54,7 @@ output: |
       CreatedAt: 2025-03-24 16:05:32
       HasReplies: no
       Body: Test comment
-    - ID: 8c85b818-fe06-47e4-ad3b-da4c7637f677
-      User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
-      CreatedAt: 2025-03-04 08:37:42
-      HasReplies: no
-      Body: Test comment
-    - ID: 4339c849-57a0-408a-a2b1-b2fa1bc9ff75
-      User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
-      CreatedAt: 2025-03-03 13:32:43
-      HasReplies: no
-      Body: Test comment
-    - ID: a49988db-2627-4f06-b01f-20cd40ddc261
-      User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
-      CreatedAt: 2025-03-03 13:32:18
-      HasReplies: no
-      Body: new test comment
 
     Pagination:
-    Has more comments: no
+    Has more comments: yes
+    Next cursor: b463d538-9b98-4a5f-8421-b2a997d81345

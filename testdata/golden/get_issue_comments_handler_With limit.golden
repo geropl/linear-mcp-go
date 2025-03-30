@@ -4,22 +4,22 @@ output: |
     Thread: root (top-level comments)
 
     Comments:
-    - ID: 58e45bbb-c519-4e0a-9d84-60deef1bdf75
+    - ID: 272b238c-8065-4b61-975c-903b2fb9825a
       User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
-      CreatedAt: 2025-03-30 10:09:36
+      CreatedAt: 2025-03-30 14:16:58
       HasReplies: no
-      Body: Test comment
-    - ID: 4ba4cbeb-beb9-4d19-8c51-f40b67bbccdc
+      Body: This is a reply to the comment
+    - ID: e4668cd7-c87c-4305-bfc2-a2f0167435e9
       User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
-      CreatedAt: 2025-03-30 09:34:56
+      CreatedAt: 2025-03-30 14:15:49
       HasReplies: no
-      Body: Test comment
-    - ID: 71c0e60c-3cbf-4a8b-b6e4-3ed4eeabf7a2
+      Body: This is a reply to the comment
+    - ID: 9d24080c-b7d0-4a23-8b3a-5cd7fe1eafd9
       User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
-      CreatedAt: 2025-03-30 07:56:59
+      CreatedAt: 2025-03-30 14:11:59
       HasReplies: no
-      Body: Test comment
+      Body: This is a reply to the comment
 
     Pagination:
     Has more comments: yes
-    Next cursor: 71c0e60c-3cbf-4a8b-b6e4-3ed4eeabf7a2
+    Next cursor: 9d24080c-b7d0-4a23-8b3a-5cd7fe1eafd9
