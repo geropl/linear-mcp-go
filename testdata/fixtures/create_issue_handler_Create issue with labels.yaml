@@ -80,7 +80,7 @@ interactions:
         content_length: -1
         uncompressed: true
         body: |
-            {"data":{"issueCreate":{"success":true,"issue":{"id":"b6dc57eb-ffde-49c2-808a-5781ac6e11a6","identifier":"TEST-38","title":"Issue with Labels","description":null,"priority":0,"url":"https://linear.app/linear-mcp-go-test/issue/TEST-38/issue-with-labels","createdAt":"2025-03-30T07:56:58.078Z","updatedAt":"2025-03-30T07:56:58.078Z","state":{"id":"42f7ad15-fca3-4d11-b349-0e3c1385c256","name":"Backlog"},"team":{"id":"234c5451-a839-4c8f-98d9-da00973f1060","name":"Test Team","key":"TEST"},"labels":{"nodes":[{"id":"37e1cdc8-a696-4412-8ad7-8ba8435ba0f4","name":"team label 1"}]}}}}}
+            {"data":{"issueCreate":{"success":true,"issue":{"id":"84876968-413a-416f-9ff3-0ed9346a28a3","identifier":"TEST-62","title":"Issue with Labels","description":null,"priority":0,"url":"https://linear.app/linear-mcp-go-test/issue/TEST-62/issue-with-labels","createdAt":"2025-03-30T10:09:33.663Z","updatedAt":"2025-03-30T10:09:33.663Z","state":{"id":"42f7ad15-fca3-4d11-b349-0e3c1385c256","name":"Backlog"},"team":{"id":"234c5451-a839-4c8f-98d9-da00973f1060","name":"Test Team","key":"TEST"},"labels":{"nodes":[{"id":"37e1cdc8-a696-4412-8ad7-8ba8435ba0f4","name":"team label 1"}]}}}}}
         headers:
             Alt-Svc:
                 - h3=":443"; ma=86400
@@ -91,7 +91,7 @@ interactions:
             Content-Type:
                 - application/json; charset=utf-8
             Etag:
-                - W/"244-Myu9h9qAEN1eTN521pvOzF8GJtM"
+                - W/"244-CngeleCjq/SKii2BFcVRipUJnxM"
             Server:
                 - cloudflare
             Vary:

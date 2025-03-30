@@ -172,10 +172,9 @@ type GetUserIssuesInput struct {
 
 // AddCommentInput represents input for adding a comment
 type AddCommentInput struct {
-	IssueID        string `json:"issueId"`
-	Body           string `json:"body"`
-	CreateAsUser   string `json:"createAsUser,omitempty"`
-	DisplayIconURL string `json:"displayIconUrl,omitempty"`
+	IssueID      string `json:"issueId"`
+	Body         string `json:"body"`
+	CreateAsUser string `json:"createAsUser,omitempty"`
 }
 
 // GraphQLRequest represents a GraphQL request

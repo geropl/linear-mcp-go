@@ -825,10 +825,6 @@ func (c *LinearClient) AddComment(input AddCommentInput) (*Comment, *Issue, erro
 		commentInput["createAsUser"] = input.CreateAsUser
 	}
 
-	if input.DisplayIconURL != "" {
-		commentInput["displayIconUrl"] = input.DisplayIconURL
-	}
-
 	variables := map[string]interface{}{
 		"input": commentInput,
 	}

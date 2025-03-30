@@ -1,4 +1,4 @@
 {
   "err": "",
-  "output": "Updated issue TEST-10\nURL: https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue"
+  "output": "Updated Issue: TEST-10 (UUID: 1c2de93f-4321-4015-bfde-ee893ef7976f)\nURL: https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue"
 }

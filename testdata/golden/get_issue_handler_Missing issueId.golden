@@ -1,4 +1,4 @@
 {
-  "err": "issueId must be a non-empty string",
+  "err": "issue must be a non-empty string",
   "output": ""
 }

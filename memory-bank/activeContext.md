@@ -9,7 +9,24 @@ The current focus is on enhancing the functionality and user experience of the L
 5. Expanding the capabilities of existing MCP tools
 
 ## Recent Changes
-1. Implemented CLI framework with subcommands:
+1. Completed Tool Standardization Testing:
+   - Updated test fixtures to reflect the new standardized format
+   - Updated test cases to use the new parameter names (e.g., `issue` instead of `issueId`)
+   - Verified that all tests pass with the new implementation
+   - Updated tracking document to mark Phase 3 (Update Tests) as completed
+   - Updated progress.md to reflect the completion of Tool Standardization testing
+
+2. Implemented Tool Standardization:
+   - Created shared utility functions for entity rendering and identifier resolution
+   - Updated all tools to follow standardization rules:
+     - Concise descriptions that focus only on functionality
+     - Flexible identifier resolution for all entity references
+     - Consistent entity rendering with both full and identifier formats
+     - Consistent parameter naming that reflects the entity type (e.g., `issue` instead of `issueId`)
+   - Created comprehensive documentation in a series of PRD files (000, 002, 003, 004, 005)
+   - Updated tracking document to reflect implementation progress
+
+2. Implemented CLI framework with subcommands:
    - Added the Cobra library for command-line handling
    - Restructured the main.go file to support subcommands
    - Created a root command that serves as the base for all subcommands
@@ -70,6 +87,42 @@ The current focus is on enhancing the functionality and user experience of the L
    - Add configuration file support for the server
 
 ## Active Decisions and Considerations
+
+### Tool Standardization Approach
+- **Decision**: Implement standardization in phases, focusing on shared utility functions first
+  - **Rationale**: Creating shared functions first ensures consistency across all tools
+  - **Alternatives Considered**: Updating each tool individually, creating a new set of tools
+  - **Implications**: More maintainable codebase with consistent patterns
+
+### Tool Description Style
+- **Decision**: Make tool descriptions concise and focused on functionality
+  - **Rationale**: Concise descriptions are easier to read and understand
+  - **Alternatives Considered**: Keeping verbose descriptions, creating separate documentation
+  - **Implications**: Improved user experience with clearer tool descriptions
+
+### Parameter Naming Convention
+- **Decision**: Use entity names for parameters that accept identifiers (e.g., `issue` instead of `issueId`)
+  - **Rationale**: Parameter names should reflect what they represent rather than implementation details
+  - **Alternatives Considered**: Keeping technical names like `issueId`, using different naming patterns
+  - **Implications**: More intuitive API that aligns with the flexible identifier resolution approach
+
+### Identifier Resolution Strategy
+- **Decision**: Extend existing resolution functions and create new ones as needed
+  - **Rationale**: Builds on existing functionality while ensuring consistency
+  - **Alternatives Considered**: Creating entirely new resolution system, handling resolution in each tool
+  - **Implications**: More flexible parameter handling with consistent behavior
+
+### Entity Rendering Approach
+- **Decision**: Create two types of formatting functions for each entity type
+  - **Rationale**: Distinguishes between full entity rendering and entity identifier rendering
+  - **Alternatives Considered**: Single formatting function, custom formatting in each tool, using templates
+  - **Implications**: Consistent user experience with standardized output format that is appropriate for the context
+
+### Full Entity vs. Identifier Rendering
+- **Decision**: Use full entity rendering for primary entities and identifier rendering for referenced entities
+  - **Rationale**: Provides comprehensive information for primary entities while keeping references concise
+  - **Alternatives Considered**: Using only full rendering or only identifier rendering for all cases
+  - **Implications**: Better readability and more intuitive output format
 
 ### CLI Framework Selection
 - **Decision**: Use the Cobra library for command-line handling

@@ -75,7 +75,7 @@
 - **Version**: 1.0.0
 - **Stability**: Stable for core features
 - **Test Coverage**: Good, all tools have test fixtures
-- **Documentation**: Updated with new command structure and setup instructions
+- **Documentation**: Updated with new command structure, setup instructions, and tool standardization PRD
 - **Release Process**: GitHub Actions workflow created
 - **Security**: Write access control implemented (disabled by default)
 - **User Experience**: Improved with setup command and user-friendly identifiers
@@ -96,6 +96,12 @@
    - Limited AI assistant support (currently only Cline)
 
 ## Recent Milestones
+- ✅ Created comprehensive Tool Standardization PRD with implementation plan
+- ✅ Implemented shared utility functions for entity rendering and identifier resolution
+- ✅ Updated all tools to follow standardization rules:
+  - Concise descriptions
+  - Flexible identifier resolution
+  - Consistent entity rendering
 - ✅ Initial implementation of all core tools
 - ✅ Test fixtures for all tools
 - ✅ GitHub Actions workflow for testing and releases
@@ -110,6 +116,7 @@
 - ✅ Fixed parent issue identifier resolution for human-readable identifiers
 
 ## Upcoming Milestones
+- [x] Complete Tool Standardization testing
 - [ ] Support for additional AI assistants
 - [ ] Improved error handling and recovery
 - [ ] Additional Linear API features

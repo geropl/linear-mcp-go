@@ -6,13 +6,63 @@ interactions:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 1667
+        content_length: 322
         transfer_encoding: []
         trailer: {}
         host: api.linear.app
         remote_addr: ""
         request_uri: ""
-        body: '{"query":"\n\t\tquery GetIssue($id: String!) {\n\t\t\tissue(id: $id) {\n\t\t\t\tid\n\t\t\t\tidentifier\n\t\t\t\ttitle\n\t\t\t\tdescription\n\t\t\t\tpriority\n\t\t\t\turl\n\t\t\t\tcreatedAt\n\t\t\t\tupdatedAt\n\t\t\t\tstate {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t}\n\t\t\t\tassignee {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\temail\n\t\t\t\t}\n\t\t\t\tteam {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\tkey\n\t\t\t\t}\n\t\t\t\tcomments(first: 100) {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tbody\n\t\t\t\t\t\tcreatedAt\n\t\t\t\t\t\tparent {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t}\n\t\t\t\t\t\tuser {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tname\n\t\t\t\t\t\t}\n\t\t\t\t\t\tchildren(first: 100) {\n\t\t\t\t\t\t\tnodes {\n\t\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\t\tbody\n\t\t\t\t\t\t\t\tcreatedAt\n\t\t\t\t\t\t\t\tuser {\n\t\t\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\t\t\tname\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\trelations(first: 20) {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\ttype\n\t\t\t\t\t\trelatedIssue {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tidentifier\n\t\t\t\t\t\t\ttitle\n\t\t\t\t\t\t\turl\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tinverseRelations(first: 20) {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\ttype\n\t\t\t\t\t\tissue {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tidentifier\n\t\t\t\t\t\t\ttitle\n\t\t\t\t\t\t\turl\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tattachments(first: 50) {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\ttitle\n\t\t\t\t\t\tsubtitle\n\t\t\t\t\t\turl\n\t\t\t\t\t\tsourceType\n\t\t\t\t\t\tmetadata\n\t\t\t\t\t\tcreatedAt\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"id":"TEST-12"}}'
+        body: '{"query":"\n\t\tquery GetIssueByIdentifier($teamKey: String!, $number: Float!) {\n\t\t\tissues(filter: { team: { key: { eq: $teamKey } }, number: { eq: $number } }, first: 1) {\n\t\t\t\tnodes {\n\t\t\t\t\tid\n\t\t\t\t\tidentifier\n\t\t\t\t\ttitle\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"number":12,"teamKey":"TEST"}}'
+        form: {}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - linear-mcp-go/1.0.0
+        url: https://api.linear.app/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: |
+            {"data":{"issues":{"nodes":[{"id":"9407c793-5fd8-4730-9280-0e17ffddf320","identifier":"TEST-12","title":"Comments issue"}]}}}
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=86400
+            Cache-Control:
+                - no-store
+            Cf-Cache-Status:
+                - DYNAMIC
+            Content-Type:
+                - application/json; charset=utf-8
+            Etag:
+                - W/"7e-a2LOPkL8PZhOQop7X2YpU+ZF/Y8"
+            Server:
+                - cloudflare
+            Vary:
+                - Accept-Encoding
+            Via:
+                - 1.1 google
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1696
+        transfer_encoding: []
+        trailer: {}
+        host: api.linear.app
+        remote_addr: ""
+        request_uri: ""
+        body: '{"query":"\n\t\tquery GetIssue($id: String!) {\n\t\t\tissue(id: $id) {\n\t\t\t\tid\n\t\t\t\tidentifier\n\t\t\t\ttitle\n\t\t\t\tdescription\n\t\t\t\tpriority\n\t\t\t\turl\n\t\t\t\tcreatedAt\n\t\t\t\tupdatedAt\n\t\t\t\tstate {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t}\n\t\t\t\tassignee {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\temail\n\t\t\t\t}\n\t\t\t\tteam {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\tkey\n\t\t\t\t}\n\t\t\t\tcomments(first: 100) {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tbody\n\t\t\t\t\t\tcreatedAt\n\t\t\t\t\t\tparent {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t}\n\t\t\t\t\t\tuser {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tname\n\t\t\t\t\t\t}\n\t\t\t\t\t\tchildren(first: 100) {\n\t\t\t\t\t\t\tnodes {\n\t\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\t\tbody\n\t\t\t\t\t\t\t\tcreatedAt\n\t\t\t\t\t\t\t\tuser {\n\t\t\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\t\t\tname\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\trelations(first: 20) {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\ttype\n\t\t\t\t\t\trelatedIssue {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tidentifier\n\t\t\t\t\t\t\ttitle\n\t\t\t\t\t\t\turl\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tinverseRelations(first: 20) {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\ttype\n\t\t\t\t\t\tissue {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tidentifier\n\t\t\t\t\t\t\ttitle\n\t\t\t\t\t\t\turl\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tattachments(first: 50) {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\ttitle\n\t\t\t\t\t\tsubtitle\n\t\t\t\t\t\turl\n\t\t\t\t\t\tsourceType\n\t\t\t\t\t\tmetadata\n\t\t\t\t\t\tcreatedAt\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"id":"9407c793-5fd8-4730-9280-0e17ffddf320"}}'
         form: {}
         headers:
             Content-Type:

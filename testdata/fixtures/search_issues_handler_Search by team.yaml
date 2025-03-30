@@ -6,13 +6,13 @@ interactions:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 644
+        content_length: 703
         transfer_encoding: []
         trailer: {}
         host: api.linear.app
         remote_addr: ""
         request_uri: ""
-        body: '{"query":"\n\t\tquery SearchIssues($filter: IssueFilter, $first: Int, $includeArchived: Boolean) {\n\t\t\tissues(filter: $filter, first: $first, includeArchived: $includeArchived) {\n\t\t\t\tnodes {\n\t\t\t\t\tid\n\t\t\t\t\tidentifier\n\t\t\t\t\ttitle\n\t\t\t\t\tdescription\n\t\t\t\t\tpriority\n\t\t\t\t\turl\n\t\t\t\t\tstate {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t}\n\t\t\t\t\tassignee {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t}\n\t\t\t\t\tlabels {\n\t\t\t\t\t\tnodes {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tname\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"filter":{},"first":5,"includeArchived":false}}'
+        body: '{"query":"\n\t\tquery SearchIssues($filter: IssueFilter, $first: Int, $includeArchived: Boolean) {\n\t\t\tissues(filter: $filter, first: $first, includeArchived: $includeArchived) {\n\t\t\t\tnodes {\n\t\t\t\t\tid\n\t\t\t\t\tidentifier\n\t\t\t\t\ttitle\n\t\t\t\t\tdescription\n\t\t\t\t\tpriority\n\t\t\t\t\turl\n\t\t\t\t\tstate {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t}\n\t\t\t\t\tassignee {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t}\n\t\t\t\t\tlabels {\n\t\t\t\t\t\tnodes {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tname\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"filter":{"team":{"id":{"eq":"234c5451-a839-4c8f-98d9-da00973f1060"}}},"first":5,"includeArchived":false}}'
         form: {}
         headers:
             Content-Type:
@@ -30,7 +30,7 @@ interactions:
         content_length: -1
         uncompressed: true
         body: |
-            {"data":{"issues":{"nodes":[{"id":"215ef6b7-6d4d-4142-a286-fe037ad37619","identifier":"TEST-39","title":"Sub Issue with Labels","description":null,"priority":0,"url":"https://linear.app/linear-mcp-go-test/issue/TEST-39/sub-issue-with-labels","state":{"id":"42f7ad15-fca3-4d11-b349-0e3c1385c256","name":"Backlog"},"assignee":null,"labels":{"nodes":[{"id":"fcd49e32-5043-4bfd-88a5-2bbe3c95124a","name":"ws-label 2"},{"id":"94087865-ce6c-470b-896c-4d1d2c7456b8","name":"Feature"}]}},{"id":"b6dc57eb-ffde-49c2-808a-5781ac6e11a6","identifier":"TEST-38","title":"Issue with Labels","description":null,"priority":0,"url":"https://linear.app/linear-mcp-go-test/issue/TEST-38/issue-with-labels","state":{"id":"42f7ad15-fca3-4d11-b349-0e3c1385c256","name":"Backlog"},"assignee":null,"labels":{"nodes":[{"id":"37e1cdc8-a696-4412-8ad7-8ba8435ba0f4","name":"team label 1"}]}},{"id":"b52d051d-bf05-4b50-b42e-764192a74f71","identifier":"TEST-37","title":"Sub Issue","description":null,"priority":0,"url":"https://linear.app/linear-mcp-go-test/issue/TEST-37/sub-issue","state":{"id":"42f7ad15-fca3-4d11-b349-0e3c1385c256","name":"Backlog"},"assignee":null,"labels":{"nodes":[]}},{"id":"e61f0f22-73df-4910-b7d6-3df148ef6a0f","identifier":"TEST-36","title":"Sub Issue","description":null,"priority":0,"url":"https://linear.app/linear-mcp-go-test/issue/TEST-36/sub-issue","state":{"id":"42f7ad15-fca3-4d11-b349-0e3c1385c256","name":"Backlog"},"assignee":null,"labels":{"nodes":[]}},{"id":"b0321f06-e745-4d40-9688-f9a513d4502b","identifier":"TEST-35","title":"Test Issue with team key","description":null,"priority":0,"url":"https://linear.app/linear-mcp-go-test/issue/TEST-35/test-issue-with-team-key","state":{"id":"42f7ad15-fca3-4d11-b349-0e3c1385c256","name":"Backlog"},"assignee":null,"labels":{"nodes":[]}}]}}}
+            {"data":{"issues":{"nodes":[{"id":"5b4ab24c-56c6-40b6-9673-1869eea1fd9d","identifier":"TEST-63","title":"Sub Issue with Labels","description":null,"priority":0,"url":"https://linear.app/linear-mcp-go-test/issue/TEST-63/sub-issue-with-labels","state":{"id":"42f7ad15-fca3-4d11-b349-0e3c1385c256","name":"Backlog"},"assignee":null,"labels":{"nodes":[{"id":"fcd49e32-5043-4bfd-88a5-2bbe3c95124a","name":"ws-label 2"},{"id":"94087865-ce6c-470b-896c-4d1d2c7456b8","name":"Feature"}]}},{"id":"84876968-413a-416f-9ff3-0ed9346a28a3","identifier":"TEST-62","title":"Issue with Labels","description":null,"priority":0,"url":"https://linear.app/linear-mcp-go-test/issue/TEST-62/issue-with-labels","state":{"id":"42f7ad15-fca3-4d11-b349-0e3c1385c256","name":"Backlog"},"assignee":null,"labels":{"nodes":[{"id":"37e1cdc8-a696-4412-8ad7-8ba8435ba0f4","name":"team label 1"}]}},{"id":"fc86c062-93d6-4062-85ec-a9a200a39fe6","identifier":"TEST-61","title":"Sub Issue","description":null,"priority":0,"url":"https://linear.app/linear-mcp-go-test/issue/TEST-61/sub-issue","state":{"id":"42f7ad15-fca3-4d11-b349-0e3c1385c256","name":"Backlog"},"assignee":null,"labels":{"nodes":[]}},{"id":"a48521c0-787f-49e5-b3b4-3e8990c3d788","identifier":"TEST-60","title":"Sub Issue","description":null,"priority":0,"url":"https://linear.app/linear-mcp-go-test/issue/TEST-60/sub-issue","state":{"id":"42f7ad15-fca3-4d11-b349-0e3c1385c256","name":"Backlog"},"assignee":null,"labels":{"nodes":[]}},{"id":"2cae0854-3e0e-4684-9332-55ea6c87c691","identifier":"TEST-59","title":"Test Issue with team key","description":null,"priority":0,"url":"https://linear.app/linear-mcp-go-test/issue/TEST-59/test-issue-with-team-key","state":{"id":"42f7ad15-fca3-4d11-b349-0e3c1385c256","name":"Backlog"},"assignee":null,"labels":{"nodes":[]}}]}}}
         headers:
             Alt-Svc:
                 - h3=":443"; ma=86400
@@ -41,7 +41,7 @@ interactions:
             Content-Type:
                 - application/json; charset=utf-8
             Etag:
-                - W/"705-MMOsRXggEaIrjsIjdEEodnCleco"
+                - W/"705-epzOiMl9nf3pQWdzEIQwv7NEzTI"
             Server:
                 - cloudflare
             Vary:

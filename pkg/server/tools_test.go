@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/geropl/linear-mcp-go/pkg/linear"
+	"github.com/geropl/linear-mcp-go/pkg/tools"
 	"github.com/google/go-cmp/cmp"
 	"github.com/mark3labs/mcp-go/mcp"
 )
@@ -52,12 +53,10 @@ func TestHandlers(t *testing.T) {
 		// CreateIssueHandler test cases
 		{
 			handler: "create_issue",
-			name:    "Valid issue with teamId",
+			name:    "Valid issue with team",
 			args: map[string]interface{}{
 				"title": "Test Issue",
 				"team":  TEAM_ID,
-				// Note: We're not testing labels here because we would need to look up actual label UUIDs
-				// which would require additional API calls
 			},
 			write: true,
 		},
@@ -157,7 +156,7 @@ func TestHandlers(t *testing.T) {
 			handler: "update_issue",
 			name:    "Valid update",
 			args: map[string]interface{}{
-				"id":    ISSUE_ID,
+				"issue":    ISSUE_ID,
 				"title": "Updated Test Issue",
 			},
 			write: true,
@@ -200,7 +199,7 @@ func TestHandlers(t *testing.T) {
 			handler: "get_user_issues",
 			name:    "Specific user issues",
 			args: map[string]interface{}{
-				"userId": USER_ID,
+				"user": USER_ID,
 				"limit":  float64(5),
 			},
 		},
@@ -210,19 +209,19 @@ func TestHandlers(t *testing.T) {
 			handler: "get_issue",
 			name:    "Valid issue",
 			args: map[string]interface{}{
-				"issueId": ISSUE_ID,
+				"issue": ISSUE_ID,
 			},
 		},
 		{
 			handler: "get_issue",
 			name:    "Get comment issue",
 			args: map[string]interface{}{
-				"issueId": COMMENT_ISSUE_ID,
+				"issue": COMMENT_ISSUE_ID,
 			},
 		},
 		{
 			handler: "get_issue",
-			name:    "Missing issueId",
+			name:    "Missing issue",
 			args:    map[string]interface{}{},
 		},
 
@@ -232,13 +231,13 @@ func TestHandlers(t *testing.T) {
 			name:    "Valid comment",
 			write:   true,
 			args: map[string]interface{}{
-				"issueId": ISSUE_ID,
-				"body":    "Test comment",
+				"issue": ISSUE_ID,
+				"body":  "Test comment",
 			},
 		},
 		{
 			handler: "add_comment",
-			name:    "Missing issueId",
+			name:    "Missing issue",
 			args: map[string]interface{}{
 				"body": "Test comment",
 			},
@@ -247,7 +246,7 @@ func TestHandlers(t *testing.T) {
 			handler: "add_comment",
 			name:    "Missing body",
 			args: map[string]interface{}{
-				"issueId": ISSUE_ID,
+				"issue": ISSUE_ID,
 			},
 		},
 	}
@@ -270,19 +269,19 @@ func TestHandlers(t *testing.T) {
 			var handler func(context.Context, mcp.CallToolRequest) (*mcp.CallToolResult, error)
 			switch tt.handler {
 			case "get_teams":
-				handler = GetTeamsHandler(client)
+				handler = tools.GetTeamsHandler(client)
 			case "create_issue":
-				handler = CreateIssueHandler(client)
+				handler = tools.CreateIssueHandler(client)
 			case "update_issue":
-				handler = UpdateIssueHandler(client)
+				handler = tools.UpdateIssueHandler(client)
 			case "search_issues":
-				handler = SearchIssuesHandler(client)
+				handler = tools.SearchIssuesHandler(client)
 			case "get_user_issues":
-				handler = GetUserIssuesHandler(client)
+				handler = tools.GetUserIssuesHandler(client)
 			case "get_issue":
-				handler = GetIssueHandler(client)
+				handler = tools.GetIssueHandler(client)
 			case "add_comment":
-				handler = AddCommentHandler(client)
+				handler = tools.AddCommentHandler(client)
 			default:
 				t.Fatalf("Unknown handler type: %s", tt.handler)
 			}
