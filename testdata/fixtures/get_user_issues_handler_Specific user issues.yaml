@@ -29,7 +29,7 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: "{\"data\":{\"user\":{\"assignedIssues\":{\"nodes\":[{\"id\":\"c58953c5-a31d-4c5a-9427-6d6ebd9a1a4e\",\"identifier\":\"TEST-1\",\"title\":\"Welcome to Linear \U0001F44B\",\"description\":\"Hi there. Complete these issues to learn how to use Linear and discover ✨**ProTips.** When you're done, delete them or move them to another team for others to view.\\n\\n### **To start, type** `C` to **create your first issue.**\\n\\nCreate issues from any view using `C` or by clicking the `New issue` button.\\n\\n \\n\\n[1189b618-97f2-4e2c-ae25-4f25467679e7](https://uploads.linear.app/fe63b3e2-bf87-46c0-8784-cd7d639287c8/532d146d-bcd6-4602-bf1f-83f674b70fff/1189b618-97f2-4e2c-ae25-4f25467679e7)\\n\\nOur issue editor and comments support Markdown. You can also: \\n\\n* @mention a teammate\\n* Drag & drop images or video (Loom & YouTube embed automatically)\\n* Use emoji ✅\\n* Type `/` to bring up more formatting options\",\"priority\":2,\"url\":\"https://linear.app/linear-mcp-go-test/issue/TEST-1/welcome-to-linear\",\"state\":{\"id\":\"cffb8999-f10e-447d-9672-8faf5b06ac67\",\"name\":\"Todo\"}}]}}}}\n"
+        body: "{\"data\":{\"user\":{\"assignedIssues\":{\"nodes\":[{\"id\":\"1c2de93f-4321-4015-bfde-ee893ef7976f\",\"identifier\":\"TEST-10\",\"title\":\"Updated Test Issue\",\"description\":null,\"priority\":0,\"url\":\"https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue\",\"state\":{\"id\":\"42f7ad15-fca3-4d11-b349-0e3c1385c256\",\"name\":\"Backlog\"}},{\"id\":\"c58953c5-a31d-4c5a-9427-6d6ebd9a1a4e\",\"identifier\":\"TEST-1\",\"title\":\"Welcome to Linear \U0001F44B\",\"description\":\"Hi there. Complete these issues to learn how to use Linear and discover ✨**ProTips.** When you're done, delete them or move them to another team for others to view.\\n\\n### **To start, type** `C` to **create your first issue.**\\n\\nCreate issues from any view using `C` or by clicking the `New issue` button.\\n\\n \\n\\n[1189b618-97f2-4e2c-ae25-4f25467679e7](https://uploads.linear.app/fe63b3e2-bf87-46c0-8784-cd7d639287c8/532d146d-bcd6-4602-bf1f-83f674b70fff/1189b618-97f2-4e2c-ae25-4f25467679e7)\\n\\nOur issue editor and comments support Markdown. You can also: \\n\\n* @mention a teammate\\n* Drag & drop images or video (Loom & YouTube embed automatically)\\n* Use emoji ✅\\n* Type `/` to bring up more formatting options\",\"priority\":2,\"url\":\"https://linear.app/linear-mcp-go-test/issue/TEST-1/welcome-to-linear\",\"state\":{\"id\":\"cffb8999-f10e-447d-9672-8faf5b06ac67\",\"name\":\"Todo\"}}]}}}}\n"
         headers:
             Alt-Svc:
                 - h3=":443"; ma=86400
@@ -40,7 +40,7 @@ interactions:
             Content-Type:
                 - application/json; charset=utf-8
             Etag:
-                - W/"413-x68G/UHqSqo2nd39aYj+kYb3/SY"
+                - W/"52b-iwXdi0Au8LYVFWrptXXwpSz7HVA"
             Server:
                 - cloudflare
             Vary:

@@ -1,0 +1,4 @@
+{
+  "err": "team must be a non-empty string (UUID, name, or key)",
+  "output": ""
+}

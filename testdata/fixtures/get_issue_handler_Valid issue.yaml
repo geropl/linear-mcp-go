@@ -30,7 +30,7 @@ interactions:
         content_length: -1
         uncompressed: true
         body: |
-            {"data":{"issue":{"id":"1c2de93f-4321-4015-bfde-ee893ef7976f","identifier":"TEST-10","title":"Updated Test Issue","description":null,"priority":0,"url":"https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue","createdAt":"2025-03-03T11:34:49.241Z","updatedAt":"2025-03-04T08:37:42.956Z","state":{"id":"42f7ad15-fca3-4d11-b349-0e3c1385c256","name":"Backlog"},"assignee":null,"team":{"id":"234c5451-a839-4c8f-98d9-da00973f1060","name":"Test Team","key":"TEST"},"comments":{"nodes":[{"id":"8c85b818-fe06-47e4-ad3b-da4c7637f677","body":"Test comment","createdAt":"2025-03-04T08:37:42.974Z","parent":null,"user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"},"children":{"nodes":[]}},{"id":"4339c849-57a0-408a-a2b1-b2fa1bc9ff75","body":"Test comment","createdAt":"2025-03-03T13:32:43.711Z","parent":null,"user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"},"children":{"nodes":[]}},{"id":"a49988db-2627-4f06-b01f-20cd40ddc261","body":"new test comment","createdAt":"2025-03-03T13:32:18.078Z","parent":null,"user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"},"children":{"nodes":[]}}]},"relations":{"nodes":[]},"inverseRelations":{"nodes":[]},"attachments":{"nodes":[]}}}}
+            {"data":{"issue":{"id":"1c2de93f-4321-4015-bfde-ee893ef7976f","identifier":"TEST-10","title":"Updated Test Issue","description":null,"priority":0,"url":"https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue","createdAt":"2025-03-03T11:34:49.241Z","updatedAt":"2025-03-30T07:56:58.266Z","state":{"id":"42f7ad15-fca3-4d11-b349-0e3c1385c256","name":"Backlog"},"assignee":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann","email":"gero.leinemann@googlemail.com"},"team":{"id":"234c5451-a839-4c8f-98d9-da00973f1060","name":"Test Team","key":"TEST"},"comments":{"nodes":[{"id":"dedcedbf-2b66-4e08-b46b-59b0ed86a953","body":"Test comment","createdAt":"2025-03-30T06:05:06.240Z","parent":null,"user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"},"children":{"nodes":[]}},{"id":"b463d538-9b98-4a5f-8421-b2a997d81345","body":"Test comment","createdAt":"2025-03-24T16:05:32.585Z","parent":null,"user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"},"children":{"nodes":[]}},{"id":"8c85b818-fe06-47e4-ad3b-da4c7637f677","body":"Test comment","createdAt":"2025-03-04T08:37:42.974Z","parent":null,"user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"},"children":{"nodes":[]}},{"id":"4339c849-57a0-408a-a2b1-b2fa1bc9ff75","body":"Test comment","createdAt":"2025-03-03T13:32:43.711Z","parent":null,"user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"},"children":{"nodes":[]}},{"id":"a49988db-2627-4f06-b01f-20cd40ddc261","body":"new test comment","createdAt":"2025-03-03T13:32:18.078Z","parent":null,"user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"},"children":{"nodes":[]}}]},"relations":{"nodes":[]},"inverseRelations":{"nodes":[]},"attachments":{"nodes":[]}}}}
         headers:
             Alt-Svc:
                 - h3=":443"; ma=86400
@@ -41,7 +41,7 @@ interactions:
             Content-Type:
                 - application/json; charset=utf-8
             Etag:
-                - W/"4e7-3qahFkwZVhGXjm5w18si2G+kzgw"
+                - W/"70c-apSuNaqZRgWpYzck2XOJnFMAVL4"
             Server:
                 - cloudflare
             Vary:

@@ -15,7 +15,7 @@ type Issue struct {
 	URL             string                   `json:"url"`
 	CreatedAt       time.Time                `json:"createdAt"`
 	UpdatedAt       time.Time                `json:"updatedAt"`
-	Labels          []Label                  `json:"labels,omitempty"`
+	Labels          *LabelConnection         `json:"labels,omitempty"`
 	State           *State                   `json:"state,omitempty"`
 	Estimate        *float64                 `json:"estimate,omitempty"`
 	Comments        *CommentConnection       `json:"comments,omitempty"`
@@ -43,6 +43,11 @@ type Team struct {
 type State struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
+}
+
+// LabelConnection represents a connection of labels
+type LabelConnection struct {
+	Nodes []Label `json:"nodes"`
 }
 
 // Label represents a Linear issue label
@@ -127,11 +132,13 @@ type APIMetrics struct {
 
 // CreateIssueInput represents input for creating an issue
 type CreateIssueInput struct {
-	Title       string  `json:"title"`
-	TeamID      string  `json:"teamId"`
-	Description string  `json:"description,omitempty"`
-	Priority    *int    `json:"priority,omitempty"`
-	Status      string  `json:"status,omitempty"`
+	Title       string   `json:"title"`
+	TeamID      string   `json:"teamId"`
+	Description string   `json:"description,omitempty"`
+	Priority    *int     `json:"priority,omitempty"`
+	Status      string   `json:"status,omitempty"`
+	ParentID    *string  `json:"parentId,omitempty"`
+	LabelIDs    []string `json:"labelIds,omitempty"`
 }
 
 // UpdateIssueInput represents input for updating an issue

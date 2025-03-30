@@ -6,13 +6,13 @@ interactions:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 478
+        content_length: 310
         transfer_encoding: []
         trailer: {}
         host: api.linear.app
         remote_addr: ""
         request_uri: ""
-        body: '{"query":"\n\t\tmutation AddComment($input: CommentCreateInput!) {\n\t\t\tcommentCreate(input: $input) {\n\t\t\t\tsuccess\n\t\t\t\tcomment {\n\t\t\t\t\tid\n\t\t\t\t\tbody\n\t\t\t\t\turl\n\t\t\t\t\tcreatedAt\n\t\t\t\t\tuser {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t}\n\t\t\t\t\tissue {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tidentifier\n\t\t\t\t\t\ttitle\n\t\t\t\t\t\turl\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"input":{"body":"Test comment","issueId":"TEST-10"}}}'
+        body: '{"query":"\n\t\tquery GetTeams($filter: TeamFilter) {\n\t\t\tteams(filter: $filter) {\n\t\t\t\tnodes {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\tkey\n\t\t\t\t\tdescription\n\t\t\t\t\tstates {\n\t\t\t\t\t\tnodes {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tname\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t"}'
         form: {}
         headers:
             Content-Type:
@@ -30,7 +30,7 @@ interactions:
         content_length: -1
         uncompressed: true
         body: |
-            {"data":{"commentCreate":{"success":true,"comment":{"id":"71c0e60c-3cbf-4a8b-b6e4-3ed4eeabf7a2","body":"Test comment","url":"https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue#comment-71c0e60c","createdAt":"2025-03-30T07:56:59.301Z","user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"},"issue":{"id":"1c2de93f-4321-4015-bfde-ee893ef7976f","identifier":"TEST-10","title":"Updated Test Issue","url":"https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue"}}}}}
+            {"data":{"teams":{"nodes":[{"id":"234c5451-a839-4c8f-98d9-da00973f1060","name":"Test Team","key":"TEST","description":null,"states":{"nodes":[{"id":"d4caa373-1a02-431c-bd3f-1bbb67318617","name":"Done"},{"id":"cffb8999-f10e-447d-9672-8faf5b06ac67","name":"Todo"},{"id":"42f7ad15-fca3-4d11-b349-0e3c1385c256","name":"Backlog"},{"id":"2d26ea57-c1f7-43ae-ba30-3f828ac8edb6","name":"Canceled"},{"id":"2a939ee1-65a1-445c-8e5d-18239e5f64bc","name":"Duplicate"},{"id":"12bb7f66-d9be-4faa-800f-49b8e3b38a3f","name":"In Progress"}]}}]}}}
         headers:
             Alt-Svc:
                 - h3=":443"; ma=86400
@@ -41,7 +41,7 @@ interactions:
             Content-Type:
                 - application/json; charset=utf-8
             Etag:
-                - W/"207-URSVPzfcYs0xdeYhdsbhbY7CaBw"
+                - W/"210-+ISnhlSrm6Gd7LWWbqn3eOeSXhw"
             Server:
                 - cloudflare
             Vary:

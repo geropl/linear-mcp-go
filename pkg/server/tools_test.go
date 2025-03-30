@@ -19,6 +19,7 @@ var golden = flag.Bool("golden", false, "Update all golden files and recordings"
 
 const (
 	TEAM_NAME = "Test Team"
+	TEAM_KEY  = "TEST"
 	TEAM_ID   = "234c5451-a839-4c8f-98d9-da00973f1060"
 	ISSUE_ID  = "TEST-10"
 	// COMMENT ISSUE ID is used for testing the add_comment handler
@@ -51,10 +52,80 @@ func TestHandlers(t *testing.T) {
 		// CreateIssueHandler test cases
 		{
 			handler: "create_issue",
-			name:    "Valid issue",
+			name:    "Valid issue with teamId",
 			args: map[string]interface{}{
-				"title":  "Test Issue",
-				"teamId": TEAM_ID,
+				"title": "Test Issue",
+				"team":  TEAM_ID,
+				// Note: We're not testing labels here because we would need to look up actual label UUIDs
+				// which would require additional API calls
+			},
+			write: true,
+		},
+		{
+			handler: "create_issue",
+			name:    "Valid issue with team UUID",
+			args: map[string]interface{}{
+				"title": "Test Issue with team UUID",
+				"team":  TEAM_ID,
+			},
+			write: true,
+		},
+		{
+			handler: "create_issue",
+			name:    "Valid issue with team name",
+			args: map[string]interface{}{
+				"title": "Test Issue with team name",
+				"team":  TEAM_NAME,
+			},
+			write: true,
+		},
+		{
+			handler: "create_issue",
+			name:    "Valid issue with team key",
+			args: map[string]interface{}{
+				"title": "Test Issue with team key",
+				"team":  TEAM_KEY,
+			},
+			write: true,
+		},
+		{
+			handler: "create_issue",
+			name:    "Create sub issue",
+			args: map[string]interface{}{
+				"title":       "Sub Issue",
+				"team":        TEAM_ID,
+				"parentIssue": "1c2de93f-4321-4015-bfde-ee893ef7976f", // UUID for TEST-10
+			},
+			write: true,
+		},
+		{
+			handler: "create_issue",
+			name:    "Create sub issue from identifier",
+			args: map[string]interface{}{
+				"title":       "Sub Issue",
+				"team":        TEAM_ID,
+				"parentIssue": "TEST-10",
+			},
+			write: true,
+		},
+		{
+			handler: "create_issue",
+			name:    "Create issue with labels",
+			args: map[string]interface{}{
+				"title":  "Issue with Labels",
+				"team":   TEAM_ID,
+				"labels": "team label 1",
+			},
+			write: true,
+		},
+		{
+			handler: "create_issue",
+			name:    "Create sub issue with labels",
+			args: map[string]interface{}{
+				"title":       "Sub Issue with Labels",
+				"team":        TEAM_ID,
+				"parentIssue": "1c2de93f-4321-4015-bfde-ee893ef7976f", // UUID for TEST-10
+				"labels":      "ws-label 2,Feature",
 			},
 			write: true,
 		},
@@ -62,14 +133,22 @@ func TestHandlers(t *testing.T) {
 			handler: "create_issue",
 			name:    "Missing title",
 			args: map[string]interface{}{
-				"teamId": TEAM_ID,
+				"team": TEAM_ID,
 			},
 		},
 		{
 			handler: "create_issue",
-			name:    "Missing teamId",
+			name:    "Missing team",
 			args: map[string]interface{}{
 				"title": "Test Issue",
+			},
+		},
+		{
+			handler: "create_issue",
+			name:    "Invalid team",
+			args: map[string]interface{}{
+				"title": "Test Issue",
+				"team":  "NonExistentTeam",
 			},
 		},
 
@@ -96,8 +175,8 @@ func TestHandlers(t *testing.T) {
 			handler: "search_issues",
 			name:    "Search by team",
 			args: map[string]interface{}{
-				"teamId": TEAM_ID,
-				"limit":  float64(5),
+				"team":  TEAM_ID,
+				"limit": float64(5),
 			},
 		},
 		{

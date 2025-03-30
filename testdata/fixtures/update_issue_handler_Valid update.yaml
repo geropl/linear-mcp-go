@@ -30,7 +30,7 @@ interactions:
         content_length: -1
         uncompressed: true
         body: |
-            {"data":{"issueUpdate":{"success":true,"issue":{"id":"1c2de93f-4321-4015-bfde-ee893ef7976f","identifier":"TEST-10","title":"Updated Test Issue","description":null,"priority":0,"url":"https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue","createdAt":"2025-03-03T11:34:49.241Z","updatedAt":"2025-03-03T12:00:11.022Z","state":{"id":"42f7ad15-fca3-4d11-b349-0e3c1385c256","name":"Backlog"},"team":{"id":"234c5451-a839-4c8f-98d9-da00973f1060","name":"Test Team","key":"TEST"}}}}}
+            {"data":{"issueUpdate":{"success":true,"issue":{"id":"1c2de93f-4321-4015-bfde-ee893ef7976f","identifier":"TEST-10","title":"Updated Test Issue","description":null,"priority":0,"url":"https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue","createdAt":"2025-03-03T11:34:49.241Z","updatedAt":"2025-03-30T07:56:58.266Z","state":{"id":"42f7ad15-fca3-4d11-b349-0e3c1385c256","name":"Backlog"},"team":{"id":"234c5451-a839-4c8f-98d9-da00973f1060","name":"Test Team","key":"TEST"}}}}}
         headers:
             Alt-Svc:
                 - h3=":443"; ma=86400
@@ -38,36 +38,16 @@ interactions:
                 - no-store
             Cf-Cache-Status:
                 - DYNAMIC
-            Cf-Ray:
-                - 91a8f8d44d59dcbe-FRA
             Content-Type:
                 - application/json; charset=utf-8
-            Date:
-                - Mon, 03 Mar 2025 12:00:11 GMT
             Etag:
-                - W/"1ed-Tr0BNHvSVQsgUsk1Wb6EJKfX7Po"
+                - W/"1ed-7IU73gmAh54HwH8kLPCuGItjbpE"
             Server:
                 - cloudflare
             Vary:
                 - Accept-Encoding
             Via:
                 - 1.1 google
-            X-Complexity:
-                - "6"
-            X-Ratelimit-Complexity-Limit:
-                - "3000000"
-            X-Ratelimit-Complexity-Remaining:
-                - "2996924"
-            X-Ratelimit-Complexity-Reset:
-                - "1741006810967"
-            X-Ratelimit-Requests-Limit:
-                - "1500"
-            X-Ratelimit-Requests-Remaining:
-                - "1498"
-            X-Ratelimit-Requests-Reset:
-                - "1741006810967"
-            X-Request-Id:
-                - 91a8f8d46481dcbe-FRA
         status: 200 OK
         code: 200
-        duration: 314.354649ms
+        duration: 0s

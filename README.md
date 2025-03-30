@@ -116,14 +116,16 @@ To enable these tools, use the `--write-access=true` flag.
 
 ### linear_create_issue
 
-Creates a new Linear issue with specified details.
+Creates a new Linear issue with specified details. Supports creating sub-issues and assigning labels.
 
 **Parameters:**
 - `title` (required): Issue title
-- `teamId` (required): Team ID
+- `team` (required): Team identifier (key, UUID or name)
 - `description`: Issue description
 - `priority`: Priority (0-4)
 - `status`: Issue status
+- `parentIssue`: Optional parent issue ID to create a sub-issue
+- `labels`: Optional comma-separated list of label IDs to assign
 
 ### linear_update_issue
 

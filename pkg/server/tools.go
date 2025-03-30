@@ -8,9 +8,78 @@ import (
 	"strings"
 
 	"github.com/geropl/linear-mcp-go/pkg/linear"
+	"github.com/google/uuid"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
+
+// resolveParentIssueIdentifier resolves a parent issue identifier (UUID or "TEAM-123") to a UUID
+func resolveParentIssueIdentifier(linearClient *linear.LinearClient, identifier string) (string, error) {
+	// If it's a valid UUID, use it directly
+	if isValidUUID(identifier) {
+		return identifier, nil
+	}
+
+	// Otherwise, try to find an issue by identifier
+	issue, err := linearClient.GetIssueByIdentifier(identifier)
+	if err != nil {
+		return "", fmt.Errorf("failed to resolve parent issue identifier '%s': %v", identifier, err)
+	}
+
+	return issue.ID, nil
+}
+
+// resolveLabelIdentifiers resolves a list of label identifiers (UUIDs or names) to UUIDs
+func resolveLabelIdentifiers(linearClient *linear.LinearClient, teamID string, labelIdentifiers []string) ([]string, error) {
+	// Separate UUIDs and names
+	var labelUUIDs []string
+	var labelNames []string
+
+	for _, identifier := range labelIdentifiers {
+		if isValidUUID(identifier) {
+			labelUUIDs = append(labelUUIDs, identifier)
+		} else {
+			labelNames = append(labelNames, identifier)
+		}
+	}
+
+	// If there are no names to resolve, return the UUIDs directly
+	if len(labelNames) == 0 {
+		return labelUUIDs, nil
+	}
+
+	// Get labels by name
+	labels, err := linearClient.GetLabelsByName(teamID, labelNames)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get labels by name: %v", err)
+	}
+
+	// Check if all label names were found
+	if len(labels) < len(labelNames) {
+		// Create a map of found label names for quick lookup
+		foundLabels := make(map[string]bool)
+		for _, label := range labels {
+			foundLabels[label.Name] = true
+		}
+
+		// Find which label names were not found
+		var missingLabels []string
+		for _, name := range labelNames {
+			if !foundLabels[name] {
+				missingLabels = append(missingLabels, name)
+			}
+		}
+
+		return nil, fmt.Errorf("label(s) not found: %s", strings.Join(missingLabels, ", "))
+	}
+
+	// Add the resolved label UUIDs to the result
+	for _, label := range labels {
+		labelUUIDs = append(labelUUIDs, label.ID)
+	}
+
+	return labelUUIDs, nil
+}
 
 // CreateIssueHandler handles the linear_create_issue tool
 func CreateIssueHandler(linearClient *linear.LinearClient) func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
@@ -24,9 +93,16 @@ func CreateIssueHandler(linearClient *linear.LinearClient) func(ctx context.Cont
 			return mcp.NewToolResultError("title must be a non-empty string"), nil
 		}
 
-		teamID, ok := args["teamId"].(string)
-		if !ok || teamID == "" {
-			return mcp.NewToolResultError("teamId must be a non-empty string"), nil
+		// Check for team parameter or teamId parameter
+		team, ok := args["team"].(string)
+		if !ok || team == "" {
+			return mcp.NewToolResultError("team must be a non-empty string (UUID, name, or key)"), nil
+		}
+
+		// Resolve team identifier to a team ID
+		teamId, err := resolveTeamIdentifier(linearClient, team)
+		if err != nil {
+			return mcp.NewToolResultError(fmt.Sprintf("Failed to resolve team: %v", err)), nil
 		}
 
 		// Extract optional arguments
@@ -46,13 +122,47 @@ func CreateIssueHandler(linearClient *linear.LinearClient) func(ctx context.Cont
 			status = s
 		}
 
+		// Extract parentIssue parameter and resolve it if needed
+		var parentID *string
+		if parentIssue, ok := args["parentIssue"].(string); ok && parentIssue != "" {
+			resolvedParentID, err := resolveParentIssueIdentifier(linearClient, parentIssue)
+			if err != nil {
+				return mcp.NewToolResultError(fmt.Sprintf("Failed to resolve parent issue: %v", err)), nil
+			}
+			parentID = &resolvedParentID
+		}
+
+		// Extract labels parameter and resolve them if needed
+		var labelIDs []string
+		if labelsStr, ok := args["labels"].(string); ok && labelsStr != "" {
+			// Split comma-separated labels
+			var labelIdentifiers []string
+			for _, label := range strings.Split(labelsStr, ",") {
+				trimmedLabel := strings.TrimSpace(label)
+				if trimmedLabel != "" {
+					labelIdentifiers = append(labelIdentifiers, trimmedLabel)
+				}
+			}
+
+			// Resolve label identifiers to UUIDs
+			if len(labelIdentifiers) > 0 {
+				resolvedLabelIDs, err := resolveLabelIdentifiers(linearClient, teamId, labelIdentifiers)
+				if err != nil {
+					return mcp.NewToolResultError(fmt.Sprintf("Failed to resolve labels: %v", err)), nil
+				}
+				labelIDs = resolvedLabelIDs
+			}
+		}
+
 		// Create the issue
 		input := linear.CreateIssueInput{
 			Title:       title,
-			TeamID:      teamID,
+			TeamID:      teamId,
 			Description: description,
 			Priority:    priority,
 			Status:      status,
+			ParentID:    parentID,
+			LabelIDs:    labelIDs,
 		}
 
 		issue, err := linearClient.CreateIssue(input)
@@ -61,9 +171,45 @@ func CreateIssueHandler(linearClient *linear.LinearClient) func(ctx context.Cont
 		}
 
 		// Return the result
-		resultText := fmt.Sprintf("Created issue %s: %s\nURL: %s", issue.Identifier, issue.Title, issue.URL)
+		resultText := fmt.Sprintf("Created issue: %s\nTitle: %s\nURL: %s", issue.Identifier, issue.Title, issue.URL)
 		return mcp.NewToolResultText(resultText), nil
 	}
+}
+
+// isValidUUID checks if a string is a valid UUID
+func isValidUUID(uuidStr string) bool {
+	return uuid.Validate(uuidStr) == nil
+}
+
+// resolveTeamIdentifier resolves a team identifier (UUID, name, or key) to a team ID
+func resolveTeamIdentifier(linearClient *linear.LinearClient, identifier string) (string, error) {
+	// If it's a valid UUID, use it directly
+	if isValidUUID(identifier) {
+		return identifier, nil
+	}
+
+	// Otherwise, try to find a team by name or key
+	teams, err := linearClient.GetTeams("")
+	if err != nil {
+		return "", fmt.Errorf("failed to get teams: %v", err)
+	}
+
+	// First try exact match on name or key
+	for _, team := range teams {
+		if team.Name == identifier || team.Key == identifier {
+			return team.ID, nil
+		}
+	}
+
+	// If no exact match, try case-insensitive match
+	identifierLower := strings.ToLower(identifier)
+	for _, team := range teams {
+		if strings.ToLower(team.Name) == identifierLower || strings.ToLower(team.Key) == identifierLower {
+			return team.ID, nil
+		}
+	}
+
+	return "", fmt.Errorf("no team found with identifier '%s'", identifier)
 }
 
 // UpdateIssueHandler handles the linear_update_issue tool
@@ -541,12 +687,14 @@ func RegisterTools(s *server.MCPServer, linearClient *linear.LinearClient, write
 
 	// Create Issue Tool
 	createIssueTool := mcp.NewTool("linear_create_issue",
-		mcp.WithDescription("Creates a new Linear issue with specified details. Use this to create tickets for tasks, bugs, or feature requests. Returns the created issue's identifier and URL. Required fields are title and teamId, with optional description, priority (0-4, where 0 is no priority and 1 is urgent), and status."),
+		mcp.WithDescription("Creates a new Linear issue with specified details. Use this to create tickets for tasks, bugs, or feature requests. Returns the created issue's identifier and URL. Supports creating sub-issues and assigning labels."),
 		mcp.WithString("title", mcp.Required(), mcp.Description("Issue title")),
-		mcp.WithString("teamId", mcp.Required(), mcp.Description("Team ID")),
+		mcp.WithString("team", mcp.Required(), mcp.Description("Team identifier (key, UUID or name)")),
 		mcp.WithString("description", mcp.Description("Issue description")),
 		mcp.WithNumber("priority", mcp.Description("Priority (0-4)")),
 		mcp.WithString("status", mcp.Description("Issue status")),
+		mcp.WithString("parentIssue", mcp.Description("Optional parent issue ID or identifier (e.g., 'TEAM-123') to create a sub-issue")),
+		mcp.WithString("labels", mcp.Description("Optional comma-separated list of label IDs or names to assign")),
 	)
 	addTool(createIssueTool, CreateIssueHandler(linearClient))
 

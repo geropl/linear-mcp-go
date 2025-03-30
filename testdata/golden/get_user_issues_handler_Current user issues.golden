@@ -1,4 +1,4 @@
 {
   "err": "",
-  "output": "Found 1 issues:\n- TEST-1: Welcome to Linear 👋\n  Priority: 2\n  Status: Todo\n  https://linear.app/linear-mcp-go-test/issue/TEST-1/welcome-to-linear\n"
+  "output": "Found 2 issues:\n- TEST-10: Updated Test Issue\n  Priority: None\n  Status: Backlog\n  https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue\n- TEST-1: Welcome to Linear 👋\n  Priority: 2\n  Status: Todo\n  https://linear.app/linear-mcp-go-test/issue/TEST-1/welcome-to-linear\n"
 }
