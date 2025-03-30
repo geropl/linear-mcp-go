@@ -101,3 +101,53 @@ interactions:
         status: 200 OK
         code: 200
         duration: 0s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 789
+        transfer_encoding: []
+        trailer: {}
+        host: api.linear.app
+        remote_addr: ""
+        request_uri: ""
+        body: '{"query":"\n\t\tquery GetIssueComments($issueId: String!, $parentId: ID, $first: Int!, $after: String) {\n\t\t\tissue(id: $issueId) {\n\t\t\t\tcomments(\n\t\t\t\t\tfirst: $first,\n\t\t\t\t\tafter: $after,\n\t\t\t\t\tfilter: { parent: { id: { eq: $parentId } } }\n\t\t\t\t) {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tbody\n\t\t\t\t\t\tcreatedAt\n\t\t\t\t\t\tuser {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tname\n\t\t\t\t\t\t}\n\t\t\t\t\t\tparent {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t}\n\t\t\t\t\t\tchildren(first: 1) {\n\t\t\t\t\t\t\tnodes {\n\t\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tpageInfo {\n\t\t\t\t\t\thasNextPage\n\t\t\t\t\t\tendCursor\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"first":3,"issueId":"1c2de93f-4321-4015-bfde-ee893ef7976f"}}'
+        form: {}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - linear-mcp-go/1.0.0
+        url: https://api.linear.app/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: |
+            {"data":{"issue":{"comments":{"nodes":[{"id":"58e45bbb-c519-4e0a-9d84-60deef1bdf75","body":"Test comment","createdAt":"2025-03-30T10:09:36.553Z","user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"},"parent":null,"children":{"nodes":[]}},{"id":"4ba4cbeb-beb9-4d19-8c51-f40b67bbccdc","body":"Test comment","createdAt":"2025-03-30T09:34:56.195Z","user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"},"parent":null,"children":{"nodes":[]}},{"id":"71c0e60c-3cbf-4a8b-b6e4-3ed4eeabf7a2","body":"Test comment","createdAt":"2025-03-30T07:56:59.301Z","user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"},"parent":null,"children":{"nodes":[]}}],"pageInfo":{"hasNextPage":true,"endCursor":"71c0e60c-3cbf-4a8b-b6e4-3ed4eeabf7a2"}}}}}
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=86400
+            Cache-Control:
+                - no-store
+            Cf-Cache-Status:
+                - DYNAMIC
+            Content-Type:
+                - application/json; charset=utf-8
+            Etag:
+                - W/"319-1hpuW+nBYvcMv/KuK39aHhE4Y00"
+            Server:
+                - cloudflare
+            Vary:
+                - Accept-Encoding
+            Via:
+                - 1.1 google
+        status: 200 OK
+        code: 200
+        duration: 0s

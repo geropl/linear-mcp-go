@@ -61,15 +61,27 @@ type CommentConnection struct {
 	Nodes []Comment `json:"nodes"`
 }
 
+// PageInfo represents pagination information
+type PageInfo struct {
+	HasNextPage bool   `json:"hasNextPage"`
+	EndCursor   string `json:"endCursor"`
+}
+
+// PaginatedCommentConnection represents a paginated connection of comments
+type PaginatedCommentConnection struct {
+	Nodes      []Comment `json:"nodes"`
+	PageInfo   PageInfo  `json:"pageInfo"`
+}
+
 // Comment represents a comment on a Linear issue
 type Comment struct {
-	ID        string            `json:"id"`
-	Body      string            `json:"body"`
-	User      *User             `json:"user,omitempty"`
-	CreatedAt time.Time         `json:"createdAt"`
-	URL       string            `json:"url,omitempty"`
-	Parent    *Comment          `json:"parent,omitempty"`
-	Children  *CommentConnection `json:"children,omitempty"`
+	ID         string            `json:"id"`
+	Body       string            `json:"body"`
+	User       *User             `json:"user,omitempty"`
+	CreatedAt  time.Time         `json:"createdAt"`
+	URL        string            `json:"url,omitempty"`
+	Parent     *Comment          `json:"parent,omitempty"`
+	Children   *CommentConnection `json:"children,omitempty"`
 }
 
 // IssueRelationConnection represents a connection of issue relations
@@ -168,6 +180,14 @@ type GetUserIssuesInput struct {
 	UserID          string `json:"userId,omitempty"`
 	IncludeArchived bool   `json:"includeArchived,omitempty"`
 	Limit           int    `json:"limit,omitempty"`
+}
+
+// GetIssueCommentsInput represents input for getting issue comments
+type GetIssueCommentsInput struct {
+	IssueID    string `json:"issueId"`
+	ParentID   string `json:"parentId,omitempty"`
+	Limit      int    `json:"limit,omitempty"`
+	AfterCursor string `json:"afterCursor,omitempty"`
 }
 
 // AddCommentInput represents input for adding a comment

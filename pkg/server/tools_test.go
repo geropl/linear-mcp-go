@@ -224,6 +224,42 @@ func TestHandlers(t *testing.T) {
 			name:    "Missing issue",
 			args:    map[string]interface{}{},
 		},
+		{
+			handler: "get_issue",
+			name:    "Missing issueId",
+			args: map[string]interface{}{
+				"issue": "NONEXISTENT-123",
+			},
+		},
+		
+		// GetIssueCommentsHandler test cases
+		{
+			handler: "get_issue_comments",
+			name:    "Valid issue",
+			args: map[string]interface{}{
+				"issue": ISSUE_ID,
+			},
+		},
+		{
+			handler: "get_issue_comments",
+			name:    "Missing issue",
+			args:    map[string]interface{}{},
+		},
+		{
+			handler: "get_issue_comments",
+			name:    "Invalid issue",
+			args: map[string]interface{}{
+				"issue": "NONEXISTENT-123",
+			},
+		},
+		{
+			handler: "get_issue_comments",
+			name:    "With limit",
+			args: map[string]interface{}{
+				"issue": ISSUE_ID,
+				"limit": float64(3),
+			},
+		},
 
 		// AddCommentHandler test cases
 		{
@@ -280,6 +316,8 @@ func TestHandlers(t *testing.T) {
 				handler = tools.GetUserIssuesHandler(client)
 			case "get_issue":
 				handler = tools.GetIssueHandler(client)
+			case "get_issue_comments":
+				handler = tools.GetIssueCommentsHandler(client)
 			case "add_comment":
 				handler = tools.AddCommentHandler(client)
 			default:

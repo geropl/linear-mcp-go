@@ -73,10 +73,11 @@ func (s *LinearMCPServer) GetLinearClient() *linear.LinearClient {
 // GetReadOnlyToolNames returns the names of all read-only tools
 func GetReadOnlyToolNames() map[string]bool {
 	return map[string]bool{
-		"linear_search_issues":   true,
-		"linear_get_user_issues": true,
-		"linear_get_issue":       true,
-		"linear_get_teams":       true,
+		"linear_search_issues":     true,
+		"linear_get_user_issues":   true,
+		"linear_get_issue":         true,
+		"linear_get_issue_comments": true,
+		"linear_get_teams":         true,
 	}
 }
 
@@ -97,6 +98,7 @@ func RegisterTools(s *mcpserver.MCPServer, linearClient *linear.LinearClient, wr
 	addTool(tools.SearchIssuesTool, tools.SearchIssuesHandler(linearClient))
 	addTool(tools.GetUserIssuesTool, tools.GetUserIssuesHandler(linearClient))
 	addTool(tools.GetIssueTool, tools.GetIssueHandler(linearClient))
+	addTool(tools.GetIssueCommentsTool, tools.GetIssueCommentsHandler(linearClient))
 	addTool(tools.GetTeamsTool, tools.GetTeamsHandler(linearClient))
 	addTool(tools.CreateIssueTool, tools.CreateIssueHandler(linearClient))
 	addTool(tools.UpdateIssueTool, tools.UpdateIssueHandler(linearClient))

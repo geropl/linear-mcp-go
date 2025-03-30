@@ -3,7 +3,6 @@ package tools
 import (
 	"context"
 	"fmt"
-	"slices"
 
 	"github.com/geropl/linear-mcp-go/pkg/linear"
 	"github.com/mark3labs/mcp-go/mcp"
@@ -70,48 +69,8 @@ func GetIssueHandler(linearClient *linear.LinearClient) func(ctx context.Context
 			resultText += "\nAttachments: None\n"
 		}
 
-		// Add comments section
-		if issue.Comments != nil && len(issue.Comments.Nodes) > 0 {
-			resultText += "\nComments:\n"
-
-			// Create a temporary slice to hold comments in reversed order (oldest first)
-			reversedComments := slices.Clone(issue.Comments.Nodes)
-			slices.Reverse(reversedComments)
-
-			// Use the reversed comments for display
-			for _, comment := range reversedComments {
-				if comment.Parent != nil {
-					// Skip nested comments (they will be displayed with their parent)
-					continue
-				}
-
-				userName := "Unknown"
-				if comment.User != nil {
-					userName = comment.User.Name
-				}
-				createdAt := comment.CreatedAt.Format("2006-01-02 15:04:05")
-				resultText += fmt.Sprintf("- [%s] %s: %s\n", createdAt, userName, comment.Body)
-
-				// Add nested comments if there are any
-				if comment.Children != nil && len(comment.Children.Nodes) > 0 {
-					// Create a temporary slice to hold child comments in reversed order (oldest first)
-					reversedChildComments := slices.Clone(comment.Children.Nodes)
-					slices.Reverse(reversedChildComments)
-
-					// Use the reversed child comments for display
-					for _, childComment := range reversedChildComments {
-						childUserName := "Unknown"
-						if childComment.User != nil {
-							childUserName = childComment.User.Name
-						}
-						childCreatedAt := childComment.CreatedAt.Format("2006-01-02 15:04:05")
-						resultText += fmt.Sprintf("  - [%s] %s: %s\n", childCreatedAt, childUserName, childComment.Body)
-					}
-				}
-			}
-		} else {
-			resultText += "\nComments: None\n"
-		}
+		// Note about comments
+		resultText += "\nComments: Use the linear_get_issue_comments tool to retrieve comments for this issue.\n"
 
 		// Add related issues section
 		if (issue.Relations != nil && len(issue.Relations.Nodes) > 0) ||

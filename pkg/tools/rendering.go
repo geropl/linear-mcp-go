@@ -135,13 +135,8 @@ func formatUserIdentifier(user *linear.User) string {
 // formatCommentIdentifier returns a consistently formatted identifier for a comment
 func formatCommentIdentifier(comment *linear.Comment) string {
 	if comment == nil {
-		return "Comment: Unknown"
+		return "Unknown"
 	}
 	
-	userName := "Unknown"
-	if comment.User != nil {
-		userName = comment.User.Name
-	}
-	
-	return fmt.Sprintf("Comment by %s (UUID: %s)", userName, comment.ID)
+	return fmt.Sprintf(comment.ID)
 }

@@ -136,31 +136,6 @@ func (c *LinearClient) GetIssue(issueID string) (*Issue, error) {
 					name
 					key
 				}
-				comments(first: 100) {
-					nodes {
-						id
-						body
-						createdAt
-						parent {
-							id
-						}
-						user {
-							id
-							name
-						}
-						children(first: 100) {
-							nodes {
-								id
-								body
-								createdAt
-								user {
-									id
-									name
-								}
-							}
-						}
-					}
-				}
 				relations(first: 20) {
 					nodes {
 						id
@@ -227,6 +202,96 @@ func (c *LinearClient) GetIssue(issueID string) (*Issue, error) {
 	}
 
 	return &issue, nil
+}
+
+// GetIssueComments gets paginated comments for an issue
+func (c *LinearClient) GetIssueComments(input GetIssueCommentsInput) (*PaginatedCommentConnection, error) {
+	query := `
+		query GetIssueComments($issueId: String!, $parentId: ID, $first: Int!, $after: String) {
+			issue(id: $issueId) {
+				comments(
+					first: $first,
+					after: $after,
+					filter: { parent: { id: { eq: $parentId } } }
+				) {
+					nodes {
+						id
+						body
+						createdAt
+						user {
+							id
+							name
+						}
+						parent {
+							id
+						}
+						children(first: 1) {
+							nodes {
+								id
+							}
+						}
+					}
+					pageInfo {
+						hasNextPage
+						endCursor
+					}
+				}
+			}
+		}
+	`
+
+	// Set default limit if not provided
+	limit := 10
+	if input.Limit > 0 {
+		limit = input.Limit
+	}
+
+	variables := map[string]interface{}{
+		"issueId": input.IssueID,
+		"first":   limit,
+	}
+
+	// Add optional parameters if provided
+	if input.ParentID != "" {
+		variables["parentId"] = input.ParentID
+	}
+
+	if input.AfterCursor != "" {
+		variables["after"] = input.AfterCursor
+	}
+
+	resp, err := c.executeGraphQL(query, variables)
+	if err != nil {
+		return nil, err
+	}
+
+	// Extract the issue from the response
+	issueData, ok := resp.Data["issue"].(map[string]interface{})
+	if !ok || issueData == nil {
+		return nil, fmt.Errorf("issue %s not found", input.IssueID)
+	}
+
+	// Extract the comments
+	commentsData, ok := issueData["comments"].(map[string]interface{})
+	if !ok || commentsData == nil {
+		return &PaginatedCommentConnection{
+			Nodes:      []Comment{},
+			PageInfo:   PageInfo{HasNextPage: false},
+		}, nil
+	}
+
+	// Parse the comments data
+	var paginatedComments PaginatedCommentConnection
+	commentsBytes, err := json.Marshal(commentsData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal comments data: %w", err)
+	}
+
+	if err := json.Unmarshal(commentsBytes, &paginatedComments); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal comments data: %w", err)
+	}
+
+	return &paginatedComments, nil
 }
 
 // GetIssueByIdentifier gets an issue by its identifier (e.g., "TEAM-123")

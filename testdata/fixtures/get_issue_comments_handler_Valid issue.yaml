@@ -101,3 +101,53 @@ interactions:
         status: 200 OK
         code: 200
         duration: 0s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 790
+        transfer_encoding: []
+        trailer: {}
+        host: api.linear.app
+        remote_addr: ""
+        request_uri: ""
+        body: '{"query":"\n\t\tquery GetIssueComments($issueId: String!, $parentId: ID, $first: Int!, $after: String) {\n\t\t\tissue(id: $issueId) {\n\t\t\t\tcomments(\n\t\t\t\t\tfirst: $first,\n\t\t\t\t\tafter: $after,\n\t\t\t\t\tfilter: { parent: { id: { eq: $parentId } } }\n\t\t\t\t) {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tbody\n\t\t\t\t\t\tcreatedAt\n\t\t\t\t\t\tuser {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tname\n\t\t\t\t\t\t}\n\t\t\t\t\t\tparent {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t}\n\t\t\t\t\t\tchildren(first: 1) {\n\t\t\t\t\t\t\tnodes {\n\t\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tpageInfo {\n\t\t\t\t\t\thasNextPage\n\t\t\t\t\t\tendCursor\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"first":10,"issueId":"1c2de93f-4321-4015-bfde-ee893ef7976f"}}'
+        form: {}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - linear-mcp-go/1.0.0
+        url: https://api.linear.app/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: |
+            {"data":{"issue":{"comments":{"nodes":[{"id":"58e45bbb-c519-4e0a-9d84-60deef1bdf75","body":"Test comment","createdAt":"2025-03-30T10:09:36.553Z","user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"},"parent":null,"children":{"nodes":[]}},{"id":"4ba4cbeb-beb9-4d19-8c51-f40b67bbccdc","body":"Test comment","createdAt":"2025-03-30T09:34:56.195Z","user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"},"parent":null,"children":{"nodes":[]}},{"id":"71c0e60c-3cbf-4a8b-b6e4-3ed4eeabf7a2","body":"Test comment","createdAt":"2025-03-30T07:56:59.301Z","user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"},"parent":null,"children":{"nodes":[]}},{"id":"dedcedbf-2b66-4e08-b46b-59b0ed86a953","body":"Test comment","createdAt":"2025-03-30T06:05:06.240Z","user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"},"parent":null,"children":{"nodes":[]}},{"id":"b463d538-9b98-4a5f-8421-b2a997d81345","body":"Test comment","createdAt":"2025-03-24T16:05:32.585Z","user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"},"parent":null,"children":{"nodes":[]}},{"id":"8c85b818-fe06-47e4-ad3b-da4c7637f677","body":"Test comment","createdAt":"2025-03-04T08:37:42.974Z","user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"},"parent":null,"children":{"nodes":[]}},{"id":"4339c849-57a0-408a-a2b1-b2fa1bc9ff75","body":"Test comment","createdAt":"2025-03-03T13:32:43.711Z","user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"},"parent":null,"children":{"nodes":[]}},{"id":"a49988db-2627-4f06-b01f-20cd40ddc261","body":"new test comment","createdAt":"2025-03-03T13:32:18.078Z","user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"},"parent":null,"children":{"nodes":[]}}],"pageInfo":{"hasNextPage":false,"endCursor":"a49988db-2627-4f06-b01f-20cd40ddc261"}}}}}
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=86400
+            Cache-Control:
+                - no-store
+            Cf-Cache-Status:
+                - DYNAMIC
+            Content-Type:
+                - application/json; charset=utf-8
+            Etag:
+                - W/"774-W4lzB174/M/fFZ4+pQl+zriPKQo"
+            Server:
+                - cloudflare
+            Vary:
+                - Accept-Encoding
+            Via:
+                - 1.1 google
+        status: 200 OK
+        code: 200
+        duration: 0s
