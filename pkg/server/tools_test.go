@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"encoding/json"
 	"flag"
 	"os"
 	"path/filepath"
@@ -12,6 +11,7 @@ import (
 	"github.com/geropl/linear-mcp-go/pkg/tools"
 	"github.com/google/go-cmp/cmp"
 	"github.com/mark3labs/mcp-go/mcp"
+	"gopkg.in/yaml.v3"
 )
 
 var record = flag.Bool("record", false, "Record HTTP interactions (excluding writes)")
@@ -30,8 +30,8 @@ const (
 
 // expectation defines the expected output and error for a test case
 type expectation struct {
-	Err    string `json:"err"`    // Empty string means no error expected
-	Output string `json:"output"` // Expected complete output
+	Err    string `yaml:"err"`          // Empty string means no error expected
+	Output string `yaml:"output", flow` // Expected complete output
 }
 
 func TestHandlers(t *testing.T) {
@@ -156,7 +156,7 @@ func TestHandlers(t *testing.T) {
 			handler: "update_issue",
 			name:    "Valid update",
 			args: map[string]interface{}{
-				"issue":    ISSUE_ID,
+				"issue": ISSUE_ID,
 				"title": "Updated Test Issue",
 			},
 			write: true,
@@ -199,8 +199,8 @@ func TestHandlers(t *testing.T) {
 			handler: "get_user_issues",
 			name:    "Specific user issues",
 			args: map[string]interface{}{
-				"user": USER_ID,
-				"limit":  float64(5),
+				"user":  USER_ID,
+				"limit": float64(5),
 			},
 		},
 
@@ -231,7 +231,7 @@ func TestHandlers(t *testing.T) {
 				"issue": "NONEXISTENT-123",
 			},
 		},
-		
+
 		// GetIssueCommentsHandler test cases
 		{
 			handler: "get_issue_comments",
@@ -401,7 +401,7 @@ func readGoldenFile(t *testing.T, path string) expectation {
 
 	// Parse the golden file
 	var exp expectation
-	if err := json.Unmarshal(data, &exp); err != nil {
+	if err := yaml.Unmarshal(data, &exp); err != nil {
 		t.Fatalf("Failed to parse golden file %s: %v", path, err)
 	}
 
@@ -418,8 +418,8 @@ func writeGoldenFile(t *testing.T, path string, exp expectation) {
 		t.Fatalf("Failed to create directory %s: %v", dir, err)
 	}
 
-	// Marshal the expectation
-	data, err := json.MarshalIndent(exp, "", "  ")
+	// Marshal the YAML node
+	data, err := yaml.Marshal(&exp)
 	if err != nil {
 		t.Fatalf("Failed to marshal expectation: %v", err)
 	}

@@ -59,7 +59,7 @@ func TestSetupCommand(t *testing.T) {
 							"mcpServers": {
 								"linear": {
 									"args": ["serve", "--write-access=true"],
-									"autoApprove": ["linear_search_issues", "linear_get_user_issues", "linear_get_issue", "linear_get_teams"],
+									"autoApprove": ["linear_search_issues", "linear_get_user_issues", "linear_get_issue", "linear_get_teams", "linear_get_issue_comments"],
 									"disabled": false
 								}
 							}
@@ -83,7 +83,7 @@ func TestSetupCommand(t *testing.T) {
 							"mcpServers": {
 								"linear": {
 									"args": ["serve", "--write-access=true"],
-									"autoApprove": ["linear_search_issues", "linear_get_user_issues", "linear_get_issue", "linear_get_teams"],
+									"autoApprove": ["linear_search_issues", "linear_get_user_issues", "linear_get_issue", "linear_get_teams", "linear_get_issue_comments"],
 									"disabled": false
 								}
 							}
@@ -107,7 +107,7 @@ func TestSetupCommand(t *testing.T) {
 							"mcpServers": {
 								"linear": {
 									"args": ["serve", "--write-access=true"],
-									"autoApprove": ["linear_search_issues", "linear_get_user_issues", "linear_get_issue", "linear_get_teams"],
+									"autoApprove": ["linear_search_issues", "linear_get_user_issues", "linear_get_issue", "linear_get_teams", "linear_get_issue_comments"],
 									"disabled": false
 								}
 							}
@@ -120,7 +120,7 @@ func TestSetupCommand(t *testing.T) {
 							"mcpServers": {
 								"linear": {
 									"args": ["serve", "--write-access=true"],
-									"autoApprove": ["linear_search_issues", "linear_get_user_issues", "linear_get_issue", "linear_get_teams"],
+									"autoApprove": ["linear_search_issues", "linear_get_user_issues", "linear_get_issue", "linear_get_teams", "linear_get_issue_comments"],
 									"disabled": false
 								}
 							}
@@ -144,7 +144,7 @@ func TestSetupCommand(t *testing.T) {
 							"mcpServers": {
 								"linear": {
 									"args": ["serve", "--write-access=true"],
-									"autoApprove": ["linear_search_issues", "linear_get_user_issues", "linear_get_issue", "linear_get_teams"],
+									"autoApprove": ["linear_search_issues", "linear_get_user_issues", "linear_get_issue", "linear_get_teams", "linear_get_issue_comments"],
 									"disabled": false
 								}
 							}

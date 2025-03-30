@@ -1,4 +1,2 @@
-{
-  "err": "Failed to resolve issue: failed to resolve issue identifier 'NONEXISTENT-123': no issue found with identifier NONEXISTENT-123",
-  "output": ""
-}
+err: 'Failed to resolve issue: failed to resolve issue identifier ''NONEXISTENT-123'': no issue found with identifier NONEXISTENT-123'
+output: ""

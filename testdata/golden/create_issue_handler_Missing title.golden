@@ -1,4 +1,2 @@
-{
-  "err": "title must be a non-empty string",
-  "output": ""
-}
+err: title must be a non-empty string
+output: ""

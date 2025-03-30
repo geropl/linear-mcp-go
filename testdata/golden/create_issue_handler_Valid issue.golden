@@ -1,4 +1,4 @@
-{
-  "err": "",
-  "output": "Created issue TEST-10: Test Issue\nURL: https://linear.app/linear-mcp-go-test/issue/TEST-10/test-issue"
-}
+err: ''
+output: |-
+    Created issue TEST-10: Test Issue
+    URL: https://linear.app/linear-mcp-go-test/issue/TEST-10/test-issue

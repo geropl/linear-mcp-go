@@ -40,19 +40,15 @@ func GetIssueHandler(linearClient *linear.LinearClient) func(ctx context.Context
 
 		// Format the result using the full issue formatting
 		resultText := formatIssue(issue)
-		
+
 		// Add assignee and team information using identifier formatting
 		if issue.Assignee != nil {
 			resultText += fmt.Sprintf("Assignee: %s\n", formatUserIdentifier(issue.Assignee))
 		} else {
 			resultText += "Assignee: None\n"
 		}
-		
-		if issue.Team != nil {
-			resultText += fmt.Sprintf("Team: %s\n", formatTeamIdentifier(issue.Team))
-		} else {
-			resultText += "Team: None\n"
-		}
+
+		resultText += fmt.Sprintf("%s\n", formatTeamIdentifier(issue.Team))
 
 		// Add attachments section if there are attachments
 		if issue.Attachments != nil && len(issue.Attachments.Nodes) > 0 {
@@ -68,9 +64,6 @@ func GetIssueHandler(linearClient *linear.LinearClient) func(ctx context.Context
 		} else {
 			resultText += "\nAttachments: None\n"
 		}
-
-		// Note about comments
-		resultText += "\nComments: Use the linear_get_issue_comments tool to retrieve comments for this issue.\n"
 
 		// Add related issues section
 		if (issue.Relations != nil && len(issue.Relations.Nodes) > 0) ||
@@ -105,6 +98,9 @@ func GetIssueHandler(linearClient *linear.LinearClient) func(ctx context.Context
 		} else {
 			resultText += "\nRelated Issues: None\n"
 		}
+
+		// Note about comments
+		resultText += "\nComments: Use the linear_get_issue_comments tool to retrieve comments for this issue.\n"
 
 		return mcp.NewToolResultText(resultText), nil
 	}

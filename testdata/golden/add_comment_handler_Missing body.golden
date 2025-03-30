@@ -1,4 +1,2 @@
-{
-  "err": "body must be a non-empty string",
-  "output": ""
-}
+err: body must be a non-empty string
+output: ""

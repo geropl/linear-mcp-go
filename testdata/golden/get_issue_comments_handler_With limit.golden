@@ -1,4 +1,25 @@
-{
-  "err": "",
-  "output": "Issue: TEST-10 (UUID: 1c2de93f-4321-4015-bfde-ee893ef7976f)\nThread: root (top-level comments)\n\nComments:\n- ID: 58e45bbb-c519-4e0a-9d84-60deef1bdf75\n  User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)\n  CreatedAt: 2025-03-30 10:09:36\n  HasReplies: no\n  Description: Test comment\n- ID: 4ba4cbeb-beb9-4d19-8c51-f40b67bbccdc\n  User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)\n  CreatedAt: 2025-03-30 09:34:56\n  HasReplies: no\n  Description: Test comment\n- ID: 71c0e60c-3cbf-4a8b-b6e4-3ed4eeabf7a2\n  User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)\n  CreatedAt: 2025-03-30 07:56:59\n  HasReplies: no\n  Description: Test comment\n\nPagination:\nHas more comments: yes\nNext cursor: 71c0e60c-3cbf-4a8b-b6e4-3ed4eeabf7a2\n"
-}
+err: ""
+output: |
+    Issue: TEST-10 (UUID: 1c2de93f-4321-4015-bfde-ee893ef7976f)
+    Thread: root (top-level comments)
+
+    Comments:
+    - ID: 58e45bbb-c519-4e0a-9d84-60deef1bdf75
+      User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
+      CreatedAt: 2025-03-30 10:09:36
+      HasReplies: no
+      Body: Test comment
+    - ID: 4ba4cbeb-beb9-4d19-8c51-f40b67bbccdc
+      User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
+      CreatedAt: 2025-03-30 09:34:56
+      HasReplies: no
+      Body: Test comment
+    - ID: 71c0e60c-3cbf-4a8b-b6e4-3ed4eeabf7a2
+      User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
+      CreatedAt: 2025-03-30 07:56:59
+      HasReplies: no
+      Body: Test comment
+
+    Pagination:
+    Has more comments: yes
+    Next cursor: 71c0e60c-3cbf-4a8b-b6e4-3ed4eeabf7a2

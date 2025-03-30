@@ -1,4 +1,2 @@
-{
-  "err": "",
-  "output": "Found 2 issues:\n- Issue: TEST-10 (UUID: 1c2de93f-4321-4015-bfde-ee893ef7976f)\n  Title: Updated Test Issue\n  Priority: None\n  Status: Backlog\n  URL: https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue\n- Issue: TEST-1 (UUID: c58953c5-a31d-4c5a-9427-6d6ebd9a1a4e)\n  Title: Welcome to Linear 👋\n  Priority: 2\n  Status: Todo\n  URL: https://linear.app/linear-mcp-go-test/issue/TEST-1/welcome-to-linear\n"
-}
+err: ""
+output: "Found 2 issues:\n- Issue: TEST-10 (UUID: 1c2de93f-4321-4015-bfde-ee893ef7976f)\n  Title: Updated Test Issue\n  Priority: None\n  Status: Backlog\n  URL: https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue\n- Issue: TEST-1 (UUID: c58953c5-a31d-4c5a-9427-6d6ebd9a1a4e)\n  Title: Welcome to Linear \U0001F44B\n  Priority: 2\n  Status: Todo\n  URL: https://linear.app/linear-mcp-go-test/issue/TEST-1/welcome-to-linear\n"

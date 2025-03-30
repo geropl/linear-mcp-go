@@ -1,4 +1,28 @@
-{
-  "err": "",
-  "output": "Found 5 issues:\n- Issue: TEST-63 (UUID: 5b4ab24c-56c6-40b6-9673-1869eea1fd9d)\n  Title: Sub Issue with Labels\n  Priority: None\n  Status: Backlog\n  URL: https://linear.app/linear-mcp-go-test/issue/TEST-63/sub-issue-with-labels\n- Issue: TEST-62 (UUID: 84876968-413a-416f-9ff3-0ed9346a28a3)\n  Title: Issue with Labels\n  Priority: None\n  Status: Backlog\n  URL: https://linear.app/linear-mcp-go-test/issue/TEST-62/issue-with-labels\n- Issue: TEST-61 (UUID: fc86c062-93d6-4062-85ec-a9a200a39fe6)\n  Title: Sub Issue\n  Priority: None\n  Status: Backlog\n  URL: https://linear.app/linear-mcp-go-test/issue/TEST-61/sub-issue\n- Issue: TEST-60 (UUID: a48521c0-787f-49e5-b3b4-3e8990c3d788)\n  Title: Sub Issue\n  Priority: None\n  Status: Backlog\n  URL: https://linear.app/linear-mcp-go-test/issue/TEST-60/sub-issue\n- Issue: TEST-59 (UUID: 2cae0854-3e0e-4684-9332-55ea6c87c691)\n  Title: Test Issue with team key\n  Priority: None\n  Status: Backlog\n  URL: https://linear.app/linear-mcp-go-test/issue/TEST-59/test-issue-with-team-key\n"
-}
+err: ""
+output: |
+    Found 5 issues:
+    - Issue: TEST-63 (UUID: 5b4ab24c-56c6-40b6-9673-1869eea1fd9d)
+      Title: Sub Issue with Labels
+      Priority: None
+      Status: Backlog
+      URL: https://linear.app/linear-mcp-go-test/issue/TEST-63/sub-issue-with-labels
+    - Issue: TEST-62 (UUID: 84876968-413a-416f-9ff3-0ed9346a28a3)
+      Title: Issue with Labels
+      Priority: None
+      Status: Backlog
+      URL: https://linear.app/linear-mcp-go-test/issue/TEST-62/issue-with-labels
+    - Issue: TEST-61 (UUID: fc86c062-93d6-4062-85ec-a9a200a39fe6)
+      Title: Sub Issue
+      Priority: None
+      Status: Backlog
+      URL: https://linear.app/linear-mcp-go-test/issue/TEST-61/sub-issue
+    - Issue: TEST-60 (UUID: a48521c0-787f-49e5-b3b4-3e8990c3d788)
+      Title: Sub Issue
+      Priority: None
+      Status: Backlog
+      URL: https://linear.app/linear-mcp-go-test/issue/TEST-60/sub-issue
+    - Issue: TEST-59 (UUID: 2cae0854-3e0e-4684-9332-55ea6c87c691)
+      Title: Test Issue with team key
+      Priority: None
+      Status: Backlog
+      URL: https://linear.app/linear-mcp-go-test/issue/TEST-59/test-issue-with-team-key

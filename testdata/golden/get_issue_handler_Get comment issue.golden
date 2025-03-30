@@ -1,4 +1,19 @@
-{
-  "err": "",
-  "output": "Issue: TEST-12 (UUID: 9407c793-5fd8-4730-9280-0e17ffddf320)\nTitle: Comments issue\nURL: https://linear.app/linear-mcp-go-test/issue/TEST-12/comments-issue\nPriority: None\nStatus: Todo\nLabels: None\nDescription: This is the description\nAssignee: None\nTeam: Team: Test Team (UUID: 234c5451-a839-4c8f-98d9-da00973f1060)\n\nAttachments:\n- [docs] Getting Started: https://www.gitpod.io/docs/introduction/getting-started\n  Gitpod Documentation: Learn how to start your first Gitpod workspace for free, set up a gitpod.yml configuration file and enable Prebuilds.\n\nComments: Use the linear_get_issue_comments tool to retrieve comments for this issue.\n\nRelated Issues: None\n"
-}
+err: ""
+output: |
+    Issue: TEST-12 (UUID: 9407c793-5fd8-4730-9280-0e17ffddf320)
+    Title: Comments issue
+    URL: https://linear.app/linear-mcp-go-test/issue/TEST-12/comments-issue
+    Priority: None
+    Status: Todo
+    Labels: None
+    Description: This is the description
+    Assignee: None
+    Team: Test Team (UUID: 234c5451-a839-4c8f-98d9-da00973f1060)
+
+    Attachments:
+    - [docs] Getting Started: https://www.gitpod.io/docs/introduction/getting-started
+      Gitpod Documentation: Learn how to start your first Gitpod workspace for free, set up a gitpod.yml configuration file and enable Prebuilds.
+
+    Related Issues: None
+
+    Comments: Use the linear_get_issue_comments tool to retrieve comments for this issue.

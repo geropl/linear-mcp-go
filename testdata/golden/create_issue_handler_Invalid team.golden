@@ -1,4 +1,2 @@
-{
-  "err": "Failed to resolve team: no team found with identifier 'NonExistentTeam'",
-  "output": ""
-}
+err: 'Failed to resolve team: no team found with identifier ''NonExistentTeam'''
+output: ""

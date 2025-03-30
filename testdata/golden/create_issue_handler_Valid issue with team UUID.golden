@@ -1,4 +1,5 @@
-{
-  "err": "",
-  "output": "Created Issue: TEST-57 (UUID: cc71e191-7edd-4a6c-98af-763ac69cd72e)\nTitle: Test Issue with team UUID\nURL: https://linear.app/linear-mcp-go-test/issue/TEST-57/test-issue-with-team-uuid"
-}
+err: ""
+output: |-
+    Created Issue: TEST-57 (UUID: cc71e191-7edd-4a6c-98af-763ac69cd72e)
+    Title: Test Issue with team UUID
+    URL: https://linear.app/linear-mcp-go-test/issue/TEST-57/test-issue-with-team-uuid
