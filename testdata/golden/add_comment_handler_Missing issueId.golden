@@ -1,4 +1,2 @@
-{
-  "err": "issueId must be a non-empty string",
-  "output": ""
-}
+err: 'issue must be a non-empty string'
+output: ""

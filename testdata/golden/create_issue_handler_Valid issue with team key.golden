@@ -1,0 +1,5 @@
+err: ""
+output: |-
+    Created Issue: TEST-59 (UUID: 2cae0854-3e0e-4684-9332-55ea6c87c691)
+    Title: Test Issue with team key
+    URL: https://linear.app/linear-mcp-go-test/issue/TEST-59/test-issue-with-team-key

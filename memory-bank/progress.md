@@ -15,9 +15,15 @@
    - Authentication via API key
    - Rate limiting implementation
    - API request and response handling
+   - Proper JSON structure handling for API responses
+   - Correct GraphQL parameter types for API validation
+   - Proper resolution of human-readable identifiers to UUIDs
 
 4. **MCP Tools**:
-   - `linear_create_issue`: Creating new Linear issues
+   - `linear_create_issue`: Creating new Linear issues with support for:
+     - Sub-issues using parent issue ID or human-readable identifier (e.g., "TEAM-123")
+     - Label assignment using label IDs or names
+     - Team specification using team ID, name, or key
    - `linear_update_issue`: Updating existing issues
    - `linear_search_issues`: Searching for issues with various criteria
    - `linear_get_user_issues`: Getting issues assigned to a user
@@ -33,6 +39,7 @@
 6. **Testing**:
    - Test fixtures for all tools
    - HTTP interaction recording and playback
+   - Comprehensive test coverage for enhanced functionality
 
 ## What's Left to Build
 
@@ -54,7 +61,6 @@
    - Add troubleshooting section
 
 3. **Additional Linear API Features**:
-   - Support for managing issue labels
    - Support for managing issue attachments
    - Support for managing issue relationships
 
@@ -69,10 +75,10 @@
 - **Version**: 1.0.0
 - **Stability**: Stable for core features
 - **Test Coverage**: Good, all tools have test fixtures
-- **Documentation**: Updated with new command structure and setup instructions
+- **Documentation**: Updated with new command structure, setup instructions, and tool standardization PRD
 - **Release Process**: GitHub Actions workflow created
 - **Security**: Write access control implemented (disabled by default)
-- **User Experience**: Improved with setup command
+- **User Experience**: Improved with setup command and user-friendly identifiers
 
 ## Known Issues
 1. **API Key Management**:
@@ -90,14 +96,27 @@
    - Limited AI assistant support (currently only Cline)
 
 ## Recent Milestones
+- ✅ Created comprehensive Tool Standardization PRD with implementation plan
+- ✅ Implemented shared utility functions for entity rendering and identifier resolution
+- ✅ Updated all tools to follow standardization rules:
+  - Concise descriptions
+  - Flexible identifier resolution
+  - Consistent entity rendering
 - ✅ Initial implementation of all core tools
 - ✅ Test fixtures for all tools
 - ✅ GitHub Actions workflow for testing and releases
 - ✅ Write access control implementation (--write-access flag, default: false)
 - ✅ Command-line interface with subcommands
 - ✅ Setup command for AI assistants
+- ✅ Enhanced `linear_create_issue` tool with support for sub-issues and labels
+- ✅ Implemented user-friendly identifiers for parent issues and labels
+- ✅ Fixed JSON unmarshaling issue with Labels field
+- ✅ Added support for team key in issue creation
+- ✅ Fixed label resolution issue with GraphQL parameter type
+- ✅ Fixed parent issue identifier resolution for human-readable identifiers
 
 ## Upcoming Milestones
+- [x] Complete Tool Standardization testing
 - [ ] Support for additional AI assistants
 - [ ] Improved error handling and recovery
 - [ ] Additional Linear API features

@@ -1,4 +1,5 @@
-{
-  "err": "",
-  "output": "Found 1 teams:\n- Test Team (Key: TEST)\n  ID: 234c5451-a839-4c8f-98d9-da00973f1060\n"
-}
+err: ""
+output: |
+    Found 1 teams:
+    - Team: Test Team (UUID: 234c5451-a839-4c8f-98d9-da00973f1060)
+      Key: TEST

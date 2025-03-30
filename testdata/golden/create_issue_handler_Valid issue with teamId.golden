@@ -1,0 +1,5 @@
+err: ''
+output: |-
+    Created Issue: TEST-48 (UUID: 71daa141-706f-45bd-af79-fa27571b9974)
+    Title: Test Issue
+    URL: https://linear.app/linear-mcp-go-test/issue/TEST-48/test-issue

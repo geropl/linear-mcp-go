@@ -1,0 +1,49 @@
+err: ""
+output: |
+    Issue: TEST-10 (UUID: 1c2de93f-4321-4015-bfde-ee893ef7976f)
+    Thread: root (top-level comments)
+
+    Comments:
+    - ID: 58e45bbb-c519-4e0a-9d84-60deef1bdf75
+      User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
+      CreatedAt: 2025-03-30 10:09:36
+      HasReplies: no
+      Body: Test comment
+    - ID: 4ba4cbeb-beb9-4d19-8c51-f40b67bbccdc
+      User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
+      CreatedAt: 2025-03-30 09:34:56
+      HasReplies: no
+      Body: Test comment
+    - ID: 71c0e60c-3cbf-4a8b-b6e4-3ed4eeabf7a2
+      User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
+      CreatedAt: 2025-03-30 07:56:59
+      HasReplies: no
+      Body: Test comment
+    - ID: dedcedbf-2b66-4e08-b46b-59b0ed86a953
+      User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
+      CreatedAt: 2025-03-30 06:05:06
+      HasReplies: no
+      Body: Test comment
+    - ID: b463d538-9b98-4a5f-8421-b2a997d81345
+      User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
+      CreatedAt: 2025-03-24 16:05:32
+      HasReplies: no
+      Body: Test comment
+    - ID: 8c85b818-fe06-47e4-ad3b-da4c7637f677
+      User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
+      CreatedAt: 2025-03-04 08:37:42
+      HasReplies: no
+      Body: Test comment
+    - ID: 4339c849-57a0-408a-a2b1-b2fa1bc9ff75
+      User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
+      CreatedAt: 2025-03-03 13:32:43
+      HasReplies: no
+      Body: Test comment
+    - ID: a49988db-2627-4f06-b01f-20cd40ddc261
+      User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
+      CreatedAt: 2025-03-03 13:32:18
+      HasReplies: no
+      Body: new test comment
+
+    Pagination:
+    Has more comments: no

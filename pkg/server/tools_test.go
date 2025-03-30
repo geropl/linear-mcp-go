@@ -2,15 +2,16 @@ package server
 
 import (
 	"context"
-	"encoding/json"
 	"flag"
 	"os"
 	"path/filepath"
 	"testing"
 
 	"github.com/geropl/linear-mcp-go/pkg/linear"
+	"github.com/geropl/linear-mcp-go/pkg/tools"
 	"github.com/google/go-cmp/cmp"
 	"github.com/mark3labs/mcp-go/mcp"
+	"gopkg.in/yaml.v3"
 )
 
 var record = flag.Bool("record", false, "Record HTTP interactions (excluding writes)")
@@ -19,6 +20,7 @@ var golden = flag.Bool("golden", false, "Update all golden files and recordings"
 
 const (
 	TEAM_NAME = "Test Team"
+	TEAM_KEY  = "TEST"
 	TEAM_ID   = "234c5451-a839-4c8f-98d9-da00973f1060"
 	ISSUE_ID  = "TEST-10"
 	// COMMENT ISSUE ID is used for testing the add_comment handler
@@ -28,8 +30,8 @@ const (
 
 // expectation defines the expected output and error for a test case
 type expectation struct {
-	Err    string `json:"err"`    // Empty string means no error expected
-	Output string `json:"output"` // Expected complete output
+	Err    string `yaml:"err"`          // Empty string means no error expected
+	Output string `yaml:"output", flow` // Expected complete output
 }
 
 func TestHandlers(t *testing.T) {
@@ -51,10 +53,78 @@ func TestHandlers(t *testing.T) {
 		// CreateIssueHandler test cases
 		{
 			handler: "create_issue",
-			name:    "Valid issue",
+			name:    "Valid issue with team",
 			args: map[string]interface{}{
-				"title":  "Test Issue",
-				"teamId": TEAM_ID,
+				"title": "Test Issue",
+				"team":  TEAM_ID,
+			},
+			write: true,
+		},
+		{
+			handler: "create_issue",
+			name:    "Valid issue with team UUID",
+			args: map[string]interface{}{
+				"title": "Test Issue with team UUID",
+				"team":  TEAM_ID,
+			},
+			write: true,
+		},
+		{
+			handler: "create_issue",
+			name:    "Valid issue with team name",
+			args: map[string]interface{}{
+				"title": "Test Issue with team name",
+				"team":  TEAM_NAME,
+			},
+			write: true,
+		},
+		{
+			handler: "create_issue",
+			name:    "Valid issue with team key",
+			args: map[string]interface{}{
+				"title": "Test Issue with team key",
+				"team":  TEAM_KEY,
+			},
+			write: true,
+		},
+		{
+			handler: "create_issue",
+			name:    "Create sub issue",
+			args: map[string]interface{}{
+				"title":       "Sub Issue",
+				"team":        TEAM_ID,
+				"parentIssue": "1c2de93f-4321-4015-bfde-ee893ef7976f", // UUID for TEST-10
+			},
+			write: true,
+		},
+		{
+			handler: "create_issue",
+			name:    "Create sub issue from identifier",
+			args: map[string]interface{}{
+				"title":       "Sub Issue",
+				"team":        TEAM_ID,
+				"parentIssue": "TEST-10",
+			},
+			write: true,
+		},
+		{
+			handler: "create_issue",
+			name:    "Create issue with labels",
+			args: map[string]interface{}{
+				"title":  "Issue with Labels",
+				"team":   TEAM_ID,
+				"labels": "team label 1",
+			},
+			write: true,
+		},
+		{
+			handler: "create_issue",
+			name:    "Create sub issue with labels",
+			args: map[string]interface{}{
+				"title":       "Sub Issue with Labels",
+				"team":        TEAM_ID,
+				"parentIssue": "1c2de93f-4321-4015-bfde-ee893ef7976f", // UUID for TEST-10
+				"labels":      "ws-label 2,Feature",
 			},
 			write: true,
 		},
@@ -62,14 +132,22 @@ func TestHandlers(t *testing.T) {
 			handler: "create_issue",
 			name:    "Missing title",
 			args: map[string]interface{}{
-				"teamId": TEAM_ID,
+				"team": TEAM_ID,
 			},
 		},
 		{
 			handler: "create_issue",
-			name:    "Missing teamId",
+			name:    "Missing team",
 			args: map[string]interface{}{
 				"title": "Test Issue",
+			},
+		},
+		{
+			handler: "create_issue",
+			name:    "Invalid team",
+			args: map[string]interface{}{
+				"title": "Test Issue",
+				"team":  "NonExistentTeam",
 			},
 		},
 
@@ -78,7 +156,7 @@ func TestHandlers(t *testing.T) {
 			handler: "update_issue",
 			name:    "Valid update",
 			args: map[string]interface{}{
-				"id":    ISSUE_ID,
+				"issue": ISSUE_ID,
 				"title": "Updated Test Issue",
 			},
 			write: true,
@@ -96,8 +174,8 @@ func TestHandlers(t *testing.T) {
 			handler: "search_issues",
 			name:    "Search by team",
 			args: map[string]interface{}{
-				"teamId": TEAM_ID,
-				"limit":  float64(5),
+				"team":  TEAM_ID,
+				"limit": float64(5),
 			},
 		},
 		{
@@ -121,8 +199,8 @@ func TestHandlers(t *testing.T) {
 			handler: "get_user_issues",
 			name:    "Specific user issues",
 			args: map[string]interface{}{
-				"userId": USER_ID,
-				"limit":  float64(5),
+				"user":  USER_ID,
+				"limit": float64(5),
 			},
 		},
 
@@ -131,20 +209,73 @@ func TestHandlers(t *testing.T) {
 			handler: "get_issue",
 			name:    "Valid issue",
 			args: map[string]interface{}{
-				"issueId": ISSUE_ID,
+				"issue": ISSUE_ID,
 			},
 		},
 		{
 			handler: "get_issue",
 			name:    "Get comment issue",
 			args: map[string]interface{}{
-				"issueId": COMMENT_ISSUE_ID,
+				"issue": COMMENT_ISSUE_ID,
 			},
 		},
 		{
 			handler: "get_issue",
-			name:    "Missing issueId",
+			name:    "Missing issue",
 			args:    map[string]interface{}{},
+		},
+		{
+			handler: "get_issue",
+			name:    "Missing issueId",
+			args: map[string]interface{}{
+				"issue": "NONEXISTENT-123",
+			},
+		},
+
+		// GetIssueCommentsHandler test cases
+		{
+			handler: "get_issue_comments",
+			name:    "Valid issue",
+			args: map[string]interface{}{
+				"issue": ISSUE_ID,
+			},
+		},
+		{
+			handler: "get_issue_comments",
+			name:    "Missing issue",
+			args:    map[string]interface{}{},
+		},
+		{
+			handler: "get_issue_comments",
+			name:    "Invalid issue",
+			args: map[string]interface{}{
+				"issue": "NONEXISTENT-123",
+			},
+		},
+		{
+			handler: "get_issue_comments",
+			name:    "With limit",
+			args: map[string]interface{}{
+				"issue": ISSUE_ID,
+				"limit": float64(3),
+			},
+		},
+		{
+			handler: "get_issue_comments",
+			name:    "With_thread_parameter",
+			args: map[string]interface{}{
+				"issue":  ISSUE_ID,
+				"thread": "ae3d62d6-3f40-4990-867b-5c97dd265a40", // ID of a comment to get replies for
+			},
+		},
+		{
+			handler: "get_issue_comments",
+			name:    "Thread_with_pagination",
+			args: map[string]interface{}{
+				"issue":  ISSUE_ID,
+				"thread": "ae3d62d6-3f40-4990-867b-5c97dd265a40", // ID of a comment to get replies for
+				"limit":  float64(2),
+			},
 		},
 
 		// AddCommentHandler test cases
@@ -153,13 +284,23 @@ func TestHandlers(t *testing.T) {
 			name:    "Valid comment",
 			write:   true,
 			args: map[string]interface{}{
-				"issueId": ISSUE_ID,
-				"body":    "Test comment",
+				"issue": ISSUE_ID,
+				"body":  "Test comment",
 			},
 		},
 		{
 			handler: "add_comment",
-			name:    "Missing issueId",
+			name:    "Reply_to_comment",
+			write:   true,
+			args: map[string]interface{}{
+				"issue":  ISSUE_ID,
+				"body":   "This is a reply to the comment",
+				"thread": "ae3d62d6-3f40-4990-867b-5c97dd265a40", // ID of the comment to reply to
+			},
+		},
+		{
+			handler: "add_comment",
+			name:    "Missing issue",
 			args: map[string]interface{}{
 				"body": "Test comment",
 			},
@@ -168,7 +309,7 @@ func TestHandlers(t *testing.T) {
 			handler: "add_comment",
 			name:    "Missing body",
 			args: map[string]interface{}{
-				"issueId": ISSUE_ID,
+				"issue": ISSUE_ID,
 			},
 		},
 	}
@@ -191,19 +332,21 @@ func TestHandlers(t *testing.T) {
 			var handler func(context.Context, mcp.CallToolRequest) (*mcp.CallToolResult, error)
 			switch tt.handler {
 			case "get_teams":
-				handler = GetTeamsHandler(client)
+				handler = tools.GetTeamsHandler(client)
 			case "create_issue":
-				handler = CreateIssueHandler(client)
+				handler = tools.CreateIssueHandler(client)
 			case "update_issue":
-				handler = UpdateIssueHandler(client)
+				handler = tools.UpdateIssueHandler(client)
 			case "search_issues":
-				handler = SearchIssuesHandler(client)
+				handler = tools.SearchIssuesHandler(client)
 			case "get_user_issues":
-				handler = GetUserIssuesHandler(client)
+				handler = tools.GetUserIssuesHandler(client)
 			case "get_issue":
-				handler = GetIssueHandler(client)
+				handler = tools.GetIssueHandler(client)
+			case "get_issue_comments":
+				handler = tools.GetIssueCommentsHandler(client)
 			case "add_comment":
-				handler = AddCommentHandler(client)
+				handler = tools.AddCommentHandler(client)
 			default:
 				t.Fatalf("Unknown handler type: %s", tt.handler)
 			}
@@ -285,7 +428,7 @@ func readGoldenFile(t *testing.T, path string) expectation {
 
 	// Parse the golden file
 	var exp expectation
-	if err := json.Unmarshal(data, &exp); err != nil {
+	if err := yaml.Unmarshal(data, &exp); err != nil {
 		t.Fatalf("Failed to parse golden file %s: %v", path, err)
 	}
 
@@ -302,8 +445,8 @@ func writeGoldenFile(t *testing.T, path string, exp expectation) {
 		t.Fatalf("Failed to create directory %s: %v", dir, err)
 	}
 
-	// Marshal the expectation
-	data, err := json.MarshalIndent(exp, "", "  ")
+	// Marshal the YAML node
+	data, err := yaml.Marshal(&exp)
 	if err != nil {
 		t.Fatalf("Failed to marshal expectation: %v", err)
 	}

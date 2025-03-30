@@ -5,6 +5,8 @@ import (
 	"os"
 
 	"github.com/geropl/linear-mcp-go/pkg/linear"
+	"github.com/geropl/linear-mcp-go/pkg/tools"
+	"github.com/mark3labs/mcp-go/mcp"
 	mcpserver "github.com/mark3labs/mcp-go/server"
 )
 
@@ -66,4 +68,39 @@ func (s *LinearMCPServer) GetMCPServer() *mcpserver.MCPServer {
 // GetLinearClient returns the Linear client
 func (s *LinearMCPServer) GetLinearClient() *linear.LinearClient {
 	return s.linearClient
+}
+
+// GetReadOnlyToolNames returns the names of all read-only tools
+func GetReadOnlyToolNames() map[string]bool {
+	return map[string]bool{
+		"linear_search_issues":     true,
+		"linear_get_user_issues":   true,
+		"linear_get_issue":         true,
+		"linear_get_issue_comments": true,
+		"linear_get_teams":         true,
+	}
+}
+
+// RegisterTools registers all Linear tools with the MCP server
+func RegisterTools(s *mcpserver.MCPServer, linearClient *linear.LinearClient, writeAccess bool) {
+	// Register tools, based on writeAccess
+	addTool := func(tool mcp.Tool, handler mcpserver.ToolHandlerFunc) {
+		if !writeAccess {
+			if readOnly := GetReadOnlyToolNames()[tool.Name]; !readOnly {
+				// Skip registering write tools if write access is disabled
+				return
+			}
+		}
+		s.AddTool(tool, handler)
+	}
+
+	// Register each tool
+	addTool(tools.SearchIssuesTool, tools.SearchIssuesHandler(linearClient))
+	addTool(tools.GetUserIssuesTool, tools.GetUserIssuesHandler(linearClient))
+	addTool(tools.GetIssueTool, tools.GetIssueHandler(linearClient))
+	addTool(tools.GetIssueCommentsTool, tools.GetIssueCommentsHandler(linearClient))
+	addTool(tools.GetTeamsTool, tools.GetTeamsHandler(linearClient))
+	addTool(tools.CreateIssueTool, tools.CreateIssueHandler(linearClient))
+	addTool(tools.UpdateIssueTool, tools.UpdateIssueHandler(linearClient))
+	addTool(tools.AddCommentTool, tools.AddCommentHandler(linearClient))
 }

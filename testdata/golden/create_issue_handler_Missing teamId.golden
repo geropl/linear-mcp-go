@@ -1,4 +1,2 @@
-{
-  "err": "teamId must be a non-empty string",
-  "output": ""
-}
+err: 'teamId must be a non-empty string'
+output: ""

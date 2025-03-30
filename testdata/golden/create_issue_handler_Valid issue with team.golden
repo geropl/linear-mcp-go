@@ -1,0 +1,5 @@
+err: ""
+output: |-
+    Created Issue: TEST-56 (UUID: 3f654536-ab93-47ca-b8b8-7d7763cf7451)
+    Title: Test Issue
+    URL: https://linear.app/linear-mcp-go-test/issue/TEST-56/test-issue

@@ -8,6 +8,8 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -134,31 +136,6 @@ func (c *LinearClient) GetIssue(issueID string) (*Issue, error) {
 					name
 					key
 				}
-				comments(first: 100) {
-					nodes {
-						id
-						body
-						createdAt
-						parent {
-							id
-						}
-						user {
-							id
-							name
-						}
-						children(first: 100) {
-							nodes {
-								id
-								body
-								createdAt
-								user {
-									id
-									name
-								}
-							}
-						}
-					}
-				}
 				relations(first: 20) {
 					nodes {
 						id
@@ -227,6 +204,228 @@ func (c *LinearClient) GetIssue(issueID string) (*Issue, error) {
 	return &issue, nil
 }
 
+// GetIssueComments gets paginated comments for an issue
+func (c *LinearClient) GetIssueComments(input GetIssueCommentsInput) (*PaginatedCommentConnection, error) {
+	query := `
+		query GetIssueComments($issueId: String!, $parentId: ID, $first: Int!, $after: String) {
+			issue(id: $issueId) {
+				comments(
+					first: $first,
+					after: $after,
+					filter: { parent: { id: { eq: $parentId } } }
+				) {
+					nodes {
+						id
+						body
+						createdAt
+						user {
+							id
+							name
+						}
+						parent {
+							id
+						}
+						children(first: 1) {
+							nodes {
+								id
+							}
+						}
+					}
+					pageInfo {
+						hasNextPage
+						endCursor
+					}
+				}
+			}
+		}
+	`
+
+	// Set default limit if not provided
+	limit := 10
+	if input.Limit > 0 {
+		limit = input.Limit
+	}
+
+	variables := map[string]interface{}{
+		"issueId": input.IssueID,
+		"first":   limit,
+	}
+
+	// Add optional parameters if provided
+	if input.ParentID != "" {
+		variables["parentId"] = input.ParentID
+	}
+
+	if input.AfterCursor != "" {
+		variables["after"] = input.AfterCursor
+	}
+
+	resp, err := c.executeGraphQL(query, variables)
+	if err != nil {
+		return nil, err
+	}
+
+	// Extract the issue from the response
+	issueData, ok := resp.Data["issue"].(map[string]interface{})
+	if !ok || issueData == nil {
+		return nil, fmt.Errorf("issue %s not found", input.IssueID)
+	}
+
+	// Extract the comments
+	commentsData, ok := issueData["comments"].(map[string]interface{})
+	if !ok || commentsData == nil {
+		return &PaginatedCommentConnection{
+			Nodes:      []Comment{},
+			PageInfo:   PageInfo{HasNextPage: false},
+		}, nil
+	}
+
+	// Parse the comments data
+	var paginatedComments PaginatedCommentConnection
+	commentsBytes, err := json.Marshal(commentsData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal comments data: %w", err)
+	}
+
+	if err := json.Unmarshal(commentsBytes, &paginatedComments); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal comments data: %w", err)
+	}
+
+	return &paginatedComments, nil
+}
+
+// GetIssueByIdentifier gets an issue by its identifier (e.g., "TEAM-123")
+func (c *LinearClient) GetIssueByIdentifier(identifier string) (*Issue, error) {
+	// Split the identifier into team key and number parts
+	parts := strings.Split(identifier, "-")
+	if len(parts) != 2 {
+		return nil, fmt.Errorf("invalid issue identifier format: %s (expected format: TEAM-123)", identifier)
+	}
+
+	teamKey := parts[0]
+	numberStr := parts[1]
+
+	// Convert the number part to an integer
+	number, err := strconv.Atoi(numberStr)
+	if err != nil {
+		return nil, fmt.Errorf("invalid issue number in identifier: %s", identifier)
+	}
+
+	// Use the issues query with filters for team key and number
+	query := `
+		query GetIssueByIdentifier($teamKey: String!, $number: Float!) {
+			issues(filter: { team: { key: { eq: $teamKey } }, number: { eq: $number } }, first: 1) {
+				nodes {
+					id
+					identifier
+					title
+				}
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"teamKey": teamKey,
+		"number":  float64(number),
+	}
+
+	resp, err := c.executeGraphQL(query, variables)
+	if err != nil {
+		return nil, err
+	}
+
+	// Extract the issues from the response
+	issuesData, ok := resp.Data["issues"].(map[string]interface{})
+	if !ok || issuesData == nil {
+		return nil, fmt.Errorf("issue search failed for identifier %s", identifier)
+	}
+
+	nodesData, ok := issuesData["nodes"].([]interface{})
+	if !ok || nodesData == nil || len(nodesData) == 0 {
+		return nil, fmt.Errorf("no issue found with identifier %s", identifier)
+	}
+
+	// Get the first issue
+	issueData, ok := nodesData[0].(map[string]interface{})
+	if !ok || issueData == nil {
+		return nil, fmt.Errorf("invalid issue data for identifier %s", identifier)
+	}
+
+	// Parse the issue data
+	var issue Issue
+	issueBytes, err := json.Marshal(issueData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal issue data: %w", err)
+	}
+
+	if err := json.Unmarshal(issueBytes, &issue); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal issue data: %w", err)
+	}
+
+	return &issue, nil
+}
+
+// GetLabelsByName gets labels by name for a team
+func (c *LinearClient) GetLabelsByName(teamID string, labelNames []string) ([]Label, error) {
+	query := `
+		query GetLabelsByName($teamId: String!, $names: [String!]!) {
+			team(id: $teamId) {
+				labels(filter: { name: { in: $names } }) {
+					nodes {
+						id
+						name
+					}
+				}
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"teamId": teamID,
+		"names":  labelNames,
+	}
+
+	resp, err := c.executeGraphQL(query, variables)
+	if err != nil {
+		return nil, err
+	}
+
+	// Extract the team from the response
+	teamData, ok := resp.Data["team"].(map[string]interface{})
+	if !ok || teamData == nil {
+		return nil, fmt.Errorf("team %s not found", teamID)
+	}
+
+	// Extract the labels
+	labelsData, ok := teamData["labels"].(map[string]interface{})
+	if !ok || labelsData == nil {
+		return []Label{}, nil
+	}
+
+	nodesData, ok := labelsData["nodes"].([]interface{})
+	if !ok || nodesData == nil {
+		return []Label{}, nil
+	}
+
+	// Parse the labels data
+	labels := make([]Label, 0, len(nodesData))
+	for _, nodeData := range nodesData {
+		labelData, ok := nodeData.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		label := Label{
+			ID:   getStringValue(labelData, "id"),
+			Name: getStringValue(labelData, "name"),
+		}
+
+		labels = append(labels, label)
+	}
+
+	return labels, nil
+}
+
 // CreateIssue creates a new issue
 func (c *LinearClient) CreateIssue(input CreateIssueInput) (*Issue, error) {
 	query := `
@@ -251,6 +450,12 @@ func (c *LinearClient) CreateIssue(input CreateIssueInput) (*Issue, error) {
 						name
 						key
 					}
+					labels {
+						nodes {
+							id
+							name
+						}
+					}
 				}
 			}
 		}
@@ -271,6 +476,14 @@ func (c *LinearClient) CreateIssue(input CreateIssueInput) (*Issue, error) {
 
 	if input.Status != "" {
 		variables["input"].(map[string]interface{})["stateId"] = input.Status
+	}
+
+	if input.ParentID != nil && *input.ParentID != "" {
+		variables["input"].(map[string]interface{})["parentId"] = *input.ParentID
+	}
+
+	if len(input.LabelIDs) > 0 {
+		variables["input"].(map[string]interface{})["labelIds"] = input.LabelIDs
 	}
 
 	resp, err := c.executeGraphQL(query, variables)
@@ -677,8 +890,8 @@ func (c *LinearClient) AddComment(input AddCommentInput) (*Comment, *Issue, erro
 		commentInput["createAsUser"] = input.CreateAsUser
 	}
 
-	if input.DisplayIconURL != "" {
-		commentInput["displayIconUrl"] = input.DisplayIconURL
+	if input.ParentID != "" {
+		commentInput["parentId"] = input.ParentID
 	}
 
 	variables := map[string]interface{}{

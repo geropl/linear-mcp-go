@@ -1,0 +1,5 @@
+err: ""
+output: |-
+    Created Issue: TEST-58 (UUID: 0401bdc5-ecd9-4c84-82eb-601544c82415)
+    Title: Test Issue with team name
+    URL: https://linear.app/linear-mcp-go-test/issue/TEST-58/test-issue-with-team-name

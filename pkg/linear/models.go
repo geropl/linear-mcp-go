@@ -15,7 +15,7 @@ type Issue struct {
 	URL             string                   `json:"url"`
 	CreatedAt       time.Time                `json:"createdAt"`
 	UpdatedAt       time.Time                `json:"updatedAt"`
-	Labels          []Label                  `json:"labels,omitempty"`
+	Labels          *LabelConnection         `json:"labels,omitempty"`
 	State           *State                   `json:"state,omitempty"`
 	Estimate        *float64                 `json:"estimate,omitempty"`
 	Comments        *CommentConnection       `json:"comments,omitempty"`
@@ -45,6 +45,11 @@ type State struct {
 	Name string `json:"name"`
 }
 
+// LabelConnection represents a connection of labels
+type LabelConnection struct {
+	Nodes []Label `json:"nodes"`
+}
+
 // Label represents a Linear issue label
 type Label struct {
 	ID   string `json:"id"`
@@ -56,15 +61,27 @@ type CommentConnection struct {
 	Nodes []Comment `json:"nodes"`
 }
 
+// PageInfo represents pagination information
+type PageInfo struct {
+	HasNextPage bool   `json:"hasNextPage"`
+	EndCursor   string `json:"endCursor"`
+}
+
+// PaginatedCommentConnection represents a paginated connection of comments
+type PaginatedCommentConnection struct {
+	Nodes      []Comment `json:"nodes"`
+	PageInfo   PageInfo  `json:"pageInfo"`
+}
+
 // Comment represents a comment on a Linear issue
 type Comment struct {
-	ID        string            `json:"id"`
-	Body      string            `json:"body"`
-	User      *User             `json:"user,omitempty"`
-	CreatedAt time.Time         `json:"createdAt"`
-	URL       string            `json:"url,omitempty"`
-	Parent    *Comment          `json:"parent,omitempty"`
-	Children  *CommentConnection `json:"children,omitempty"`
+	ID         string            `json:"id"`
+	Body       string            `json:"body"`
+	User       *User             `json:"user,omitempty"`
+	CreatedAt  time.Time         `json:"createdAt"`
+	URL        string            `json:"url,omitempty"`
+	Parent     *Comment          `json:"parent,omitempty"`
+	Children   *CommentConnection `json:"children,omitempty"`
 }
 
 // IssueRelationConnection represents a connection of issue relations
@@ -127,11 +144,13 @@ type APIMetrics struct {
 
 // CreateIssueInput represents input for creating an issue
 type CreateIssueInput struct {
-	Title       string  `json:"title"`
-	TeamID      string  `json:"teamId"`
-	Description string  `json:"description,omitempty"`
-	Priority    *int    `json:"priority,omitempty"`
-	Status      string  `json:"status,omitempty"`
+	Title       string   `json:"title"`
+	TeamID      string   `json:"teamId"`
+	Description string   `json:"description,omitempty"`
+	Priority    *int     `json:"priority,omitempty"`
+	Status      string   `json:"status,omitempty"`
+	ParentID    *string  `json:"parentId,omitempty"`
+	LabelIDs    []string `json:"labelIds,omitempty"`
 }
 
 // UpdateIssueInput represents input for updating an issue
@@ -163,12 +182,20 @@ type GetUserIssuesInput struct {
 	Limit           int    `json:"limit,omitempty"`
 }
 
+// GetIssueCommentsInput represents input for getting issue comments
+type GetIssueCommentsInput struct {
+	IssueID    string `json:"issueId"`
+	ParentID   string `json:"parentId,omitempty"`
+	Limit      int    `json:"limit,omitempty"`
+	AfterCursor string `json:"afterCursor,omitempty"`
+}
+
 // AddCommentInput represents input for adding a comment
 type AddCommentInput struct {
-	IssueID        string `json:"issueId"`
-	Body           string `json:"body"`
-	CreateAsUser   string `json:"createAsUser,omitempty"`
-	DisplayIconURL string `json:"displayIconUrl,omitempty"`
+	IssueID      string `json:"issueId"`
+	Body         string `json:"body"`
+	CreateAsUser string `json:"createAsUser,omitempty"`
+	ParentID     string `json:"parentId,omitempty"`
 }
 
 // GraphQLRequest represents a GraphQL request
