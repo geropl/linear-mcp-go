@@ -260,6 +260,23 @@ func TestHandlers(t *testing.T) {
 				"limit": float64(3),
 			},
 		},
+		{
+			handler: "get_issue_comments",
+			name:    "With_thread_parameter",
+			args: map[string]interface{}{
+				"issue":  ISSUE_ID,
+				"thread": "ae3d62d6-3f40-4990-867b-5c97dd265a40", // ID of a comment to get replies for
+			},
+		},
+		{
+			handler: "get_issue_comments",
+			name:    "Thread_with_pagination",
+			args: map[string]interface{}{
+				"issue":  ISSUE_ID,
+				"thread": "ae3d62d6-3f40-4990-867b-5c97dd265a40", // ID of a comment to get replies for
+				"limit":  float64(2),
+			},
+		},
 
 		// AddCommentHandler test cases
 		{
@@ -269,6 +286,16 @@ func TestHandlers(t *testing.T) {
 			args: map[string]interface{}{
 				"issue": ISSUE_ID,
 				"body":  "Test comment",
+			},
+		},
+		{
+			handler: "add_comment",
+			name:    "Reply_to_comment",
+			write:   true,
+			args: map[string]interface{}{
+				"issue":  ISSUE_ID,
+				"body":   "This is a reply to the comment",
+				"thread": "ae3d62d6-3f40-4990-867b-5c97dd265a40", // ID of the comment to reply to
 			},
 		},
 		{

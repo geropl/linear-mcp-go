@@ -1,0 +1,14 @@
+err: ""
+output: |
+    Issue: TEST-10 (UUID: 1c2de93f-4321-4015-bfde-ee893ef7976f)
+    Thread: ae3d62d6-3f40-4990-867b-5c97dd265a40 (replies to comment)
+
+    Comments:
+    - ID: 7539ff3c-1c61-4ac3-9203-bb51ec376c7e
+      User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
+      CreatedAt: 2025-03-30 13:41:41
+      HasReplies: no
+      Body: This is a reply to the comment
+
+    Pagination:
+    Has more comments: no

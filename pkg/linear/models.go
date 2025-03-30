@@ -195,6 +195,7 @@ type AddCommentInput struct {
 	IssueID      string `json:"issueId"`
 	Body         string `json:"body"`
 	CreateAsUser string `json:"createAsUser,omitempty"`
+	ParentID     string `json:"parentId,omitempty"`
 }
 
 // GraphQLRequest represents a GraphQL request

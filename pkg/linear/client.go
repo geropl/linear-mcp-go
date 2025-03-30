@@ -890,6 +890,10 @@ func (c *LinearClient) AddComment(input AddCommentInput) (*Comment, *Issue, erro
 		commentInput["createAsUser"] = input.CreateAsUser
 	}
 
+	if input.ParentID != "" {
+		commentInput["parentId"] = input.ParentID
+	}
+
 	variables := map[string]interface{}{
 		"input": commentInput,
 	}

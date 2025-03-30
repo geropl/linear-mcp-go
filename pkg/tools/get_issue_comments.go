@@ -12,7 +12,7 @@ import (
 var GetIssueCommentsTool = mcp.NewTool("linear_get_issue_comments",
 	mcp.WithDescription("Retrieves paginated comments for a Linear issue. Supports navigating through comment threads and pagination."),
 	mcp.WithString("issue", mcp.Required(), mcp.Description("ID or identifier (e.g., 'TEAM-123') of the issue to retrieve comments for")),
-	mcp.WithString("thread", mcp.Description("Optional UUID of the parent comment to retrieve replies for. If not provided, returns top-level comments.")),
+	mcp.WithString("thread", mcp.Description("Optional UUID of the parent comment / thread to retrieve replies for. If not provided, returns top-level comments.")),
 	mcp.WithNumber("limit", mcp.Description("Maximum number of comments to return (default: 10)")),
 	mcp.WithString("after", mcp.Description("Cursor for pagination, to get comments after this point")),
 )

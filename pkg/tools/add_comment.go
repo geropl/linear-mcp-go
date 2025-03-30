@@ -13,6 +13,7 @@ var AddCommentTool = mcp.NewTool("linear_add_comment",
 	mcp.WithDescription("Adds a comment to a Linear issue."),
 	mcp.WithString("issue", mcp.Required(), mcp.Description("ID or identifier (e.g., 'TEAM-123') of the issue to comment on")),
 	mcp.WithString("body", mcp.Required(), mcp.Description("Comment text in markdown format")),
+	mcp.WithString("thread", mcp.Description("Optional ID of a parent comment / thread to reply to")),
 	mcp.WithString("createAsUser", mcp.Description("Optional custom username to show for the comment")),
 )
 
@@ -45,11 +46,17 @@ func AddCommentHandler(linearClient *linear.LinearClient) func(ctx context.Conte
 			createAsUser = user
 		}
 
+		parentID := ""
+		if parent, ok := args["thread"].(string); ok {
+			parentID = parent
+		}
+
 		// Add the comment
 		input := linear.AddCommentInput{
 			IssueID:      issueID,
 			Body:         body,
 			CreateAsUser: createAsUser,
+			ParentID:     parentID,
 		}
 
 		comment, issue, err := linearClient.AddComment(input)
@@ -59,6 +66,9 @@ func AddCommentHandler(linearClient *linear.LinearClient) func(ctx context.Conte
 
 		// Return the result
 		resultText := fmt.Sprintf("Added comment to %s\n", formatIssueIdentifier(issue))
+		if parentID != "" {
+			resultText += fmt.Sprintf("Thread: %s\n", parentID)
+		}
 		resultText += fmt.Sprintf("Comment: %s\n", formatCommentIdentifier(comment))
 		resultText += fmt.Sprintf("URL: %s", comment.URL)
 		return mcp.NewToolResultText(resultText), nil

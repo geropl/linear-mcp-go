@@ -1,0 +1,6 @@
+err: ""
+output: |-
+    Added comment to Issue: TEST-10 (UUID: 1c2de93f-4321-4015-bfde-ee893ef7976f)
+    Thread: ae3d62d6-3f40-4990-867b-5c97dd265a40
+    Comment: 272b238c-8065-4b61-975c-903b2fb9825a
+    URL: https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue#comment-272b238c
