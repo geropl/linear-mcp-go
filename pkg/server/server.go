@@ -44,6 +44,9 @@ func NewLinearMCPServer(writeAccess bool) (*LinearMCPServer, error) {
 
 	// Register tools
 	RegisterTools(mcpServer, linearClient, writeAccess)
+	
+	// Register resources
+	RegisterResources(mcpServer, linearClient)
 
 	return server, nil
 }
