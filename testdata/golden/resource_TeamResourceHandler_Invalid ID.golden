@@ -1,0 +1,2 @@
+err: 'failed to resolve team identifier: no team found with identifier ''invalid-identifier-does-not-exist'''
+output: ""

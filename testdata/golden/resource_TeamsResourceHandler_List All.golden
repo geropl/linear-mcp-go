@@ -1,0 +1,9 @@
+err: ""
+output: |-
+    [
+      {
+        "uri": "linear://team/234c5451-a839-4c8f-98d9-da00973f1060",
+        "mimeType": "application/json",
+        "text": "{\"id\":\"234c5451-a839-4c8f-98d9-da00973f1060\",\"name\":\"Test Team\",\"key\":\"TEST\"}"
+      }
+    ]
