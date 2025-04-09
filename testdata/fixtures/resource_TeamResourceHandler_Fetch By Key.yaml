@@ -1,0 +1,99 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 310
+        transfer_encoding: []
+        trailer: {}
+        host: api.linear.app
+        remote_addr: ""
+        request_uri: ""
+        body: '{"query":"\n\t\tquery GetTeams($filter: TeamFilter) {\n\t\t\tteams(filter: $filter) {\n\t\t\t\tnodes {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\tkey\n\t\t\t\t\tdescription\n\t\t\t\t\tstates {\n\t\t\t\t\t\tnodes {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tname\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t"}'
+        form: {}
+        headers:
+            Content-Type:
+                - application/json
+        url: https://api.linear.app/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: |
+            {"data":{"teams":{"nodes":[{"id":"234c5451-a839-4c8f-98d9-da00973f1060","name":"Test Team","key":"TEST","description":null,"states":{"nodes":[{"id":"d4caa373-1a02-431c-bd3f-1bbb67318617","name":"Done"},{"id":"cffb8999-f10e-447d-9672-8faf5b06ac67","name":"Todo"},{"id":"42f7ad15-fca3-4d11-b349-0e3c1385c256","name":"Backlog"},{"id":"2d26ea57-c1f7-43ae-ba30-3f828ac8edb6","name":"Canceled"},{"id":"2a939ee1-65a1-445c-8e5d-18239e5f64bc","name":"Duplicate"},{"id":"12bb7f66-d9be-4faa-800f-49b8e3b38a3f","name":"In Progress"}]}}]}}}
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=86400
+            Cache-Control:
+                - no-store
+            Cf-Cache-Status:
+                - DYNAMIC
+            Content-Type:
+                - application/json; charset=utf-8
+            Etag:
+                - W/"210-+ISnhlSrm6Gd7LWWbqn3eOeSXhw"
+            Server:
+                - cloudflare
+            Vary:
+                - Accept-Encoding
+            Via:
+                - 1.1 google
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 310
+        transfer_encoding: []
+        trailer: {}
+        host: api.linear.app
+        remote_addr: ""
+        request_uri: ""
+        body: '{"query":"\n\t\tquery GetTeams($filter: TeamFilter) {\n\t\t\tteams(filter: $filter) {\n\t\t\t\tnodes {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\tkey\n\t\t\t\t\tdescription\n\t\t\t\t\tstates {\n\t\t\t\t\t\tnodes {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tname\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t"}'
+        form: {}
+        headers:
+            Content-Type:
+                - application/json
+        url: https://api.linear.app/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: |
+            {"data":{"teams":{"nodes":[{"id":"234c5451-a839-4c8f-98d9-da00973f1060","name":"Test Team","key":"TEST","description":null,"states":{"nodes":[{"id":"d4caa373-1a02-431c-bd3f-1bbb67318617","name":"Done"},{"id":"cffb8999-f10e-447d-9672-8faf5b06ac67","name":"Todo"},{"id":"42f7ad15-fca3-4d11-b349-0e3c1385c256","name":"Backlog"},{"id":"2d26ea57-c1f7-43ae-ba30-3f828ac8edb6","name":"Canceled"},{"id":"2a939ee1-65a1-445c-8e5d-18239e5f64bc","name":"Duplicate"},{"id":"12bb7f66-d9be-4faa-800f-49b8e3b38a3f","name":"In Progress"}]}}]}}}
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=86400
+            Cache-Control:
+                - no-store
+            Cf-Cache-Status:
+                - DYNAMIC
+            Content-Type:
+                - application/json; charset=utf-8
+            Etag:
+                - W/"210-+ISnhlSrm6Gd7LWWbqn3eOeSXhw"
+            Server:
+                - cloudflare
+            Vary:
+                - Accept-Encoding
+            Via:
+                - 1.1 google
+        status: 200 OK
+        code: 200
+        duration: 0s
