@@ -1,4 +1,5 @@
 # Linear MCP Server
+[![smithery badge](https://smithery.ai/badge/@geropl/linear-mcp-go)](https://smithery.ai/server/@geropl/linear-mcp-go)
 
 A Model Context Protocol (MCP) server for Linear, written in Go. This server provides tools for interacting with the Linear API through the MCP protocol.
 
@@ -16,6 +17,14 @@ A Model Context Protocol (MCP) server for Linear, written in Go. This server pro
 - Linear API key
 
 ## Installation
+
+### Installing via Smithery
+
+To install Linear MCP Server for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@geropl/linear-mcp-go):
+
+```bash
+npx -y @smithery/cli install @geropl/linear-mcp-go --client claude
+```
 
 ### From Releases
 
