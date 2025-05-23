@@ -22,10 +22,15 @@ type fileExpectation struct {
 	mustExist bool
 }
 
+type preExistingFile struct {
+	path    string
+	content string
+}
+
 type expectations struct {
-	files     map[string]fileExpectation
-	errors    []string
-	exitCode  int
+	files    map[string]fileExpectation
+	errors   []string
+	exitCode int
 }
 
 // TestSetupCommand tests the setup command with various combinations of parameters
@@ -39,11 +44,12 @@ func TestSetupCommand(t *testing.T) {
 
 	// Define test cases
 	testCases := []struct {
-		name        string
-		toolParam   string
-		writeAccess bool
-		autoApprove string
-		expect      expectations
+		name             string
+		toolParam        string
+		writeAccess      bool
+		autoApprove      string
+		preExistingFiles map[string]preExistingFile
+		expect           expectations
 	}{
 		{
 			name:        "Cline Only",
@@ -58,7 +64,11 @@ func TestSetupCommand(t *testing.T) {
 						content: `{
 							"mcpServers": {
 								"linear": {
+									"command": "home/mcp-servers/linear-mcp-go",
 									"args": ["serve", "--write-access=true"],
+									"env": {
+										"LINEAR_API_KEY": "test-api-key"
+									},
 									"autoApprove": ["linear_search_issues", "linear_get_user_issues", "linear_get_issue", "linear_get_teams", "linear_get_issue_comments"],
 									"disabled": false
 								}
@@ -82,7 +92,11 @@ func TestSetupCommand(t *testing.T) {
 						content: `{
 							"mcpServers": {
 								"linear": {
+									"command": "home/mcp-servers/linear-mcp-go",
 									"args": ["serve", "--write-access=true"],
+									"env": {
+										"LINEAR_API_KEY": "test-api-key"
+									},
 									"autoApprove": ["linear_search_issues", "linear_get_user_issues", "linear_get_issue", "linear_get_teams", "linear_get_issue_comments"],
 									"disabled": false
 								}
@@ -106,7 +120,11 @@ func TestSetupCommand(t *testing.T) {
 						content: `{
 							"mcpServers": {
 								"linear": {
+									"command": "home/mcp-servers/linear-mcp-go",
 									"args": ["serve", "--write-access=true"],
+									"env": {
+										"LINEAR_API_KEY": "test-api-key"
+									},
 									"autoApprove": ["linear_search_issues", "linear_get_user_issues", "linear_get_issue", "linear_get_teams", "linear_get_issue_comments"],
 									"disabled": false
 								}
@@ -119,7 +137,11 @@ func TestSetupCommand(t *testing.T) {
 						content: `{
 							"mcpServers": {
 								"linear": {
+									"command": "home/mcp-servers/linear-mcp-go",
 									"args": ["serve", "--write-access=true"],
+									"env": {
+										"LINEAR_API_KEY": "test-api-key"
+									},
 									"autoApprove": ["linear_search_issues", "linear_get_user_issues", "linear_get_issue", "linear_get_teams", "linear_get_issue_comments"],
 									"disabled": false
 								}
@@ -143,7 +165,11 @@ func TestSetupCommand(t *testing.T) {
 						content: `{
 							"mcpServers": {
 								"linear": {
+									"command": "home/mcp-servers/linear-mcp-go",
 									"args": ["serve", "--write-access=true"],
+									"env": {
+										"LINEAR_API_KEY": "test-api-key"
+									},
 									"autoApprove": ["linear_search_issues", "linear_get_user_issues", "linear_get_issue", "linear_get_teams", "linear_get_issue_comments"],
 									"disabled": false
 								}
@@ -153,6 +179,152 @@ func TestSetupCommand(t *testing.T) {
 				},
 				errors:   []string{"Unsupported tool: invalid-tool"},
 				exitCode: 1,
+			},
+		},
+		{
+			name:        "Preserve Existing Arrays in Config",
+			toolParam:   "cline",
+			writeAccess: true,
+			autoApprove: "allow-read-only",
+			preExistingFiles: map[string]preExistingFile{
+				"cline": {
+					path: "home/.vscode-server/data/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json",
+					content: `{
+						"mcpServers": {
+							"existing-server": {
+								"command": "/path/to/existing/server",
+								"args": ["serve", "--option1", "--option2"],
+								"autoApprove": ["tool1", "tool2", "tool3"],
+								"env": {
+									"API_KEY": "existing-key"
+								},
+								"disabled": false,
+								"customArray": ["item1", "item2"],
+								"nestedObject": {
+									"arrayField": ["nested1", "nested2"]
+								}
+							}
+						},
+						"otherTopLevelArray": ["value1", "value2"],
+						"otherConfig": {
+							"someArray": [1, 2, 3]
+						}
+					}`,
+				},
+			},
+			expect: expectations{
+				files: map[string]fileExpectation{
+					"cline": {
+						path:      "home/.vscode-server/data/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json",
+						mustExist: true,
+						content: `{
+							"mcpServers": {
+								"existing-server": {
+									"command": "/path/to/existing/server",
+									"args": ["serve", "--option1", "--option2"],
+									"autoApprove": ["tool1", "tool2", "tool3"],
+									"env": {
+										"API_KEY": "existing-key"
+									},
+									"disabled": false,
+									"customArray": ["item1", "item2"],
+									"nestedObject": {
+										"arrayField": ["nested1", "nested2"]
+									}
+								},
+								"linear": {
+									"command": "home/mcp-servers/linear-mcp-go",
+									"args": ["serve", "--write-access=true"],
+									"env": {
+										"LINEAR_API_KEY": "test-api-key"
+									},
+									"autoApprove": ["linear_search_issues", "linear_get_user_issues", "linear_get_issue", "linear_get_teams", "linear_get_issue_comments"],
+									"disabled": false
+								}
+							},
+							"otherTopLevelArray": ["value1", "value2"],
+							"otherConfig": {
+								"someArray": [1, 2, 3]
+							}
+						}`,
+					},
+				},
+				exitCode: 0,
+			},
+		},
+		{
+			name:        "Complex Array Preservation Test",
+			toolParam:   "cline",
+			writeAccess: false,
+			autoApprove: "linear_get_issue,linear_search_issues",
+			preExistingFiles: map[string]preExistingFile{
+				"cline": {
+					path: "home/.vscode-server/data/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json",
+					content: `{
+						"mcpServers": {
+							"github": {
+								"command": "npx",
+								"args": ["-y", "@modelcontextprotocol/server-github"],
+								"env": {
+									"GITHUB_PERSONAL_ACCESS_TOKEN": "github_token"
+								},
+								"autoApprove": ["search_repositories", "get_file_contents"],
+								"disabled": false
+							},
+							"filesystem": {
+								"command": "npx",
+								"args": ["-y", "@modelcontextprotocol/server-filesystem", "/workspace"],
+								"autoApprove": [],
+								"disabled": false
+							}
+						},
+						"globalSettings": {
+							"enabledFeatures": ["autocomplete", "syntax-highlighting"],
+							"debugModes": ["verbose", "trace"]
+						}
+					}`,
+				},
+			},
+			expect: expectations{
+				files: map[string]fileExpectation{
+					"cline": {
+						path:      "home/.vscode-server/data/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json",
+						mustExist: true,
+						content: `{
+							"mcpServers": {
+								"github": {
+									"command": "npx",
+									"args": ["-y", "@modelcontextprotocol/server-github"],
+									"env": {
+										"GITHUB_PERSONAL_ACCESS_TOKEN": "github_token"
+									},
+									"autoApprove": ["search_repositories", "get_file_contents"],
+									"disabled": false
+								},
+								"filesystem": {
+									"command": "npx",
+									"args": ["-y", "@modelcontextprotocol/server-filesystem", "/workspace"],
+									"autoApprove": [],
+									"disabled": false
+								},
+								"linear": {
+									"command": "home/mcp-servers/linear-mcp-go",
+									"args": ["serve"],
+									"env": {
+										"LINEAR_API_KEY": "test-api-key"
+									},
+									"autoApprove": ["linear_get_issue", "linear_search_issues"],
+									"disabled": false
+								}
+							},
+							"globalSettings": {
+								"enabledFeatures": ["autocomplete", "syntax-highlighting"],
+								"debugModes": ["verbose", "trace"]
+							}
+						}`,
+					},
+				},
+				exitCode: 0,
 			},
 		},
 	}
@@ -188,6 +360,17 @@ func TestSetupCommand(t *testing.T) {
 			oldApiKey := os.Getenv("LINEAR_API_KEY")
 			os.Setenv("LINEAR_API_KEY", "test-api-key")
 			defer os.Setenv("LINEAR_API_KEY", oldApiKey)
+
+			// Create pre-existing files if specified
+			for _, preFile := range tc.preExistingFiles {
+				fullPath := filepath.Join(rootDir, preFile.path)
+				if err := os.MkdirAll(filepath.Dir(fullPath), 0755); err != nil {
+					t.Fatalf("Failed to create directory for pre-existing file %s: %v", fullPath, err)
+				}
+				if err := os.WriteFile(fullPath, []byte(preFile.content), 0644); err != nil {
+					t.Fatalf("Failed to create pre-existing file %s: %v", fullPath, err)
+				}
+			}
 
 			// Build the command
 			args := []string{"setup", "--tool=" + tc.toolParam}
@@ -257,19 +440,19 @@ func verifyFileExpectations(t *testing.T, rootDir string, fileExpects map[string
 
 			// Parse both expected and actual content as JSON for comparison
 			var expectedJSON, actualJSON map[string]interface{}
-			
+
 			if err := json.Unmarshal([]byte(expect.content), &expectedJSON); err != nil {
 				t.Fatalf("Failed to parse expected JSON for %s: %v", tool, err)
 			}
-			
+
 			if err := json.Unmarshal(actualContent, &actualJSON); err != nil {
 				t.Fatalf("Failed to parse actual JSON in file %s: %v", filePath, err)
 			}
-			
+
 			// Process the JSON objects to make them comparable
 			normalizeJSON(expectedJSON)
 			normalizeJSON(actualJSON)
-			
+
 			// Compare the JSON objects
 			if diff := cmp.Diff(expectedJSON, actualJSON); diff != "" {
 				t.Errorf("File content mismatch for %s (-want +got):\n%s", tool, diff)
@@ -281,34 +464,71 @@ func verifyFileExpectations(t *testing.T, rootDir string, fileExpects map[string
 // normalizeJSON processes a JSON object to make it comparable
 // by removing fields that may vary and sorting arrays
 func normalizeJSON(jsonObj map[string]interface{}) {
-	if mcpServers, ok := jsonObj["mcpServers"].(map[string]interface{}); ok {
-		if linear, ok := mcpServers["linear"].(map[string]interface{}); ok {
-			// Remove the command field since it contains the full path
-			delete(linear, "command")
-			
-			// Remove the env field since it contains the API key
-			delete(linear, "env")
-			
-			// Sort the autoApprove array
-			if autoApprove, ok := linear["autoApprove"].([]interface{}); ok {
-				// Convert to strings and sort
-				strSlice := make([]string, len(autoApprove))
-				for i, v := range autoApprove {
-					strSlice[i] = v.(string)
+	normalizeJSONRecursive(jsonObj)
+}
+
+// normalizeJSONRecursive recursively processes JSON objects to normalize them for comparison
+func normalizeJSONRecursive(obj interface{}) {
+	switch v := obj.(type) {
+	case map[string]interface{}:
+		// Handle mcpServers specially
+		if mcpServers, ok := v["mcpServers"].(map[string]interface{}); ok {
+			for _, serverConfig := range mcpServers {
+				if serverMap, ok := serverConfig.(map[string]interface{}); ok {
+					// Normalize the command field by stripping temporary directory prefix
+					if command, ok := serverMap["command"].(string); ok {
+						// Strip the temporary test directory prefix, keeping only the meaningful part
+						// Pattern: /tmp/linear-mcp-go-test-*/home/... -> home/...
+						if strings.Contains(command, "/home/") {
+							parts := strings.Split(command, "/home/")
+							if len(parts) > 1 {
+								serverMap["command"] = "home/" + parts[1]
+							}
+						}
+					}
+					// Sort arrays in all servers
+					normalizeJSONRecursive(serverMap)
 				}
-				
-				// Sort the strings
-				sort.Strings(strSlice)
-				
-				// Convert back to []interface{}
-				sortedSlice := make([]interface{}, len(strSlice))
-				for i, v := range strSlice {
-					sortedSlice[i] = v
-				}
-				
-				// Replace the original array with the sorted one
-				linear["autoApprove"] = sortedSlice
 			}
+		}
+
+		// Process all other map entries recursively
+		for key, value := range v {
+			if key != "mcpServers" { // Already handled above
+				normalizeJSONRecursive(value)
+			}
+		}
+
+	case []interface{}:
+		// Sort arrays if they contain strings
+		if len(v) > 0 {
+			// Check if all elements are strings
+			allStrings := true
+			for _, item := range v {
+				if _, ok := item.(string); !ok {
+					allStrings = false
+					break
+				}
+			}
+
+			if allStrings {
+				// Convert to string slice, sort, and convert back
+				strSlice := make([]string, len(v))
+				for i, item := range v {
+					strSlice[i] = item.(string)
+				}
+				sort.Strings(strSlice)
+
+				// Update the original slice in place
+				for i, str := range strSlice {
+					v[i] = str
+				}
+			}
+		}
+
+		// Process array elements recursively
+		for _, item := range v {
+			normalizeJSONRecursive(item)
 		}
 	}
 }
@@ -327,25 +547,25 @@ func buildBinary() (string, error) {
 		os.RemoveAll(tempDir)
 		return "", fmt.Errorf("failed to get current directory: %w", err)
 	}
-	
+
 	// Ensure we're building from the project root
 	projectRoot := filepath.Dir(currentDir)
 	if filepath.Base(currentDir) != "cmd" {
 		// If we're already in the project root, use the current directory
 		projectRoot = currentDir
 	}
-	
+
 	fmt.Printf("Building binary from project root: %s\n", projectRoot)
-	
+
 	// Build the binary
 	binaryPath := filepath.Join(tempDir, "linear-mcp-go")
 	cmd := exec.Command("go", "build", "-o", binaryPath)
 	cmd.Dir = projectRoot // Set the working directory to the project root
-	
+
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
-	
+
 	if err := cmd.Run(); err != nil {
 		os.RemoveAll(tempDir)
 		return "", fmt.Errorf("failed to build binary: %w\nstdout: %s\nstderr: %s",
@@ -358,7 +578,7 @@ func buildBinary() (string, error) {
 		os.RemoveAll(tempDir)
 		return "", fmt.Errorf("failed to stat binary: %w", err)
 	}
-	
+
 	if info.Size() == 0 {
 		os.RemoveAll(tempDir)
 		return "", fmt.Errorf("binary file is empty")
