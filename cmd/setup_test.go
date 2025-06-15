@@ -48,6 +48,7 @@ func TestSetupCommand(t *testing.T) {
 		toolParam        string
 		writeAccess      bool
 		autoApprove      string
+		projectPath      string
 		preExistingFiles map[string]preExistingFile
 		expect           expectations
 	}{
@@ -327,6 +328,333 @@ func TestSetupCommand(t *testing.T) {
 				exitCode: 0,
 			},
 		},
+		{
+			name:        "Claude Code Only",
+			toolParam:   "claude-code",
+			projectPath: "/workspace/test-project",
+			expect: expectations{
+				files: map[string]fileExpectation{
+					"claude-code": {
+						path:      "home/.claude.json",
+						mustExist: true,
+						content: `{
+							"projects": {
+								"/workspace/test-project": {
+									"mcpServers": {
+										"linear": {
+											"type": "stdio",
+											"command": "home/mcp-servers/linear-mcp-go",
+											"args": ["serve"],
+											"env": {
+												"LINEAR_API_KEY": "test-api-key"
+											},
+											"autoApprove": [],
+											"disabled": false
+										}
+									}
+								}
+							}
+						}`,
+					},
+				},
+				exitCode: 0,
+			},
+		},
+		{
+			name:        "Claude Code with Existing File",
+			toolParam:   "claude-code",
+			projectPath: "/workspace/test-project",
+			preExistingFiles: map[string]preExistingFile{
+				"claude-code": {
+					path: "home/.claude.json",
+					content: `{
+						"projects": {
+							"/workspace/another-project": {
+								"mcpServers": {
+									"another-server": {
+										"command": "/path/to/another/server"
+									}
+								}
+							}
+						}
+					}`,
+				},
+			},
+			expect: expectations{
+				files: map[string]fileExpectation{
+					"claude-code": {
+						path:      "home/.claude.json",
+						mustExist: true,
+						content: `{
+							"projects": {
+								"/workspace/another-project": {
+									"mcpServers": {
+										"another-server": {
+											"command": "/path/to/another/server"
+										}
+									}
+								},
+								"/workspace/test-project": {
+									"mcpServers": {
+										"linear": {
+											"type": "stdio",
+											"command": "home/mcp-servers/linear-mcp-go",
+											"args": ["serve"],
+											"env": {
+												"LINEAR_API_KEY": "test-api-key"
+											},
+											"autoApprove": [],
+											"disabled": false
+										}
+									}
+								}
+							}
+						}`,
+					},
+				},
+				exitCode: 0,
+			},
+		},
+		{
+			name:      "Claude Code Missing Project Path",
+			toolParam: "claude-code",
+			expect: expectations{
+				errors:   []string{"--project-path is required for claude-code"},
+				exitCode: 1,
+			},
+		},
+		{
+			name:        "Claude Code Complex Settings Preservation",
+			toolParam:   "claude-code",
+			projectPath: "/workspace/new-project",
+			writeAccess: true,
+			autoApprove: "linear_get_issue,linear_search_issues",
+			preExistingFiles: map[string]preExistingFile{
+				"claude-code": {
+					path: "home/.claude.json",
+					content: `{
+						"firstStartTime": "2025-06-11T14:49:28.932Z",
+						"userID": "31553dcf54399f00daf126faf48dbb0e626926f50e9bf49c16cb05c06f65cfd8",
+						"globalSettings": {
+							"theme": "dark",
+							"autoSave": true,
+							"debugMode": false,
+							"experimentalFeatures": ["feature1", "feature2", "feature3"],
+							"limits": {
+								"maxTokens": 4096,
+								"timeout": 30000,
+								"retries": 3
+							},
+							"customMappings": {
+								"shortcuts": {
+									"ctrl+s": "save",
+									"ctrl+z": "undo"
+								},
+								"aliases": ["alias1", "alias2"]
+							}
+						},
+						"recentProjects": ["/workspace/project1", "/workspace/project2", "/workspace/project3"],
+						"projects": {
+							"/workspace/existing-project": {
+								"allowedTools": ["tool1", "tool2", "tool3"],
+								"history": [
+									{
+										"timestamp": "2025-06-11T15:00:00.000Z",
+										"action": "create_file",
+										"details": {"filename": "test.js", "size": 1024}
+									}
+								],
+								"dontCrawlDirectory": false,
+								"mcpContextUris": ["file:///workspace/docs", "https://api.example.com/docs"],
+								"mcpServers": {
+									"github": {
+										"type": "stdio",
+										"command": "npx",
+										"args": ["-y", "@modelcontextprotocol/server-github"],
+										"env": {"GITHUB_PERSONAL_ACCESS_TOKEN": "github_token_123"},
+										"autoApprove": ["search_repositories", "get_file_contents"],
+										"disabled": false,
+										"customConfig": {"rateLimit": 5000, "features": ["search", "read"]}
+									},
+									"filesystem": {
+										"type": "stdio",
+										"command": "npx", 
+										"args": ["-y", "@modelcontextprotocol/server-filesystem", "/workspace"],
+										"autoApprove": ["read_file", "list_directory"],
+										"disabled": false,
+										"permissions": {"read": true, "write": false, "execute": false}
+									}
+								},
+								"enabledMcpjsonServers": ["server1", "server2"],
+								"disabledMcpjsonServers": ["server3", "server4"],
+								"hasTrustDialogAccepted": true,
+								"projectOnboardingSeenCount": 3,
+								"customProjectSettings": {
+									"linting": {"enabled": true, "rules": ["rule1", "rule2"]},
+									"formatting": {"tabSize": 2, "insertSpaces": true}
+								}
+							}
+						},
+						"analytics": {
+							"enabled": true,
+							"sessionId": "session_12345",
+							"metrics": {"commandsExecuted": 42, "filesModified": 15}
+						},
+						"version": "1.2.3"
+					}`,
+				},
+			},
+			expect: expectations{
+				files: map[string]fileExpectation{
+					"claude-code": {
+						path:      "home/.claude.json",
+						mustExist: true,
+						content: `{
+							"firstStartTime": "2025-06-11T14:49:28.932Z",
+							"userID": "31553dcf54399f00daf126faf48dbb0e626926f50e9bf49c16cb05c06f65cfd8",
+							"globalSettings": {
+								"theme": "dark",
+								"autoSave": true,
+								"debugMode": false,
+								"experimentalFeatures": ["feature1", "feature2", "feature3"],
+								"limits": {
+									"maxTokens": 4096,
+									"timeout": 30000,
+									"retries": 3
+								},
+								"customMappings": {
+									"shortcuts": {
+										"ctrl+s": "save",
+										"ctrl+z": "undo"
+									},
+									"aliases": ["alias1", "alias2"]
+								}
+							},
+							"recentProjects": ["/workspace/project1", "/workspace/project2", "/workspace/project3"],
+							"projects": {
+								"/workspace/existing-project": {
+									"allowedTools": ["tool1", "tool2", "tool3"],
+									"history": [
+										{
+											"timestamp": "2025-06-11T15:00:00.000Z",
+											"action": "create_file",
+											"details": {"filename": "test.js", "size": 1024}
+										}
+									],
+									"dontCrawlDirectory": false,
+									"mcpContextUris": ["file:///workspace/docs", "https://api.example.com/docs"],
+									"mcpServers": {
+										"github": {
+											"type": "stdio",
+											"command": "npx",
+											"args": ["-y", "@modelcontextprotocol/server-github"],
+											"env": {"GITHUB_PERSONAL_ACCESS_TOKEN": "github_token_123"},
+											"autoApprove": ["search_repositories", "get_file_contents"],
+											"disabled": false,
+											"customConfig": {"rateLimit": 5000, "features": ["search", "read"]}
+										},
+										"filesystem": {
+											"type": "stdio",
+											"command": "npx", 
+											"args": ["-y", "@modelcontextprotocol/server-filesystem", "/workspace"],
+											"autoApprove": ["read_file", "list_directory"],
+											"disabled": false,
+											"permissions": {"read": true, "write": false, "execute": false}
+										}
+									},
+									"enabledMcpjsonServers": ["server1", "server2"],
+									"disabledMcpjsonServers": ["server3", "server4"],
+									"hasTrustDialogAccepted": true,
+									"projectOnboardingSeenCount": 3,
+									"customProjectSettings": {
+										"linting": {"enabled": true, "rules": ["rule1", "rule2"]},
+										"formatting": {"tabSize": 2, "insertSpaces": true}
+									}
+								},
+								"/workspace/new-project": {
+									"mcpServers": {
+										"linear": {
+											"type": "stdio",
+											"command": "home/mcp-servers/linear-mcp-go",
+											"args": ["serve", "--write-access=true"],
+											"env": {"LINEAR_API_KEY": "test-api-key"},
+											"autoApprove": ["linear_get_issue", "linear_search_issues"],
+											"disabled": false
+										}
+									}
+								}
+							},
+							"analytics": {
+								"enabled": true,
+								"sessionId": "session_12345",
+								"metrics": {"commandsExecuted": 42, "filesModified": 15}
+							},
+							"version": "1.2.3"
+						}`,
+					},
+				},
+				exitCode: 0,
+			},
+		},
+		{
+			name:        "Claude Code Update Existing Linear Server",
+			toolParam:   "claude-code",
+			projectPath: "/workspace/existing-project",
+			writeAccess: false,
+			autoApprove: "allow-read-only",
+			preExistingFiles: map[string]preExistingFile{
+				"claude-code": {
+					path: "home/.claude.json",
+					content: `{
+						"projects": {
+							"/workspace/existing-project": {
+								"mcpServers": {
+									"linear": {
+										"type": "stdio",
+										"command": "/old/path/to/linear",
+										"args": ["serve", "--old-flag"],
+										"env": {"LINEAR_API_KEY": "old-key"},
+										"autoApprove": ["old_tool"],
+										"disabled": true
+									},
+									"other-server": {
+										"command": "/path/to/other/server"
+									}
+								}
+							}
+						}
+					}`,
+				},
+			},
+			expect: expectations{
+				files: map[string]fileExpectation{
+					"claude-code": {
+						path:      "home/.claude.json",
+						mustExist: true,
+						content: `{
+							"projects": {
+								"/workspace/existing-project": {
+									"mcpServers": {
+										"linear": {
+											"type": "stdio",
+											"command": "home/mcp-servers/linear-mcp-go",
+											"args": ["serve"],
+											"env": {"LINEAR_API_KEY": "test-api-key"},
+											"autoApprove": ["linear_search_issues", "linear_get_user_issues", "linear_get_issue", "linear_get_teams", "linear_get_issue_comments"],
+											"disabled": false
+										},
+										"other-server": {
+											"command": "/path/to/other/server"
+										}
+									}
+								}
+							}
+						}`,
+					},
+				},
+				exitCode: 0,
+			},
+		},
 	}
 
 	// Run each test case
@@ -379,6 +707,9 @@ func TestSetupCommand(t *testing.T) {
 			}
 			if tc.autoApprove != "" {
 				args = append(args, "--auto-approve="+tc.autoApprove)
+			}
+			if tc.projectPath != "" {
+				args = append(args, "--project-path="+tc.projectPath)
 			}
 
 			// Execute the command

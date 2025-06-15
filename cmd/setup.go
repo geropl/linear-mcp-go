@@ -14,17 +14,19 @@ import (
 	"github.com/spf13/cobra"
 )
 
+
 // setupCmd represents the setup command
 var setupCmd = &cobra.Command{
 	Use:   "setup",
 	Short: "Set up the Linear MCP server for use with an AI assistant",
 	Long: `Set up the Linear MCP server for use with an AI assistant.
 This command installs the Linear MCP server and configures it for use with the specified AI assistant tool(s).
-Currently supported tools: cline, roo-code`,
+Currently supported tools: cline, roo-code, claude-code`,
 	Run: func(cmd *cobra.Command, args []string) {
 		toolParam, _ := cmd.Flags().GetString("tool")
 		writeAccess, _ := cmd.Flags().GetBool("write-access")
 		autoApprove, _ := cmd.Flags().GetString("auto-approve")
+		projectPath, _ := cmd.Flags().GetString("project-path")
 
 		// Check if the Linear API key is provided in the environment
 		apiKey := os.Getenv("LINEAR_API_KEY")
@@ -78,9 +80,11 @@ Currently supported tools: cline, roo-code`,
 				err = setupCline(binaryPath, apiKey, writeAccess, autoApprove)
 			case "roo-code":
 				err = setupRooCode(binaryPath, apiKey, writeAccess, autoApprove)
+			case "claude-code":
+				err = setupClaudeCode(binaryPath, apiKey, writeAccess, autoApprove, projectPath)
 			default:
 				fmt.Printf("Unsupported tool: %s\n", t)
-				fmt.Println("Currently supported tools: cline, roo-code")
+				fmt.Println("Currently supported tools: cline, roo-code, claude-code")
 				hasErrors = true
 				continue
 			}
@@ -103,9 +107,10 @@ func init() {
 	rootCmd.AddCommand(setupCmd)
 
 	// Add flags to the setup command
-	setupCmd.Flags().String("tool", "cline", "The AI assistant tool(s) to set up for (comma-separated, e.g., cline,roo-code)")
+	setupCmd.Flags().String("tool", "cline", "The AI assistant tool(s) to set up for (comma-separated, e.g., cline,roo-code,claude-code)")
 	setupCmd.Flags().Bool("write-access", false, "Enable write operations (default: false)")
 	setupCmd.Flags().String("auto-approve", "", "Comma-separated list of tool names to auto-approve, or 'allow-read-only' to auto-approve all read-only tools")
+	setupCmd.Flags().String("project-path", "", "The project path for claude-code configuration")
 }
 
 // checkBinary checks if the Linear MCP binary is already on the path
@@ -312,4 +317,126 @@ func setupRooCode(binaryPath, apiKey string, writeAccess bool, autoApprove strin
 	}
 
 	return setupTool("Roo Code", binaryPath, apiKey, writeAccess, autoApprove, configDir)
+}
+
+// setupClaudeCode sets up the Linear MCP server for Claude Code
+func setupClaudeCode(binaryPath, apiKey string, writeAccess bool, autoApprove, projectPath string) error {
+	if runtime.GOOS != "linux" {
+		return fmt.Errorf("claude-code is only supported on Linux")
+	}
+
+	if projectPath == "" {
+		return fmt.Errorf("--project-path is required for claude-code")
+	}
+
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return fmt.Errorf("failed to get user home directory: %w", err)
+	}
+
+	configPath := filepath.Join(homeDir, ".claude.json")
+	if err := os.MkdirAll(filepath.Dir(configPath), 0755); err != nil {
+		return fmt.Errorf("failed to create directory '%s': %w", filepath.Dir(configPath), err)
+	}
+
+	// Use flexible map structure to preserve all existing settings
+	var settings map[string]interface{}
+	data, err := os.ReadFile(configPath)
+	if err != nil {
+		if !os.IsNotExist(err) {
+			return fmt.Errorf("failed to read claude code settings: %w", err)
+		}
+		// Initialize with empty structure if file doesn't exist
+		settings = map[string]interface{}{
+			"projects": map[string]interface{}{},
+		}
+	} else {
+		if err := json.Unmarshal(data, &settings); err != nil {
+			return fmt.Errorf("failed to parse claude code settings: %w", err)
+		}
+		// Ensure projects field exists
+		if settings["projects"] == nil {
+			settings["projects"] = map[string]interface{}{}
+		}
+	}
+
+	serverArgs := []string{"serve"}
+	if writeAccess {
+		serverArgs = append(serverArgs, "--write-access=true")
+	}
+
+	autoApproveTools := []string{}
+	if autoApprove != "" {
+		if autoApprove == "allow-read-only" {
+			for k := range server.GetReadOnlyToolNames() {
+				autoApproveTools = append(autoApproveTools, k)
+			}
+		} else {
+			for _, tool := range strings.Split(autoApprove, ",") {
+				trimmedTool := strings.TrimSpace(tool)
+				if trimmedTool != "" {
+					autoApproveTools = append(autoApproveTools, trimmedTool)
+				}
+			}
+		}
+	}
+
+	linearServerConfig := map[string]interface{}{
+		"type":        "stdio",
+		"command":     binaryPath,
+		"args":        serverArgs,
+		"env":         map[string]string{"LINEAR_API_KEY": apiKey},
+		"disabled":    false,
+		"autoApprove": autoApproveTools,
+	}
+
+	// Get projects map
+	projects, ok := settings["projects"].(map[string]interface{})
+	if !ok {
+		projects = map[string]interface{}{}
+		settings["projects"] = projects
+	}
+
+	// Get or create the specific project
+	var project map[string]interface{}
+	if existingProject, exists := projects[projectPath]; exists {
+		if projectMap, ok := existingProject.(map[string]interface{}); ok {
+			project = projectMap
+		} else {
+			// If existing project is not a map, create a new one
+			project = map[string]interface{}{}
+		}
+	} else {
+		project = map[string]interface{}{}
+	}
+
+	// Get or create mcpServers for this project
+	var mcpServers map[string]interface{}
+	if existingMcpServers, exists := project["mcpServers"]; exists {
+		if mcpServersMap, ok := existingMcpServers.(map[string]interface{}); ok {
+			mcpServers = mcpServersMap
+		} else {
+			// If existing mcpServers is not a map, create a new one
+			mcpServers = map[string]interface{}{}
+		}
+	} else {
+		mcpServers = map[string]interface{}{}
+	}
+
+	// Add/update the linear server configuration
+	mcpServers["linear"] = linearServerConfig
+	project["mcpServers"] = mcpServers
+	projects[projectPath] = project
+
+	updatedData, err := json.MarshalIndent(settings, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal claude code settings: %w", err)
+	}
+
+	if err := os.WriteFile(configPath, updatedData, 0644); err != nil {
+		return fmt.Errorf("failed to write claude code settings: %w", err)
+	}
+
+	fmt.Printf("Claude Code MCP settings updated at %s\n", configPath)
+	return nil
 }
