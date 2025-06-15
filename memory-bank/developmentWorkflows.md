@@ -24,19 +24,120 @@
   - Minor: New features (backward compatible)
   - Patch: Bug fixes (backward compatible)
 
-### Release Steps
-1. **Update Version**: Update the version in `pkg/server/server.go`
-2. **Commit Changes**: Commit version update with descriptive message
-3. **Create Tag**: Create and push a tag matching the version:
-   ```bash
-   git tag v1.0.0
-   git push origin v1.0.0
-   ```
-4. **Automated Release**: GitHub Actions workflow automatically:
-   - Builds binaries for Linux, macOS, and Windows
-   - Runs all tests
-   - Creates GitHub release
-   - Uploads release assets
+### Release Branch Workflow
+Since the main branch is protected and requires PR approval, releases follow a branch-based workflow:
+
+#### Phase 1: Prepare Release Branch
+```bash
+# Create release branch from current development branch
+git checkout -b release/v{version}
+
+# Update version in pkg/server/server.go
+# Change ServerVersion constant to new version
+
+# Commit version update
+git add pkg/server/server.go
+git commit -m "Bump version to v{version}"
+
+# Push release branch
+git push origin release/v{version}
+```
+
+#### Phase 2: Create Release Pull Request
+```bash
+# Create PR from release/v{version} to main
+# PR Title: "Release v{version}"
+# PR Description should include:
+# - Summary of changes since last release
+# - Breaking changes (if any)
+# - New features added
+# - Bug fixes included
+# - Testing performed
+```
+
+#### Phase 3: Review and Merge
+- **Code Review**: Release PR must be reviewed and approved
+- **CI Checks**: All automated tests and checks must pass
+- **Documentation**: Ensure README and docs are up to date
+- **Final Testing**: Perform any additional manual testing if needed
+
+#### Phase 4: Tag and Release
+```bash
+# After PR is merged to main
+git checkout main
+git pull origin main
+
+# Create and push release tag
+git tag v{version}
+git push origin v{version}
+```
+
+#### Phase 5: Automated Release
+GitHub Actions workflow automatically:
+- Builds binaries for Linux, macOS, and Windows
+- Runs full test suite
+- Creates GitHub release with release notes
+- Uploads release assets
+
+### Release Branch Naming
+- **Format**: `release/v{version}` (e.g., `release/v1.6.0`)
+- **Purpose**: Isolate release preparation from ongoing development
+- **Lifecycle**: Created for release prep, deleted after successful release
+
+### Release PR Template
+When creating a release PR, include:
+
+```markdown
+## Release v{version}
+
+### Summary
+Brief description of this release.
+
+### Changes Since Last Release
+- **New Features:**
+  - Feature 1 description
+  - Feature 2 description
+
+- **Bug Fixes:**
+  - Fix 1 description
+  - Fix 2 description
+
+- **Improvements:**
+  - Improvement 1 description
+  - Improvement 2 description
+
+### Breaking Changes
+- None / List any breaking changes
+
+### Testing
+- [ ] All automated tests pass
+- [ ] Manual testing performed
+- [ ] Setup command tested on target platforms
+
+### Checklist
+- [ ] Version updated in pkg/server/server.go
+- [ ] CHANGELOG.md updated (if exists)
+- [ ] Documentation updated
+- [ ] All tests passing
+- [ ] No merge conflicts with main
+```
+
+### Hotfix Process
+For urgent fixes that need to bypass normal development flow:
+
+```bash
+# Create hotfix branch from main
+git checkout main
+git pull origin main
+git checkout -b hotfix/v{version}
+
+# Make necessary fixes
+# Update version (patch increment)
+# Commit changes
+
+# Create PR to main (expedited review)
+# After merge, tag immediately
+```
 
 ### GitHub Actions Workflow
 - **Trigger**: Activated when tags matching "v*" pattern are pushed
