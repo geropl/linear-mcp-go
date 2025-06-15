@@ -14,7 +14,7 @@ const (
 	// ServerName is the name of the MCP server
 	ServerName = "Linear MCP Server"
 	// ServerVersion is the version of the MCP server
-	ServerVersion = "1.6.0"
+	ServerVersion = "1.6.1"
 )
 
 // LinearMCPServer represents the Linear MCP server
@@ -44,7 +44,7 @@ func NewLinearMCPServer(writeAccess bool) (*LinearMCPServer, error) {
 
 	// Register tools
 	RegisterTools(mcpServer, linearClient, writeAccess)
-	
+
 	// Register resources
 	RegisterResources(mcpServer, linearClient)
 
@@ -76,11 +76,11 @@ func (s *LinearMCPServer) GetLinearClient() *linear.LinearClient {
 // GetReadOnlyToolNames returns the names of all read-only tools
 func GetReadOnlyToolNames() map[string]bool {
 	return map[string]bool{
-		"linear_search_issues":     true,
-		"linear_get_user_issues":   true,
-		"linear_get_issue":         true,
+		"linear_search_issues":      true,
+		"linear_get_user_issues":    true,
+		"linear_get_issue":          true,
 		"linear_get_issue_comments": true,
-		"linear_get_teams":         true,
+		"linear_get_teams":          true,
 	}
 }
 
