@@ -81,6 +81,84 @@ flowchart TD
 ### 5. Builder Pattern
 - MCP tools are constructed using a builder-like pattern with the `mcp.NewTool()` function and various `With*` methods.
 
+## MCP Tool Registration Patterns
+
+### Tool Registration Process
+- All tools are registered in the `RegisterTools` function in `pkg/server/tools.go`
+- Tools are conditionally registered based on write access permissions
+- Each tool follows a consistent registration pattern:
+
+```go
+server.AddTool(mcp.NewTool("tool_name").
+    WithDescription("Tool description").
+    WithInputSchema(mcp.Object{
+        "param1": mcp.String().WithDescription("Parameter description"),
+        "param2": mcp.Required(mcp.String()).WithDescription("Required parameter"),
+    }).
+    WithHandler(toolHandlerFunction))
+```
+
+### Tool Handler Structure
+- Each tool has a dedicated handler function that processes MCP requests
+- Handler functions follow a consistent pattern:
+  1. Extract and validate parameters from the request
+  2. Call appropriate Linear client methods
+  3. Format and return the response
+- Error handling is consistent across all handlers
+- Response formatting follows MCP specifications
+
+### Parameter Definition Patterns
+- Tool parameters are defined using the MCP schema format
+- Required parameters are marked with `mcp.Required()`
+- Parameter types include: `mcp.String()`, `mcp.Number()`, `mcp.Boolean()`
+- All parameters include descriptive help text
+- Optional parameters have sensible defaults where applicable
+
+### Write Access Control
+- Write operations are controlled by the `writeAccess` flag
+- Read-only tools are always registered
+- Write tools (`linear_create_issue`, `linear_update_issue`, `linear_add_comment`) are only registered when write access is enabled
+- This provides a security layer to prevent accidental modifications
+
+## Linear API Integration Patterns
+
+### Client Architecture
+- The Linear client is implemented in `pkg/linear/client.go`
+- Client provides high-level methods that abstract GraphQL complexity
+- All API interactions go through the centralized client
+
+### Authentication Pattern
+- Authentication is handled via the `LINEAR_API_KEY` environment variable
+- API key is validated on first API request, not at startup
+- No support for other authentication methods currently
+- Client includes the API key in all requests via Authorization header
+
+### Rate Limiting Implementation
+- Simple rate limiter implemented to respect Linear's API quotas
+- Rate limiting is applied at the client level before making requests
+- Current implementation uses a basic token bucket approach
+- Rate limits are not configurable (hardcoded values)
+
+### API Response Handling
+- API responses are parsed into Go structs defined in `pkg/linear/models.go`
+- JSON unmarshaling handles nested structures (e.g., `LabelConnection`)
+- Error responses from Linear API are translated into user-friendly messages
+- GraphQL errors are properly extracted and formatted
+
+### GraphQL Query Patterns
+- All Linear API interactions use GraphQL queries and mutations
+- Queries are embedded as string literals in the client methods
+- Parameter types in queries match Linear API expectations (e.g., `String!` vs `ID!`)
+- Query structure follows Linear's API schema requirements
+
+### Identifier Resolution Strategy
+- Flexible identifier resolution allows users to specify entities by:
+  - UUID (direct API identifier)
+  - Human-readable identifiers (e.g., "TEAM-123" for issues)
+  - Names (e.g., team names, label names)
+- Resolution functions handle the translation from user input to API identifiers
+- Error handling provides clear feedback when identifiers cannot be resolved
+
 ## Component Relationships
 
 ### Commands and Subcommands

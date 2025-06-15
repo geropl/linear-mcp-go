@@ -83,17 +83,31 @@
 ## Known Issues
 1. **API Key Management**:
    - API key validation only happens on first API request
-   - No support for other authentication methods
+   - No support for other authentication methods (OAuth, etc.)
+   - LINEAR_API_KEY environment variable must be set manually
 
-2. **Error Handling**:
+2. **Rate Limiting Constraints**:
+   - Linear API has rate limits that must be respected
+   - Current rate limiter implementation is basic (simple token bucket)
+   - Rate limits are not configurable (hardcoded values)
+   - No sophisticated backoff strategies for rate limit exceeded scenarios
+
+3. **Error Handling**:
    - Some error messages could be more descriptive
    - No retry mechanism for transient errors
    - Network errors during setup could be handled better
+   - GraphQL errors could be better formatted for end users
 
-3. **Feature Limitations**:
+4. **Feature Limitations**:
    - Limited support for Linear API features
    - No support for webhooks or real-time updates
    - Limited AI assistant support (currently only Cline)
+   - No configuration file support for server settings
+
+5. **Authentication Limitations**:
+   - Only supports API key authentication
+   - No support for OAuth or other modern authentication methods
+   - API key is not validated until first API request is made
 
 ## Recent Milestones
 - ✅ Created comprehensive Tool Standardization PRD with implementation plan
@@ -114,6 +128,50 @@
 - ✅ Added support for team key in issue creation
 - ✅ Fixed label resolution issue with GraphQL parameter type
 - ✅ Fixed parent issue identifier resolution for human-readable identifiers
+
+## Evolution of Project Decisions
+
+### Initial Implementation Phase
+- **Started with basic Linear API integration**: Focused on core functionality first
+- **Implemented core MCP tools for issue management**: Prioritized the most common Linear operations
+- **Added test fixtures for all tools**: Established testing foundation early
+- **Decision Rationale**: Build a solid foundation before adding advanced features
+
+### Command-Line Interface Evolution
+- **Original**: Simple binary that only ran the server
+- **Enhanced**: Added Cobra framework with subcommand structure
+- **Current**: Full CLI with server and setup subcommands
+- **Decision Rationale**: Better user experience and extensibility for future commands
+
+### Setup Automation Development
+- **Original**: Manual installation via bash script
+- **Enhanced**: Integrated setup command within the main binary
+- **Current**: Automated binary discovery, download, and configuration
+- **Decision Rationale**: Reduce friction for users setting up the server
+
+### Write Access Control Implementation
+- **Original**: All tools available by default
+- **Enhanced**: Added write access control with --write-access flag
+- **Current**: Write operations disabled by default for security
+- **Decision Rationale**: Prevent accidental modifications while maintaining functionality
+
+### Tool Standardization Journey
+- **Original**: Inconsistent tool descriptions and parameter naming
+- **Enhanced**: Created comprehensive standardization PRD
+- **Current**: All tools follow consistent patterns for descriptions, parameters, and output
+- **Decision Rationale**: Improve user experience and maintainability
+
+### Testing Strategy Evolution
+- **Original**: Basic unit tests
+- **Enhanced**: Added go-vcr for HTTP interaction recording
+- **Current**: Comprehensive test coverage with fixtures for all scenarios
+- **Decision Rationale**: Enable testing without API dependencies and ensure reliability
+
+### Release Process Development
+- **Original**: Manual releases
+- **Enhanced**: Added GitHub Actions workflow
+- **Current**: Automated testing and releases triggered by version tags
+- **Decision Rationale**: Streamline release process and ensure quality
 
 ## Upcoming Milestones
 - [x] Complete Tool Standardization testing
