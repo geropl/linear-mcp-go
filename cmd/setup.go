@@ -110,7 +110,7 @@ func init() {
 	setupCmd.Flags().String("tool", "cline", "The AI assistant tool(s) to set up for (comma-separated, e.g., cline,roo-code,claude-code)")
 	setupCmd.Flags().Bool("write-access", false, "Enable write operations (default: false)")
 	setupCmd.Flags().String("auto-approve", "", "Comma-separated list of tool names to auto-approve, or 'allow-read-only' to auto-approve all read-only tools")
-	setupCmd.Flags().String("project-path", "", "The project path for claude-code configuration")
+	setupCmd.Flags().String("project-path", "", "The project path(s) for claude-code configuration (comma-separated for multiple projects, or empty to register to all existing projects)")
 }
 
 // checkBinary checks if the Linear MCP binary is already on the path
@@ -325,10 +325,6 @@ func setupClaudeCode(binaryPath, apiKey string, writeAccess bool, autoApprove, p
 		return fmt.Errorf("claude-code is only supported on Linux")
 	}
 
-	if projectPath == "" {
-		return fmt.Errorf("--project-path is required for claude-code")
-	}
-
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		return fmt.Errorf("failed to get user home directory: %w", err)
@@ -390,6 +386,71 @@ func setupClaudeCode(binaryPath, apiKey string, writeAccess bool, autoApprove, p
 		"autoApprove": autoApproveTools,
 	}
 
+	// Determine which projects to register to
+	var targetProjects []string
+	if projectPath == "" {
+		// Register to all existing projects
+		existingProjects, err := getAllExistingProjects(settings)
+		if err != nil {
+			return fmt.Errorf("failed to get existing projects: %w", err)
+		}
+		if len(existingProjects) == 0 {
+			return fmt.Errorf("no existing projects found and no --project-path specified. Please specify --project-path or create projects first")
+		}
+		targetProjects = existingProjects
+		fmt.Printf("Registering Linear MCP server to %d existing projects\n", len(targetProjects))
+	} else {
+		// Parse comma-separated project paths
+		for _, path := range strings.Split(projectPath, ",") {
+			trimmedPath := strings.TrimSpace(path)
+			if trimmedPath != "" {
+				targetProjects = append(targetProjects, trimmedPath)
+			}
+		}
+		if len(targetProjects) == 0 {
+			return fmt.Errorf("no valid project paths provided")
+		}
+		fmt.Printf("Registering Linear MCP server to %d specified projects\n", len(targetProjects))
+	}
+
+	// Register Linear MCP server to each target project
+	for _, projPath := range targetProjects {
+		if err := registerLinearToProject(settings, projPath, linearServerConfig); err != nil {
+			return fmt.Errorf("failed to register Linear MCP server to project '%s': %w", projPath, err)
+		}
+		fmt.Printf("  - Registered to project: %s\n", projPath)
+	}
+
+	updatedData, err := json.MarshalIndent(settings, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal claude code settings: %w", err)
+	}
+
+	if err := os.WriteFile(configPath, updatedData, 0644); err != nil {
+		return fmt.Errorf("failed to write claude code settings: %w", err)
+	}
+
+	fmt.Printf("Claude Code MCP settings updated at %s\n", configPath)
+	return nil
+}
+
+// getAllExistingProjects extracts all existing project paths from the settings
+func getAllExistingProjects(settings map[string]interface{}) ([]string, error) {
+	projects, ok := settings["projects"].(map[string]interface{})
+	if !ok {
+		return []string{}, nil
+	}
+
+	var projectPaths []string
+	for projectPath := range projects {
+		projectPaths = append(projectPaths, projectPath)
+	}
+
+	return projectPaths, nil
+}
+
+// registerLinearToProject registers the Linear MCP server to a specific project
+func registerLinearToProject(settings map[string]interface{}, projectPath string, linearServerConfig map[string]interface{}) error {
 	// Get projects map
 	projects, ok := settings["projects"].(map[string]interface{})
 	if !ok {
@@ -428,15 +489,5 @@ func setupClaudeCode(binaryPath, apiKey string, writeAccess bool, autoApprove, p
 	project["mcpServers"] = mcpServers
 	projects[projectPath] = project
 
-	updatedData, err := json.MarshalIndent(settings, "", "  ")
-	if err != nil {
-		return fmt.Errorf("failed to marshal claude code settings: %w", err)
-	}
-
-	if err := os.WriteFile(configPath, updatedData, 0644); err != nil {
-		return fmt.Errorf("failed to write claude code settings: %w", err)
-	}
-
-	fmt.Printf("Claude Code MCP settings updated at %s\n", configPath)
 	return nil
 }

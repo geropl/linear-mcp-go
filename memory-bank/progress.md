@@ -128,6 +128,11 @@
 - ✅ Added support for team key in issue creation
 - ✅ Fixed label resolution issue with GraphQL parameter type
 - ✅ Fixed parent issue identifier resolution for human-readable identifiers
+- ✅ Enhanced Claude Code Support in Setup Command:
+  - Register to all existing projects when no --project-path is specified
+  - Support multiple project paths separated by commas
+  - Comprehensive testing with 5 new test cases
+  - Manual testing confirmed functionality
 
 ## Evolution of Project Decisions
 

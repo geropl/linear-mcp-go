@@ -70,6 +70,31 @@ The current focus is on enhancing the functionality and user experience of the L
    - Added a new test case for creating sub-issues using human-readable identifiers
    - All tests now pass successfully
 
+8. Enhanced Claude Code Support in Setup Command:
+   - **Feature 1**: Register to all existing projects when no --project-path is specified
+     - Modified `setupClaudeCode` function to read existing projects from `.claude.json`
+     - Added `getAllExistingProjects` helper function to extract project paths
+     - Implemented logic to register Linear MCP server to all existing projects automatically
+     - Added proper error handling when no existing projects are found
+   - **Feature 2**: Support multiple project paths separated by commas
+     - Added comma-separated project path parsing with whitespace trimming
+     - Modified registration logic to handle multiple target projects
+     - Added validation for empty project path lists
+   - **Implementation Details**:
+     - Created `registerLinearToProject` helper function for reusable project registration logic
+     - Preserved all existing configuration settings and project structures
+     - Added comprehensive logging to show which projects are being registered
+     - Updated flag help text to document the new behavior
+   - **Testing**:
+     - Added 5 new comprehensive test cases covering all scenarios:
+       - Register to all existing projects (empty project path)
+       - Multiple comma-separated project paths with whitespace handling
+       - Mixed existing and new projects
+       - Error handling for empty project lists
+       - Error handling when no existing projects found
+     - All tests pass successfully
+     - Manual testing confirmed functionality works as expected
+
 ## Next Steps
 1. **Testing the Setup Command**:
    - Test the setup command on different platforms (Linux, macOS, Windows)

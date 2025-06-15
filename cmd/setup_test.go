@@ -416,10 +416,216 @@ func TestSetupCommand(t *testing.T) {
 			},
 		},
 		{
-			name:      "Claude Code Missing Project Path",
+			name:      "Claude Code No Existing Projects and No Project Path",
 			toolParam: "claude-code",
 			expect: expectations{
-				errors:   []string{"--project-path is required for claude-code"},
+				errors:   []string{"no existing projects found and no --project-path specified"},
+				exitCode: 1,
+			},
+		},
+		{
+			name:      "Claude Code Register to All Existing Projects",
+			toolParam: "claude-code",
+			preExistingFiles: map[string]preExistingFile{
+				"claude-code": {
+					path: "home/.claude.json",
+					content: `{
+						"projects": {
+							"/workspace/project1": {
+								"mcpServers": {
+									"existing-server": {
+										"command": "/path/to/existing/server"
+									}
+								}
+							},
+							"/workspace/project2": {
+								"someOtherConfig": "value"
+							}
+						}
+					}`,
+				},
+			},
+			expect: expectations{
+				files: map[string]fileExpectation{
+					"claude-code": {
+						path:      "home/.claude.json",
+						mustExist: true,
+						content: `{
+							"projects": {
+								"/workspace/project1": {
+									"mcpServers": {
+										"existing-server": {
+											"command": "/path/to/existing/server"
+										},
+										"linear": {
+											"type": "stdio",
+											"command": "home/mcp-servers/linear-mcp-go",
+											"args": ["serve"],
+											"env": {
+												"LINEAR_API_KEY": "test-api-key"
+											},
+											"autoApprove": [],
+											"disabled": false
+										}
+									}
+								},
+								"/workspace/project2": {
+									"someOtherConfig": "value",
+									"mcpServers": {
+										"linear": {
+											"type": "stdio",
+											"command": "home/mcp-servers/linear-mcp-go",
+											"args": ["serve"],
+											"env": {
+												"LINEAR_API_KEY": "test-api-key"
+											},
+											"autoApprove": [],
+											"disabled": false
+										}
+									}
+								}
+							}
+						}`,
+					},
+				},
+				exitCode: 0,
+			},
+		},
+		{
+			name:        "Claude Code Multiple Project Paths",
+			toolParam:   "claude-code",
+			projectPath: "/workspace/proj1,/workspace/proj2, /workspace/proj3 ",
+			writeAccess: true,
+			autoApprove: "linear_get_issue,linear_search_issues",
+			expect: expectations{
+				files: map[string]fileExpectation{
+					"claude-code": {
+						path:      "home/.claude.json",
+						mustExist: true,
+						content: `{
+							"projects": {
+								"/workspace/proj1": {
+									"mcpServers": {
+										"linear": {
+											"type": "stdio",
+											"command": "home/mcp-servers/linear-mcp-go",
+											"args": ["serve", "--write-access=true"],
+											"env": {
+												"LINEAR_API_KEY": "test-api-key"
+											},
+											"autoApprove": ["linear_get_issue", "linear_search_issues"],
+											"disabled": false
+										}
+									}
+								},
+								"/workspace/proj2": {
+									"mcpServers": {
+										"linear": {
+											"type": "stdio",
+											"command": "home/mcp-servers/linear-mcp-go",
+											"args": ["serve", "--write-access=true"],
+											"env": {
+												"LINEAR_API_KEY": "test-api-key"
+											},
+											"autoApprove": ["linear_get_issue", "linear_search_issues"],
+											"disabled": false
+										}
+									}
+								},
+								"/workspace/proj3": {
+									"mcpServers": {
+										"linear": {
+											"type": "stdio",
+											"command": "home/mcp-servers/linear-mcp-go",
+											"args": ["serve", "--write-access=true"],
+											"env": {
+												"LINEAR_API_KEY": "test-api-key"
+											},
+											"autoApprove": ["linear_get_issue", "linear_search_issues"],
+											"disabled": false
+										}
+									}
+								}
+							}
+						}`,
+					},
+				},
+				exitCode: 0,
+			},
+		},
+		{
+			name:        "Claude Code Mixed Existing and New Projects",
+			toolParam:   "claude-code",
+			projectPath: "/workspace/existing-project,/workspace/new-project",
+			preExistingFiles: map[string]preExistingFile{
+				"claude-code": {
+					path: "home/.claude.json",
+					content: `{
+						"projects": {
+							"/workspace/existing-project": {
+								"mcpServers": {
+									"other-server": {
+										"command": "/path/to/other/server"
+									}
+								},
+								"customConfig": "value"
+							}
+						}
+					}`,
+				},
+			},
+			expect: expectations{
+				files: map[string]fileExpectation{
+					"claude-code": {
+						path:      "home/.claude.json",
+						mustExist: true,
+						content: `{
+							"projects": {
+								"/workspace/existing-project": {
+									"mcpServers": {
+										"other-server": {
+											"command": "/path/to/other/server"
+										},
+										"linear": {
+											"type": "stdio",
+											"command": "home/mcp-servers/linear-mcp-go",
+											"args": ["serve"],
+											"env": {
+												"LINEAR_API_KEY": "test-api-key"
+											},
+											"autoApprove": [],
+											"disabled": false
+										}
+									},
+									"customConfig": "value"
+								},
+								"/workspace/new-project": {
+									"mcpServers": {
+										"linear": {
+											"type": "stdio",
+											"command": "home/mcp-servers/linear-mcp-go",
+											"args": ["serve"],
+											"env": {
+												"LINEAR_API_KEY": "test-api-key"
+											},
+											"autoApprove": [],
+											"disabled": false
+										}
+									}
+								}
+							}
+						}`,
+					},
+				},
+				exitCode: 0,
+			},
+		},
+		{
+			name:        "Claude Code Empty Project Path List",
+			toolParam:   "claude-code",
+			projectPath: " , , ",
+			expect: expectations{
+				errors:   []string{"no valid project paths provided"},
 				exitCode: 1,
 			},
 		},
