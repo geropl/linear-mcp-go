@@ -95,6 +95,31 @@ The current focus is on enhancing the functionality and user experience of the L
      - All tests pass successfully
      - Manual testing confirmed functionality works as expected
 
+9. **UPDATED**: Implemented User-Scoped MCP Server Registration for Claude Code:
+   - **Problem Identified**: The previous implementation tried to register to all existing projects when no project path was specified, which was complex and didn't match Claude Code's intended behavior
+   - **Solution Implemented**: Use user-scoped `mcpServers` registration instead of project-scoped when no project path is specified
+   - **Key Changes**:
+     - **Updated `setupClaudeCode` function**: Now registers to user-scoped `mcpServers` (root level) when `projectPath` is empty
+     - **Added `registerLinearToUserScope` function**: Handles registration to the root-level `mcpServers` object that applies to all projects
+     - **Removed obsolete `getAllExistingProjects` function**: No longer needed since we use user-scoped registration
+     - **Updated flag help text**: Changed from "register to all existing projects" to "register to user scope for all projects"
+   - **Benefits of User-Scoped Approach**:
+     - **Simpler logic**: No need to iterate through existing projects
+     - **Better user experience**: Works even when no projects exist yet
+     - **Future-proof**: Automatically applies to new projects created later
+     - **Matches Claude Code design**: Uses the intended global registration mechanism
+   - **JSON Structure Changes**:
+     - **When `projectPath` is empty**: Registers to root-level `mcpServers` (user-scoped)
+     - **When `projectPath` is specified**: Continues using project-scoped registration in `projects[path].mcpServers`
+   - **Updated Test Cases**:
+     - **Modified existing test**: "Claude Code Register to All Existing Projects" → "Claude Code Register to User Scope with Existing Projects"
+     - **Updated error test**: "Claude Code No Existing Projects and No Project Path" now expects success with user-scoped registration
+     - **Added new test cases**:
+       - User-scoped registration with existing user-scoped servers
+       - User-scoped update of existing Linear server
+       - Comprehensive coverage of both user-scoped and project-scoped scenarios
+   - **Implementation Status**: Complete and ready for testing
+
 ## Next Steps
 1. **Testing the Setup Command**:
    - Test the setup command on different platforms (Linux, macOS, Windows)

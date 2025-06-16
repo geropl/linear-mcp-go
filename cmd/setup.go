@@ -110,7 +110,7 @@ func init() {
 	setupCmd.Flags().String("tool", "cline", "The AI assistant tool(s) to set up for (comma-separated, e.g., cline,roo-code,claude-code)")
 	setupCmd.Flags().Bool("write-access", false, "Enable write operations (default: false)")
 	setupCmd.Flags().String("auto-approve", "", "Comma-separated list of tool names to auto-approve, or 'allow-read-only' to auto-approve all read-only tools")
-	setupCmd.Flags().String("project-path", "", "The project path(s) for claude-code configuration (comma-separated for multiple projects, or empty to register to all existing projects)")
+	setupCmd.Flags().String("project-path", "", "The project path(s) for claude-code project-scoped configuration (comma-separated for multiple projects, or empty to register to user scope for all projects)")
 }
 
 // checkBinary checks if the Linear MCP binary is already on the path
@@ -386,21 +386,15 @@ func setupClaudeCode(binaryPath, apiKey string, writeAccess bool, autoApprove, p
 		"autoApprove": autoApproveTools,
 	}
 
-	// Determine which projects to register to
-	var targetProjects []string
 	if projectPath == "" {
-		// Register to all existing projects
-		existingProjects, err := getAllExistingProjects(settings)
-		if err != nil {
-			return fmt.Errorf("failed to get existing projects: %w", err)
+		// Register to user-scoped mcpServers (applies to all projects)
+		if err := registerLinearToUserScope(settings, linearServerConfig); err != nil {
+			return fmt.Errorf("failed to register Linear MCP server to user scope: %w", err)
 		}
-		if len(existingProjects) == 0 {
-			return fmt.Errorf("no existing projects found and no --project-path specified. Please specify --project-path or create projects first")
-		}
-		targetProjects = existingProjects
-		fmt.Printf("Registering Linear MCP server to %d existing projects\n", len(targetProjects))
+		fmt.Printf("Registered Linear MCP server to user scope (applies to all projects)\n")
 	} else {
-		// Parse comma-separated project paths
+		// Parse comma-separated project paths and register to specific projects
+		var targetProjects []string
 		for _, path := range strings.Split(projectPath, ",") {
 			trimmedPath := strings.TrimSpace(path)
 			if trimmedPath != "" {
@@ -410,15 +404,14 @@ func setupClaudeCode(binaryPath, apiKey string, writeAccess bool, autoApprove, p
 		if len(targetProjects) == 0 {
 			return fmt.Errorf("no valid project paths provided")
 		}
+		
 		fmt.Printf("Registering Linear MCP server to %d specified projects\n", len(targetProjects))
-	}
-
-	// Register Linear MCP server to each target project
-	for _, projPath := range targetProjects {
-		if err := registerLinearToProject(settings, projPath, linearServerConfig); err != nil {
-			return fmt.Errorf("failed to register Linear MCP server to project '%s': %w", projPath, err)
+		for _, projPath := range targetProjects {
+			if err := registerLinearToProject(settings, projPath, linearServerConfig); err != nil {
+				return fmt.Errorf("failed to register Linear MCP server to project '%s': %w", projPath, err)
+			}
+			fmt.Printf("  - Registered to project: %s\n", projPath)
 		}
-		fmt.Printf("  - Registered to project: %s\n", projPath)
 	}
 
 	updatedData, err := json.MarshalIndent(settings, "", "  ")
@@ -434,19 +427,26 @@ func setupClaudeCode(binaryPath, apiKey string, writeAccess bool, autoApprove, p
 	return nil
 }
 
-// getAllExistingProjects extracts all existing project paths from the settings
-func getAllExistingProjects(settings map[string]interface{}) ([]string, error) {
-	projects, ok := settings["projects"].(map[string]interface{})
-	if !ok {
-		return []string{}, nil
+// registerLinearToUserScope registers the Linear MCP server to user-scoped mcpServers (applies to all projects)
+func registerLinearToUserScope(settings map[string]interface{}, linearServerConfig map[string]interface{}) error {
+	// Get or create user-scoped mcpServers
+	var mcpServers map[string]interface{}
+	if existingMcpServers, exists := settings["mcpServers"]; exists {
+		if mcpServersMap, ok := existingMcpServers.(map[string]interface{}); ok {
+			mcpServers = mcpServersMap
+		} else {
+			// If existing mcpServers is not a map, create a new one
+			mcpServers = map[string]interface{}{}
+		}
+	} else {
+		mcpServers = map[string]interface{}{}
 	}
 
-	var projectPaths []string
-	for projectPath := range projects {
-		projectPaths = append(projectPaths, projectPath)
-	}
+	// Add/update the linear server configuration
+	mcpServers["linear"] = linearServerConfig
+	settings["mcpServers"] = mcpServers
 
-	return projectPaths, nil
+	return nil
 }
 
 // registerLinearToProject registers the Linear MCP server to a specific project
