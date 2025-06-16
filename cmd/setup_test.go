@@ -416,15 +416,35 @@ func TestSetupCommand(t *testing.T) {
 			},
 		},
 		{
-			name:      "Claude Code No Existing Projects and No Project Path",
+			name:      "Claude Code No Existing Projects and No Project Path - User Scope Registration",
 			toolParam: "claude-code",
 			expect: expectations{
-				errors:   []string{"no existing projects found and no --project-path specified"},
-				exitCode: 1,
+				files: map[string]fileExpectation{
+					"claude-code": {
+						path:      "home/.claude.json",
+						mustExist: true,
+						content: `{
+							"projects": {},
+							"mcpServers": {
+								"linear": {
+									"type": "stdio",
+									"command": "home/mcp-servers/linear-mcp-go",
+									"args": ["serve"],
+									"env": {
+										"LINEAR_API_KEY": "test-api-key"
+									},
+									"autoApprove": [],
+									"disabled": false
+								}
+							}
+						}`,
+					},
+				},
+				exitCode: 0,
 			},
 		},
 		{
-			name:      "Claude Code Register to All Existing Projects",
+			name:      "Claude Code Register to User Scope with Existing Projects",
 			toolParam: "claude-code",
 			preExistingFiles: map[string]preExistingFile{
 				"claude-code": {
@@ -456,33 +476,23 @@ func TestSetupCommand(t *testing.T) {
 									"mcpServers": {
 										"existing-server": {
 											"command": "/path/to/existing/server"
-										},
-										"linear": {
-											"type": "stdio",
-											"command": "home/mcp-servers/linear-mcp-go",
-											"args": ["serve"],
-											"env": {
-												"LINEAR_API_KEY": "test-api-key"
-											},
-											"autoApprove": [],
-											"disabled": false
 										}
 									}
 								},
 								"/workspace/project2": {
-									"someOtherConfig": "value",
-									"mcpServers": {
-										"linear": {
-											"type": "stdio",
-											"command": "home/mcp-servers/linear-mcp-go",
-											"args": ["serve"],
-											"env": {
-												"LINEAR_API_KEY": "test-api-key"
-											},
-											"autoApprove": [],
-											"disabled": false
-										}
-									}
+									"someOtherConfig": "value"
+								}
+							},
+							"mcpServers": {
+								"linear": {
+									"type": "stdio",
+									"command": "home/mcp-servers/linear-mcp-go",
+									"args": ["serve"],
+									"env": {
+										"LINEAR_API_KEY": "test-api-key"
+									},
+									"autoApprove": [],
+									"disabled": false
 								}
 							}
 						}`,
@@ -853,6 +863,128 @@ func TestSetupCommand(t *testing.T) {
 											"command": "/path/to/other/server"
 										}
 									}
+								}
+							}
+						}`,
+					},
+				},
+				exitCode: 0,
+			},
+		},
+		{
+			name:        "Claude Code User Scope with Existing User-Scoped Servers",
+			toolParam:   "claude-code",
+			writeAccess: true,
+			autoApprove: "linear_get_issue,linear_search_issues",
+			preExistingFiles: map[string]preExistingFile{
+				"claude-code": {
+					path: "home/.claude.json",
+					content: `{
+						"projects": {
+							"/workspace/project1": {
+								"mcpServers": {
+									"project-specific-server": {
+										"command": "/path/to/project/server"
+									}
+								}
+							}
+						},
+						"mcpServers": {
+							"existing-user-server": {
+								"type": "stdio",
+								"command": "/path/to/existing/user/server",
+								"args": ["serve"],
+								"env": {"API_KEY": "existing-key"},
+								"autoApprove": ["existing_tool"],
+								"disabled": false
+							}
+						}
+					}`,
+				},
+			},
+			expect: expectations{
+				files: map[string]fileExpectation{
+					"claude-code": {
+						path:      "home/.claude.json",
+						mustExist: true,
+						content: `{
+							"projects": {
+								"/workspace/project1": {
+									"mcpServers": {
+										"project-specific-server": {
+											"command": "/path/to/project/server"
+										}
+									}
+								}
+							},
+							"mcpServers": {
+								"existing-user-server": {
+									"type": "stdio",
+									"command": "/path/to/existing/user/server",
+									"args": ["serve"],
+									"env": {"API_KEY": "existing-key"},
+									"autoApprove": ["existing_tool"],
+									"disabled": false
+								},
+								"linear": {
+									"type": "stdio",
+									"command": "home/mcp-servers/linear-mcp-go",
+									"args": ["serve", "--write-access=true"],
+									"env": {"LINEAR_API_KEY": "test-api-key"},
+									"autoApprove": ["linear_get_issue", "linear_search_issues"],
+									"disabled": false
+								}
+							}
+						}`,
+					},
+				},
+				exitCode: 0,
+			},
+		},
+		{
+			name:        "Claude Code User Scope Update Existing User-Scoped Linear Server",
+			toolParam:   "claude-code",
+			writeAccess: false,
+			autoApprove: "allow-read-only",
+			preExistingFiles: map[string]preExistingFile{
+				"claude-code": {
+					path: "home/.claude.json",
+					content: `{
+						"projects": {},
+						"mcpServers": {
+							"linear": {
+								"type": "stdio",
+								"command": "/old/path/to/linear",
+								"args": ["serve", "--old-flag"],
+								"env": {"LINEAR_API_KEY": "old-key"},
+								"autoApprove": ["old_tool"],
+								"disabled": true
+							},
+							"other-user-server": {
+								"command": "/path/to/other/user/server"
+							}
+						}
+					}`,
+				},
+			},
+			expect: expectations{
+				files: map[string]fileExpectation{
+					"claude-code": {
+						path:      "home/.claude.json",
+						mustExist: true,
+						content: `{
+							"projects": {},
+							"mcpServers": {
+								"linear": {
+									"type": "stdio",
+									"command": "home/mcp-servers/linear-mcp-go",
+									"args": ["serve"],
+									"env": {"LINEAR_API_KEY": "test-api-key"},
+									"autoApprove": ["linear_search_issues", "linear_get_user_issues", "linear_get_issue", "linear_get_teams", "linear_get_issue_comments"],
+									"disabled": false
+								},
+								"other-user-server": {
+									"command": "/path/to/other/user/server"
 								}
 							}
 						}`,
