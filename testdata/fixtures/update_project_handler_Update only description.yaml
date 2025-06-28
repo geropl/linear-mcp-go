@@ -6,13 +6,13 @@ interactions:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 583
+        content_length: 733
         transfer_encoding: []
         trailer: {}
         host: api.linear.app
         remote_addr: ""
         request_uri: ""
-        body: '{"query":"\n\t\tquery GetProject($id: String!) {\n\t\t\tproject(id: $id) {\n\t\t\t\tid\n\t\t\t\tname\n\t\t\t\tdescription\n\t\t\t\tslugId\n\t\t\t\tstate\n\t\t\t\turl\n\t\t\t\tcreatedAt\n\t\t\t\tupdatedAt\n\t\t\t\tlead {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\temail\n\t\t\t\t}\n\t\t\t\tmembers {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t\temail\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tteams {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t\tkey\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"id":"bfa49864-16c9-44db-994e-a11ba2b386f1"}}'
+        body: '{"query":"\n\t\tquery GetProject($id: String!) {\n\t\t\tproject(id: $id) {\n\t\t\t\tid\n\t\t\t\tname\n\t\t\t\tdescription\n\t\t\t\tslugId\n\t\t\t\tstate\n\t\t\t\turl\n\t\t\t\tcreatedAt\n\t\t\t\tupdatedAt\n\t\t\t\tlead {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\temail\n\t\t\t\t}\n\t\t\t\tmembers {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t\temail\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tteams {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t\tkey\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tinitiatives(first: 10) {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tstartDate\n\t\t\t\ttargetDate\n\t\t\t}\n\t\t}\n\t","variables":{"id":"bfa49864-16c9-44db-994e-a11ba2b386f1"}}'
         form: {}
         headers:
             Content-Type:
@@ -28,7 +28,7 @@ interactions:
         content_length: -1
         uncompressed: true
         body: |
-            {"data":{"project":{"id":"bfa49864-16c9-44db-994e-a11ba2b386f1","name":"Updated Project Name 2","description":"Updated Description","slugId":"e1153169a428","state":"backlog","url":"https://linear.app/linear-mcp-go-test/project/updated-project-name-2-e1153169a428","createdAt":"2025-06-28T18:42:20.223Z","updatedAt":"2025-06-28T18:51:59.259Z","lead":null,"members":{"nodes":[]},"teams":{"nodes":[{"id":"234c5451-a839-4c8f-98d9-da00973f1060","name":"Test Team","key":"TEST"}]}}}}
+            {"data":{"project":{"id":"bfa49864-16c9-44db-994e-a11ba2b386f1","name":"Updated Project Name 2","description":"Updated Description","slugId":"e1153169a428","state":"backlog","url":"https://linear.app/linear-mcp-go-test/project/updated-project-name-2-e1153169a428","createdAt":"2025-06-28T18:42:20.223Z","updatedAt":"2025-06-28T21:44:56.564Z","lead":null,"members":{"nodes":[]},"teams":{"nodes":[{"id":"234c5451-a839-4c8f-98d9-da00973f1060","name":"Test Team","key":"TEST"}]},"initiatives":{"nodes":[]},"startDate":null,"targetDate":null}}}
         headers:
             Alt-Svc:
                 - h3=":443"; ma=86400
@@ -39,7 +39,7 @@ interactions:
             Content-Type:
                 - application/json; charset=utf-8
             Etag:
-                - W/"1de-O/Ry0sG06MlVceINm8ZwavAA57s"
+                - W/"21c-zZT5JHii4UiJPH+GXG9r9OBmr2A"
             Server:
                 - cloudflare
             Vary:

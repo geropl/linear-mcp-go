@@ -5,3 +5,8 @@ output: |
       State: backlog
       URL: https://linear.app/linear-mcp-go-test/project/mcp-tool-investigation-ae44897e42a7
       Description: Summary text goes here
+      Lead: Gero Leinemann
+      Start Date: 2025-06-02
+      Target Date: 2025-06-30
+      Initiatives:
+        - Push for MCP (ID: 15e7c1bd-c0c5-4801-ac9a-8e98bf88ea7a)

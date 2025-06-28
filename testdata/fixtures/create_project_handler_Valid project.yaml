@@ -28,7 +28,7 @@ interactions:
         content_length: -1
         uncompressed: true
         body: |
-            {"data":{"projectCreate":{"success":true,"project":{"id":"bfa49864-16c9-44db-994e-a11ba2b386f1","name":"Created Test Project","description":"","slugId":"e1153169a428","state":"backlog","url":"https://linear.app/linear-mcp-go-test/project/created-test-project-e1153169a428"}}}}
+            {"data":{"projectCreate":{"success":true,"project":{"id":"1c3f69d6-ab7b-4339-906d-5d63bd3cc3bc","name":"Created Test Project","description":"","slugId":"d1e7a63515a4","state":"backlog","url":"https://linear.app/linear-mcp-go-test/project/created-test-project-d1e7a63515a4"}}}}
         headers:
             Alt-Svc:
                 - h3=":443"; ma=86400
@@ -39,7 +39,7 @@ interactions:
             Content-Type:
                 - application/json; charset=utf-8
             Etag:
-                - W/"115-pKofhJbaWwooZ5KKQmWVpkWHfGA"
+                - W/"115-3XE+XxWz8n/te2YxwxwQ8jghgOQ"
             Server:
                 - cloudflare
             Vary:

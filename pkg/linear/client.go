@@ -258,6 +258,14 @@ func (c *LinearClient) getProjectByID(id string) (*Project, error) {
 						key
 					}
 				}
+				initiatives(first: 10) {
+					nodes {
+						id
+						name
+					}
+				}
+				startDate
+				targetDate
 			}
 		}
 	`
@@ -322,6 +330,14 @@ func (c *LinearClient) getProjectByNameOrSlug(identifier string) (*Project, erro
 							key
 						}
 					}
+					initiatives(first: 1) {
+						nodes {
+							id
+							name
+						}
+					}
+					startDate
+					targetDate
 				}
 			}
 		}
@@ -394,6 +410,18 @@ func (c *LinearClient) SearchProjects(query string) ([]Project, error) {
 					slugId
 					state
 					url
+					initiatives(first: 1) {
+						nodes {
+							id
+							name
+						}
+					}
+					lead {
+						id
+						name
+					}
+					startDate
+					targetDate
 				}
 			}
 		}

@@ -6,13 +6,13 @@ interactions:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 564
+        content_length: 714
         transfer_encoding: []
         trailer: {}
         host: api.linear.app
         remote_addr: ""
         request_uri: ""
-        body: '{"query":"\n\t\tquery GetProject($id: String!) {\n\t\t\tproject(id: $id) {\n\t\t\t\tid\n\t\t\t\tname\n\t\t\t\tdescription\n\t\t\t\tslugId\n\t\t\t\tstate\n\t\t\t\turl\n\t\t\t\tcreatedAt\n\t\t\t\tupdatedAt\n\t\t\t\tlead {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\temail\n\t\t\t\t}\n\t\t\t\tmembers {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t\temail\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tteams {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t\tkey\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"id":"non-existent-slug"}}'
+        body: '{"query":"\n\t\tquery GetProject($id: String!) {\n\t\t\tproject(id: $id) {\n\t\t\t\tid\n\t\t\t\tname\n\t\t\t\tdescription\n\t\t\t\tslugId\n\t\t\t\tstate\n\t\t\t\turl\n\t\t\t\tcreatedAt\n\t\t\t\tupdatedAt\n\t\t\t\tlead {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\temail\n\t\t\t\t}\n\t\t\t\tmembers {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t\temail\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tteams {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t\tkey\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tinitiatives(first: 10) {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tstartDate\n\t\t\t\ttargetDate\n\t\t\t}\n\t\t}\n\t","variables":{"id":"non-existent-slug"}}'
         form: {}
         headers:
             Content-Type:
@@ -54,13 +54,13 @@ interactions:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 741
+        content_length: 906
         transfer_encoding: []
         trailer: {}
         host: api.linear.app
         remote_addr: ""
         request_uri: ""
-        body: '{"query":"\n\t\tquery GetProjectByNameOrSlug($filter: ProjectFilter) {\n\t\t\tprojects(filter: $filter, first: 1) {\n\t\t\t\tnodes {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\tdescription\n\t\t\t\t\tslugId\n\t\t\t\t\tstate\n\t\t\t\t\turl\n\t\t\t\t\tcreatedAt\n\t\t\t\t\tupdatedAt\n\t\t\t\t\tlead {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t\temail\n\t\t\t\t\t}\n\t\t\t\t\tmembers {\n\t\t\t\t\t\tnodes {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tname\n\t\t\t\t\t\t\temail\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tteams {\n\t\t\t\t\t\tnodes {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tname\n\t\t\t\t\t\t\tkey\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"filter":{"or":[{"name":{"eq":"non-existent-slug"}},{"slugId":{"eq":"slug"}}]}}}'
+        body: '{"query":"\n\t\tquery GetProjectByNameOrSlug($filter: ProjectFilter) {\n\t\t\tprojects(filter: $filter, first: 1) {\n\t\t\t\tnodes {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\tdescription\n\t\t\t\t\tslugId\n\t\t\t\t\tstate\n\t\t\t\t\turl\n\t\t\t\t\tcreatedAt\n\t\t\t\t\tupdatedAt\n\t\t\t\t\tlead {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t\temail\n\t\t\t\t\t}\n\t\t\t\t\tmembers {\n\t\t\t\t\t\tnodes {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tname\n\t\t\t\t\t\t\temail\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tteams {\n\t\t\t\t\t\tnodes {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tname\n\t\t\t\t\t\t\tkey\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tinitiatives(first: 1) {\n\t\t\t\t\t\tnodes {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tname\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tstartDate\n\t\t\t\t\ttargetDate\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"filter":{"or":[{"name":{"eq":"non-existent-slug"}},{"slugId":{"eq":"slug"}}]}}}'
         form: {}
         headers:
             Content-Type:

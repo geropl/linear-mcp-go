@@ -6,13 +6,13 @@ interactions:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 334
+        content_length: 564
         transfer_encoding: []
         trailer: {}
         host: api.linear.app
         remote_addr: ""
         request_uri: ""
-        body: '{"query":"\n\t\tquery SearchProjects($filter: ProjectFilter) {\n\t\t\tprojects(filter: $filter) {\n\t\t\t\tnodes {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\tdescription\n\t\t\t\t\tslugId\n\t\t\t\t\tstate\n\t\t\t\t\turl\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"filter":{"name":{"containsIgnoreCase":"non-existent-project-query"}}}}'
+        body: '{"query":"\n\t\tquery SearchProjects($filter: ProjectFilter) {\n\t\t\tprojects(filter: $filter) {\n\t\t\t\tnodes {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\tdescription\n\t\t\t\t\tslugId\n\t\t\t\t\tstate\n\t\t\t\t\turl\n\t\t\t\t\tinitiatives(first: 1) {\n\t\t\t\t\t\tnodes {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tname\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tlead {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t}\n\t\t\t\t\tstartDate\n\t\t\t\t\ttargetDate\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"filter":{"name":{"containsIgnoreCase":"non-existent-project-query"}}}}'
         form: {}
         headers:
             Content-Type:
