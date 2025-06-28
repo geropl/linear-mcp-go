@@ -1,0 +1,2 @@
+err: 'Failed to get project: project with identifier ''non-existent-slug'' not found'
+output: ""

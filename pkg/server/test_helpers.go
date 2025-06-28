@@ -15,12 +15,18 @@ var golden = flag.Bool("golden", false, "Update all golden files and recordings"
 
 // Shared constants for tests
 const (
-	TEAM_NAME        = "Test Team"
-	TEAM_KEY         = "TEST"
-	TEAM_ID          = "234c5451-a839-4c8f-98d9-da00973f1060"
-	ISSUE_ID         = "TEST-10"
-	COMMENT_ISSUE_ID = "TEST-12" // Used for testing add_comment handler
-	USER_ID          = "cc24eee4-9edc-4bfe-b91b-fedde125ba85"
+	TEAM_NAME            = "Test Team"
+	TEAM_KEY             = "TEST"
+	TEAM_ID              = "234c5451-a839-4c8f-98d9-da00973f1060"
+	ISSUE_ID             = "TEST-10"
+	COMMENT_ISSUE_ID     = "TEST-12" // Used for testing add_comment handler
+	USER_ID              = "cc24eee4-9edc-4bfe-b91b-fedde125ba85"
+	PROJECT_ID           = "01bff2dd-ab7f-4464-b425-97073862013f"
+	UPDATE_PROJECT_ID    = "bfa49864-16c9-44db-994e-a11ba2b386f1"
+	MILESTONE_ID         = "c86acc00-3035-4a67-82f2-2a5bf6453e92"
+	UPDATE_MILESTONE_ID  = "2d95299d-1341-484b-ab00-5cb587f2cc67"
+	INITIATIVE_ID        = "3bb752a7-897e-4240-9306-01e48872fab3"
+	UPDATE_INITIATIVE_ID = "c6a7dd0c-cbe2-4101-906d-ddd97acb2241"
 )
 
 // expectation defines the expected output and error for a test case

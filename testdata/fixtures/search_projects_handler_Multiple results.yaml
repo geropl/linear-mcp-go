@@ -1,0 +1,51 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 311
+        transfer_encoding: []
+        trailer: {}
+        host: api.linear.app
+        remote_addr: ""
+        request_uri: ""
+        body: '{"query":"\n\t\tquery SearchProjects($filter: ProjectFilter) {\n\t\t\tprojects(filter: $filter) {\n\t\t\t\tnodes {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\tdescription\n\t\t\t\t\tslugId\n\t\t\t\t\tstate\n\t\t\t\t\turl\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"filter":{"name":{"containsIgnoreCase":"MCP"}}}}'
+        form: {}
+        headers:
+            Content-Type:
+                - application/json
+        url: https://api.linear.app/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: |
+            {"data":{"projects":{"nodes":[{"id":"473d62ae-38fe-4439-9007-08763e51bf88","name":"Totally different MCP project with no content","description":"Summary goes here","slugId":"29129640a673","state":"backlog","url":"https://linear.app/linear-mcp-go-test/project/totally-different-mcp-project-with-no-content-29129640a673"},{"id":"01bff2dd-ab7f-4464-b425-97073862013f","name":"MCP tool investigation","description":"Summary text goes here","slugId":"ae44897e42a7","state":"backlog","url":"https://linear.app/linear-mcp-go-test/project/mcp-tool-investigation-ae44897e42a7"}]}}}
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=86400
+            Cache-Control:
+                - no-store
+            Cf-Cache-Status:
+                - DYNAMIC
+            Content-Type:
+                - application/json; charset=utf-8
+            Etag:
+                - W/"23d-RbtDQzevWNSpRrZPpJzffPw9TOU"
+            Server:
+                - cloudflare
+            Vary:
+                - Accept-Encoding
+            Via:
+                - 1.1 google
+        status: 200 OK
+        code: 200
+        duration: 0s

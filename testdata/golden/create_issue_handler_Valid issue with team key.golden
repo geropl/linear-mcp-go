@@ -1,5 +1,5 @@
 err: ""
 output: |-
-    Created Issue: TEST-67 (UUID: 8a2c9f4a-88ce-4f02-9b42-81c257d7a4f7)
+    Created Issue: TEST-75 (UUID: cc09a899-ecb2-46d5-9ea7-291e18c52789)
     Title: Test Issue with team key
-    URL: https://linear.app/linear-mcp-go-test/issue/TEST-67/test-issue-with-team-key
+    URL: https://linear.app/linear-mcp-go-test/issue/TEST-75/test-issue-with-team-key

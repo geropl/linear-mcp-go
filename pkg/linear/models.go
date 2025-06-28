@@ -12,6 +12,8 @@ type Issue struct {
 	Status          string                   `json:"status"`
 	Assignee        *User                    `json:"assignee,omitempty"`
 	Team            *Team                    `json:"team,omitempty"`
+	Project         *Project                 `json:"project,omitempty"`
+	ProjectMilestone *ProjectMilestone       `json:"projectMilestone,omitempty"`
 	URL             string                   `json:"url"`
 	CreatedAt       time.Time                `json:"createdAt"`
 	UpdatedAt       time.Time                `json:"updatedAt"`
@@ -37,6 +39,61 @@ type Team struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
 	Key  string `json:"key"`
+}
+
+// Project represents a Linear project
+type Project struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	SlugID      string `json:"slugId"`
+	State       string `json:"state"`
+	Creator     *User  `json:"creator,omitempty"`
+	Lead        *User  `json:"lead,omitempty"`
+	// Members     *UserConnection `json:"members,omitempty"`
+	// Teams       *TeamConnection `json:"teams,omitempty"`
+	StartDate  *time.Time `json:"startDate,omitempty"`
+	TargetDate *time.Time `json:"targetDate,omitempty"`
+	Color      string     `json:"color"`
+	Icon       string     `json:"icon,omitempty"`
+	URL        string     `json:"url"`
+}
+
+// ProjectConnection represents a connection of projects
+type ProjectConnection struct {
+	Nodes []Project `json:"nodes"`
+}
+
+// ProjectMilestoneConnection represents a connection of project milestones.
+type ProjectMilestoneConnection struct {
+	Nodes []ProjectMilestone `json:"nodes"`
+}
+
+// ProjectMilestone represents a Linear project milestone
+type ProjectMilestone struct {
+	ID          string   `json:"id"`
+	Name        string   `json:"name"`
+	Description string   `json:"description,omitempty"`
+	TargetDate  *string  `json:"targetDate,omitempty"`
+	Project     *Project `json:"project,omitempty"`
+	SortOrder   float64  `json:"sortOrder"`
+}
+
+// InitiativeConnection represents a connection of initiatives.
+type InitiativeConnection struct {
+	Nodes []Initiative `json:"nodes"`
+}
+
+// Initiative represents a Linear initiative
+type Initiative struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description,omitempty"`
+	Owner       *User  `json:"owner,omitempty"`
+	Color       string `json:"color,omitempty"`
+	Icon        string `json:"icon,omitempty"`
+	SlugID      string `json:"slugId"`
+	URL         string `json:"url"`
 }
 
 // State represents a workflow state in Linear
@@ -124,13 +181,15 @@ type Organization struct {
 
 // LinearIssueResponse represents a simplified issue response
 type LinearIssueResponse struct {
-	ID         string  `json:"id"`
-	Identifier string  `json:"identifier"`
-	Title      string  `json:"title"`
-	Priority   int     `json:"priority"`
-	Status     string  `json:"status,omitempty"`
-	StateName  string  `json:"stateName,omitempty"`
-	URL        string  `json:"url"`
+	ID               string            `json:"id"`
+	Identifier       string            `json:"identifier"`
+	Title            string            `json:"title"`
+	Priority         int               `json:"priority"`
+	Status           string            `json:"status,omitempty"`
+	StateName        string            `json:"stateName,omitempty"`
+	URL              string            `json:"url"`
+	Project          *Project          `json:"project,omitempty"`
+	ProjectMilestone *ProjectMilestone `json:"projectMilestone,omitempty"`
 }
 
 // APIMetrics represents metrics about API usage
@@ -160,6 +219,9 @@ type UpdateIssueInput struct {
 	Description string  `json:"description,omitempty"`
 	Priority    *int    `json:"priority,omitempty"`
 	Status      string  `json:"status,omitempty"`
+	TeamID   	string  `json:"teamId,omitempty"`
+	ProjectID   string  `json:"projectId,omitempty"`
+	MilestoneID string  `json:"milestoneId,omitempty"`
 }
 
 // SearchIssuesInput represents input for searching issues
@@ -196,6 +258,53 @@ type AddCommentInput struct {
 	Body         string `json:"body"`
 	CreateAsUser string `json:"createAsUser,omitempty"`
 	ParentID     string `json:"parentId,omitempty"`
+}
+
+// ProjectCreateInput represents the input for creating a project.
+type ProjectCreateInput struct {
+	Name        string   `json:"name"`
+	TeamIDs     []string `json:"teamIds"`
+	Description string   `json:"description,omitempty"`
+	LeadID      string   `json:"leadId,omitempty"`
+	StartDate   string   `json:"startDate,omitempty"`
+	TargetDate  string   `json:"targetDate,omitempty"`
+}
+
+// ProjectUpdateInput represents the input for updating a project.
+type ProjectUpdateInput struct {
+	Name        string   `json:"name,omitempty"`
+	Description string   `json:"description,omitempty"`
+	LeadID      string   `json:"leadId,omitempty"`
+	StartDate   string   `json:"startDate,omitempty"`
+	TargetDate  string   `json:"targetDate,omitempty"`
+	TeamIDs     []string `json:"teamIds,omitempty"`
+}
+
+// ProjectMilestoneCreateInput represents the input for creating a project milestone.
+type ProjectMilestoneCreateInput struct {
+	Name        string `json:"name"`
+	ProjectID   string `json:"projectId"`
+	Description string `json:"description,omitempty"`
+	TargetDate  string `json:"targetDate,omitempty"`
+}
+
+// ProjectMilestoneUpdateInput represents the input for updating a project milestone.
+type ProjectMilestoneUpdateInput struct {
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
+	TargetDate  string `json:"targetDate,omitempty"`
+}
+
+// InitiativeCreateInput represents the input for creating an initiative.
+type InitiativeCreateInput struct {
+	Name        string `json:"name"`
+	Description string `json:"description,omitempty"`
+}
+
+// InitiativeUpdateInput represents the input for updating an initiative.
+type InitiativeUpdateInput struct {
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
 }
 
 // GraphQLRequest represents a GraphQL request

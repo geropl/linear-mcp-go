@@ -54,13 +54,13 @@ interactions:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 1187
+        content_length: 1316
         transfer_encoding: []
         trailer: {}
         host: api.linear.app
         remote_addr: ""
         request_uri: ""
-        body: '{"query":"\n\t\tquery GetIssue($id: String!) {\n\t\t\tissue(id: $id) {\n\t\t\t\tid\n\t\t\t\tidentifier\n\t\t\t\ttitle\n\t\t\t\tdescription\n\t\t\t\tpriority\n\t\t\t\turl\n\t\t\t\tcreatedAt\n\t\t\t\tupdatedAt\n\t\t\t\tstate {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t}\n\t\t\t\tassignee {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\temail\n\t\t\t\t}\n\t\t\t\tteam {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\tkey\n\t\t\t\t}\n\t\t\t\trelations(first: 20) {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\ttype\n\t\t\t\t\t\trelatedIssue {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tidentifier\n\t\t\t\t\t\t\ttitle\n\t\t\t\t\t\t\turl\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tinverseRelations(first: 20) {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\ttype\n\t\t\t\t\t\tissue {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tidentifier\n\t\t\t\t\t\t\ttitle\n\t\t\t\t\t\t\turl\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tattachments(first: 50) {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\ttitle\n\t\t\t\t\t\tsubtitle\n\t\t\t\t\t\turl\n\t\t\t\t\t\tsourceType\n\t\t\t\t\t\tmetadata\n\t\t\t\t\t\tcreatedAt\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"id":"9407c793-5fd8-4730-9280-0e17ffddf320"}}'
+        body: '{"query":"\n\t\tquery GetIssue($id: String!) {\n\t\t\tissue(id: $id) {\n\t\t\t\tid\n\t\t\t\tidentifier\n\t\t\t\ttitle\n\t\t\t\tdescription\n\t\t\t\tpriority\n\t\t\t\turl\n\t\t\t\tcreatedAt\n\t\t\t\tupdatedAt\n\t\t\t\tstate {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t}\n\t\t\t\tassignee {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\temail\n\t\t\t\t}\n\t\t\t\tteam {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\tkey\n\t\t\t\t}\n\t\t\t\tproject {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t}\n\t\t\t\tprojectMilestone {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t}\n\t\t\t\trelations(first: 20) {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\ttype\n\t\t\t\t\t\trelatedIssue {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tidentifier\n\t\t\t\t\t\t\ttitle\n\t\t\t\t\t\t\turl\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tinverseRelations(first: 20) {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\ttype\n\t\t\t\t\t\tissue {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tidentifier\n\t\t\t\t\t\t\ttitle\n\t\t\t\t\t\t\turl\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tattachments(first: 50) {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\ttitle\n\t\t\t\t\t\tsubtitle\n\t\t\t\t\t\turl\n\t\t\t\t\t\tsourceType\n\t\t\t\t\t\tmetadata\n\t\t\t\t\t\tcreatedAt\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"id":"9407c793-5fd8-4730-9280-0e17ffddf320"}}'
         form: {}
         headers:
             Content-Type:
@@ -76,7 +76,7 @@ interactions:
         content_length: -1
         uncompressed: true
         body: |
-            {"data":{"issue":{"id":"9407c793-5fd8-4730-9280-0e17ffddf320","identifier":"TEST-12","title":"Comments issue","description":"This is the description","priority":0,"url":"https://linear.app/linear-mcp-go-test/issue/TEST-12/comments-issue","createdAt":"2025-03-04T08:40:53.877Z","updatedAt":"2025-03-04T08:43:37.989Z","state":{"id":"cffb8999-f10e-447d-9672-8faf5b06ac67","name":"Todo"},"assignee":null,"team":{"id":"234c5451-a839-4c8f-98d9-da00973f1060","name":"Test Team","key":"TEST"},"relations":{"nodes":[]},"inverseRelations":{"nodes":[]},"attachments":{"nodes":[{"id":"cf677e8d-955f-430e-b281-4ee9bde7df79","title":"[docs] Getting Started","subtitle":"Gitpod Documentation: Learn how to start your first Gitpod workspace for free, set up a gitpod.yml configuration file and enable Prebuilds.","url":"https://www.gitpod.io/docs/introduction/getting-started","sourceType":"api","metadata":{},"createdAt":"2025-03-04T08:43:37.989Z"}]}}}}
+            {"data":{"issue":{"id":"9407c793-5fd8-4730-9280-0e17ffddf320","identifier":"TEST-12","title":"Comments issue","description":"This is the description","priority":0,"url":"https://linear.app/linear-mcp-go-test/issue/TEST-12/comments-issue","createdAt":"2025-03-04T08:40:53.877Z","updatedAt":"2025-03-04T08:43:37.989Z","state":{"id":"cffb8999-f10e-447d-9672-8faf5b06ac67","name":"Todo"},"assignee":null,"team":{"id":"234c5451-a839-4c8f-98d9-da00973f1060","name":"Test Team","key":"TEST"},"project":null,"projectMilestone":null,"relations":{"nodes":[]},"inverseRelations":{"nodes":[]},"attachments":{"nodes":[{"id":"cf677e8d-955f-430e-b281-4ee9bde7df79","title":"[docs] Getting Started","subtitle":"Gitpod Documentation: Learn how to start your first Gitpod workspace for free, set up a gitpod.yml configuration file and enable Prebuilds.","url":"https://www.gitpod.io/docs/introduction/getting-started","sourceType":"api","metadata":{},"createdAt":"2025-03-04T08:43:37.989Z"}]}}}}
         headers:
             Alt-Svc:
                 - h3=":443"; ma=86400
@@ -87,7 +87,7 @@ interactions:
             Content-Type:
                 - application/json; charset=utf-8
             Etag:
-                - W/"3ab-0mAwjHHW2BdwIVzruopTuUusyOc"
+                - W/"3d2-y7Op6fHSC2Lvc4f+0aw4k03LArM"
             Server:
                 - cloudflare
             Vary:

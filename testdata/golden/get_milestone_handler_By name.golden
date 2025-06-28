@@ -1,0 +1,7 @@
+err: ""
+output: |
+    Milestone: Test Milestone 2
+      ID: 67ae1d0a-107b-42af-b063-c31a3fa05fd1
+      Description: Test Description
+      Target Date: 2024-12-31
+      Project: Updated Project Name 2 (bfa49864-16c9-44db-994e-a11ba2b386f1)

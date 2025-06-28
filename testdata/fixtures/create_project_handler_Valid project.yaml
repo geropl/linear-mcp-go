@@ -1,0 +1,51 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 384
+        transfer_encoding: []
+        trailer: {}
+        host: api.linear.app
+        remote_addr: ""
+        request_uri: ""
+        body: '{"query":"\n\t\tmutation ProjectCreate($input: ProjectCreateInput!) {\n\t\t\tprojectCreate(input: $input) {\n\t\t\t\tsuccess\n\t\t\t\tproject {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\tdescription\n\t\t\t\t\tslugId\n\t\t\t\t\tstate\n\t\t\t\t\turl\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"input":{"name":"Created Test Project","teamIds":["234c5451-a839-4c8f-98d9-da00973f1060"]}}}'
+        form: {}
+        headers:
+            Content-Type:
+                - application/json
+        url: https://api.linear.app/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: |
+            {"data":{"projectCreate":{"success":true,"project":{"id":"bfa49864-16c9-44db-994e-a11ba2b386f1","name":"Created Test Project","description":"","slugId":"e1153169a428","state":"backlog","url":"https://linear.app/linear-mcp-go-test/project/created-test-project-e1153169a428"}}}}
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=86400
+            Cache-Control:
+                - no-store
+            Cf-Cache-Status:
+                - DYNAMIC
+            Content-Type:
+                - application/json; charset=utf-8
+            Etag:
+                - W/"115-pKofhJbaWwooZ5KKQmWVpkWHfGA"
+            Server:
+                - cloudflare
+            Vary:
+                - Accept-Encoding
+            Via:
+                - 1.1 google
+        status: 200 OK
+        code: 200
+        duration: 0s

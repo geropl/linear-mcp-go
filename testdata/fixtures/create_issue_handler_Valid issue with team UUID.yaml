@@ -6,13 +6,13 @@ interactions:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 701
+        content_length: 846
         transfer_encoding: []
         trailer: {}
         host: api.linear.app
         remote_addr: ""
         request_uri: ""
-        body: '{"query":"\n\t\tmutation CreateIssue($input: IssueCreateInput!) {\n\t\t\tissueCreate(input: $input) {\n\t\t\t\tsuccess\n\t\t\t\tissue {\n\t\t\t\t\tid\n\t\t\t\t\tidentifier\n\t\t\t\t\ttitle\n\t\t\t\t\tdescription\n\t\t\t\t\tpriority\n\t\t\t\t\turl\n\t\t\t\t\tcreatedAt\n\t\t\t\t\tupdatedAt\n\t\t\t\t\tstate {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t}\n\t\t\t\t\tteam {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t\tkey\n\t\t\t\t\t}\n\t\t\t\t\tlabels {\n\t\t\t\t\t\tnodes {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tname\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"input":{"description":"","teamId":"234c5451-a839-4c8f-98d9-da00973f1060","title":"Test Issue with team UUID"}}}'
+        body: '{"query":"\n\t\tmutation CreateIssue($input: IssueCreateInput!) {\n\t\t\tissueCreate(input: $input) {\n\t\t\t\tsuccess\n\t\t\t\tissue {\n\t\t\t\t\tid\n\t\t\t\t\tidentifier\n\t\t\t\t\ttitle\n\t\t\t\t\tdescription\n\t\t\t\t\tpriority\n\t\t\t\t\turl\n\t\t\t\t\tcreatedAt\n\t\t\t\t\tupdatedAt\n\t\t\t\t\tstate {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t}\n\t\t\t\t\tteam {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t\tkey\n\t\t\t\t\t}\n\t\t\t\t\tlabels {\n\t\t\t\t\t\tnodes {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tname\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tproject {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t}\n\t\t\t\t\tprojectMilestone {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"input":{"description":"","teamId":"234c5451-a839-4c8f-98d9-da00973f1060","title":"Test Issue with team UUID"}}}'
         form: {}
         headers:
             Content-Type:
@@ -28,7 +28,7 @@ interactions:
         content_length: -1
         uncompressed: true
         body: |
-            {"data":{"issueCreate":{"success":true,"issue":{"id":"c5e46aa6-b499-4471-8240-17767aee136d","identifier":"TEST-65","title":"Test Issue with team UUID","description":null,"priority":0,"url":"https://linear.app/linear-mcp-go-test/issue/TEST-65/test-issue-with-team-uuid","createdAt":"2025-03-30T14:30:11.422Z","updatedAt":"2025-03-30T14:30:11.422Z","state":{"id":"42f7ad15-fca3-4d11-b349-0e3c1385c256","name":"Backlog"},"team":{"id":"234c5451-a839-4c8f-98d9-da00973f1060","name":"Test Team","key":"TEST"},"labels":{"nodes":[]}}}}}
+            {"data":{"issueCreate":{"success":true,"issue":{"id":"8de5ddfd-725d-46db-8fda-ed79390fe6c4","identifier":"TEST-73","title":"Test Issue with team UUID","description":null,"priority":0,"url":"https://linear.app/linear-mcp-go-test/issue/TEST-73/test-issue-with-team-uuid","createdAt":"2025-06-28T20:13:53.244Z","updatedAt":"2025-06-28T20:13:53.244Z","state":{"id":"42f7ad15-fca3-4d11-b349-0e3c1385c256","name":"Backlog"},"team":{"id":"234c5451-a839-4c8f-98d9-da00973f1060","name":"Test Team","key":"TEST"},"labels":{"nodes":[]},"project":null,"projectMilestone":null}}}}
         headers:
             Alt-Svc:
                 - h3=":443"; ma=86400
@@ -39,7 +39,7 @@ interactions:
             Content-Type:
                 - application/json; charset=utf-8
             Etag:
-                - W/"211-BO3LmXLXyLkZmX+FI0SpPel68hQ"
+                - W/"238-8z5M5ZuJYtoMq7C9qB+b1J3mgMU"
             Server:
                 - cloudflare
             Vary:

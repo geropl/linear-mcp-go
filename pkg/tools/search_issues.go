@@ -106,6 +106,16 @@ func SearchIssuesHandler(linearClient *linear.LinearClient) func(ctx context.Con
 			resultText += fmt.Sprintf("  Title: %s\n", issue.Title)
 			resultText += fmt.Sprintf("  Priority: %s\n", priorityStr)
 			resultText += fmt.Sprintf("  Status: %s\n", statusStr)
+			if issue.Project != nil {
+				resultText += fmt.Sprintf("  Project: %s (%s)\n", issue.Project.Name, issue.Project.ID)
+			} else {
+				resultText += "  Project: None\n"
+			}
+			if issue.ProjectMilestone != nil {
+				resultText += fmt.Sprintf("  Milestone: %s (%s)\n", issue.ProjectMilestone.Name, issue.ProjectMilestone.ID)
+			} else {
+				resultText += "  Milestone: None\n"
+			}
 			resultText += fmt.Sprintf("  URL: %s\n", issue.URL)
 		}
 

@@ -9,6 +9,8 @@ output: |
     Description: This is the description
     Assignee: None
     Team: Test Team (UUID: 234c5451-a839-4c8f-98d9-da00973f1060)
+    Project: None
+    Milestone: None
 
     Attachments:
     - [docs] Getting Started: https://www.gitpod.io/docs/introduction/getting-started

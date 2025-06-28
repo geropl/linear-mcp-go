@@ -138,6 +138,14 @@ func (c *LinearClient) GetIssue(issueID string) (*Issue, error) {
 					name
 					key
 				}
+				project {
+					id
+					name
+				}
+				projectMilestone {
+					id
+					name
+				}
 				relations(first: 20) {
 					nodes {
 						id
@@ -204,6 +212,793 @@ func (c *LinearClient) GetIssue(issueID string) (*Issue, error) {
 	}
 
 	return &issue, nil
+}
+
+// GetProject gets a project by identifier (ID, name, or slug)
+func (c *LinearClient) GetProject(identifier string) (*Project, error) {
+	// First, try to get the project by ID
+	project, err := c.getProjectByID(identifier)
+	if err == nil {
+		return project, nil
+	}
+
+	// If not found by ID, try to get by name or slug
+	return c.getProjectByNameOrSlug(identifier)
+}
+
+// getProjectByID gets a project by its UUID
+func (c *LinearClient) getProjectByID(id string) (*Project, error) {
+	query := `
+		query GetProject($id: String!) {
+			project(id: $id) {
+				id
+				name
+				description
+				slugId
+				state
+				url
+				createdAt
+				updatedAt
+				lead {
+					id
+					name
+					email
+				}
+				members {
+					nodes {
+						id
+						name
+						email
+					}
+				}
+				teams {
+					nodes {
+						id
+						name
+						key
+					}
+				}
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"id": id,
+	}
+
+	resp, err := c.executeGraphQL(query, variables)
+	if err != nil {
+		return nil, err
+	}
+
+	projectData, ok := resp.Data["project"].(map[string]interface{})
+	if !ok || projectData == nil {
+		return nil, fmt.Errorf("project with ID %s not found", id)
+	}
+
+	var project Project
+	projectBytes, err := json.Marshal(projectData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal project data: %w", err)
+	}
+
+	if err := json.Unmarshal(projectBytes, &project); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal project data: %w", err)
+	}
+
+	return &project, nil
+}
+
+// getProjectByNameOrSlug gets a project by its name or slug
+func (c *LinearClient) getProjectByNameOrSlug(identifier string) (*Project, error) {
+	query := `
+		query GetProjectByNameOrSlug($filter: ProjectFilter) {
+			projects(filter: $filter, first: 1) {
+				nodes {
+					id
+					name
+					description
+					slugId
+					state
+					url
+					createdAt
+					updatedAt
+					lead {
+						id
+						name
+						email
+					}
+					members {
+						nodes {
+							id
+							name
+							email
+						}
+					}
+					teams {
+						nodes {
+							id
+							name
+							key
+						}
+					}
+				}
+			}
+		}
+	`
+
+	// Check if the identifier is a slug and extract the slugId
+	parts := strings.Split(identifier, "-")
+	slugID := ""
+	if len(parts) > 1 {
+		slugID = parts[len(parts)-1]
+	}
+
+	filter := map[string]interface{}{
+		"or": []map[string]interface{}{
+			{
+				"name": map[string]interface{}{"eq": identifier},
+			},
+			{
+				"slugId": map[string]interface{}{"eq": slugID},
+			},
+		},
+	}
+
+	variables := map[string]interface{}{
+		"filter": filter,
+	}
+
+	resp, err := c.executeGraphQL(query, variables)
+	if err != nil {
+		return nil, err
+	}
+
+	projectsData, ok := resp.Data["projects"].(map[string]interface{})
+	if !ok || projectsData == nil {
+		return nil, fmt.Errorf("project with identifier '%s' not found", identifier)
+	}
+
+	nodes, ok := projectsData["nodes"].([]interface{})
+	if !ok || len(nodes) == 0 {
+		return nil, fmt.Errorf("project with identifier '%s' not found", identifier)
+	}
+
+	projectData, ok := nodes[0].(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("failed to parse project data for identifier '%s'", identifier)
+	}
+
+	var project Project
+	projectBytes, err := json.Marshal(projectData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal project data: %w", err)
+	}
+
+	if err := json.Unmarshal(projectBytes, &project); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal project data: %w", err)
+	}
+
+	return &project, nil
+}
+
+// SearchProjects searches for projects
+func (c *LinearClient) SearchProjects(query string) ([]Project, error) {
+	graphqlQuery := `
+		query SearchProjects($filter: ProjectFilter) {
+			projects(filter: $filter) {
+				nodes {
+					id
+					name
+					description
+					slugId
+					state
+					url
+				}
+			}
+		}
+	`
+
+	filter := map[string]interface{}{
+		"name": map[string]interface{}{"containsIgnoreCase": query},
+	}
+
+	variables := map[string]interface{}{
+		"filter": filter,
+	}
+
+	resp, err := c.executeGraphQL(graphqlQuery, variables)
+	if err != nil {
+		return nil, err
+	}
+
+	projectsData, ok := resp.Data["projects"].(map[string]interface{})
+	if !ok || projectsData == nil {
+		return []Project{}, nil
+	}
+
+	nodes, ok := projectsData["nodes"].([]interface{})
+	if !ok {
+		return []Project{}, nil
+	}
+
+	var projects []Project
+	for _, node := range nodes {
+		projectData, ok := node.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		var project Project
+		projectBytes, err := json.Marshal(projectData)
+		if err != nil {
+			return nil, fmt.Errorf("failed to marshal project data: %w", err)
+		}
+
+		if err := json.Unmarshal(projectBytes, &project); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal project data: %w", err)
+		}
+		projects = append(projects, project)
+	}
+
+	return projects, nil
+}
+
+// CreateProject creates a new project.
+func (c *LinearClient) CreateProject(input ProjectCreateInput) (*Project, error) {
+	query := `
+		mutation ProjectCreate($input: ProjectCreateInput!) {
+			projectCreate(input: $input) {
+				success
+				project {
+					id
+					name
+					description
+					slugId
+					state
+					url
+				}
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"input": input,
+	}
+
+	resp, err := c.executeGraphQL(query, variables)
+	if err != nil {
+		return nil, err
+	}
+
+	projectCreateData, ok := resp.Data["projectCreate"].(map[string]interface{})
+	if !ok || projectCreateData == nil {
+		return nil, errors.New("failed to create project")
+	}
+
+	success, ok := projectCreateData["success"].(bool)
+	if !ok || !success {
+		return nil, errors.New("failed to create project")
+	}
+
+	projectData, ok := projectCreateData["project"].(map[string]interface{})
+	if !ok || projectData == nil {
+		return nil, errors.New("failed to create project")
+	}
+
+	var project Project
+	projectBytes, err := json.Marshal(projectData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal project data: %w", err)
+	}
+
+	if err := json.Unmarshal(projectBytes, &project); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal project data: %w", err)
+	}
+
+	return &project, nil
+}
+
+// UpdateProject updates an existing project.
+func (c *LinearClient) UpdateProject(id string, input ProjectUpdateInput) (*Project, error) {
+	query := `
+		mutation ProjectUpdate($id: String!, $input: ProjectUpdateInput!) {
+			projectUpdate(id: $id, input: $input) {
+				success
+				project {
+					id
+					name
+					description
+					slugId
+					state
+					url
+				}
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"id":    id,
+		"input": input,
+	}
+
+	resp, err := c.executeGraphQL(query, variables)
+	if err != nil {
+		return nil, err
+	}
+
+	projectUpdateData, ok := resp.Data["projectUpdate"].(map[string]interface{})
+	if !ok || projectUpdateData == nil {
+		return nil, errors.New("failed to update project")
+	}
+
+	success, ok := projectUpdateData["success"].(bool)
+	if !ok || !success {
+		return nil, errors.New("failed to update project")
+	}
+
+	projectData, ok := projectUpdateData["project"].(map[string]interface{})
+	if !ok || projectData == nil {
+		return nil, errors.New("failed to update project")
+	}
+
+	var project Project
+	projectBytes, err := json.Marshal(projectData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal project data: %w", err)
+	}
+
+	if err := json.Unmarshal(projectBytes, &project); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal project data: %w", err)
+	}
+
+	return &project, nil
+}
+
+// GetMilestone gets a project milestone by identifier (ID or name).
+func (c *LinearClient) GetMilestone(identifier string) (*ProjectMilestone, error) {
+	// First, try to get the milestone by ID
+	milestone, err := c.getMilestoneByID(identifier)
+	if err == nil {
+		return milestone, nil
+	}
+
+	// If not found by ID, try to get by name
+	return c.getMilestoneByName(identifier)
+}
+
+// getMilestoneByID gets a project milestone by its UUID.
+func (c *LinearClient) getMilestoneByID(id string) (*ProjectMilestone, error) {
+	query := `
+		query ProjectMilestone($id: String!) {
+			projectMilestone(id: $id) {
+				id
+				name
+				description
+				targetDate
+				project {
+					id
+					name
+				}
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"id": id,
+	}
+
+	resp, err := c.executeGraphQL(query, variables)
+	if err != nil {
+		return nil, err
+	}
+
+	milestoneData, ok := resp.Data["projectMilestone"].(map[string]interface{})
+	if !ok || milestoneData == nil {
+		return nil, fmt.Errorf("milestone with ID %s not found", id)
+	}
+
+	var milestone ProjectMilestone
+	milestoneBytes, err := json.Marshal(milestoneData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal milestone data: %w", err)
+	}
+
+	if err := json.Unmarshal(milestoneBytes, &milestone); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal milestone data: %w", err)
+	}
+
+	return &milestone, nil
+}
+
+// getMilestoneByName gets a project milestone by its name.
+func (c *LinearClient) getMilestoneByName(name string) (*ProjectMilestone, error) {
+	query := `
+		query GetMilestoneByName($filter: ProjectMilestoneFilter) {
+			projectMilestones(filter: $filter, first: 1) {
+				nodes {
+					id
+					name
+					description
+					targetDate
+					project {
+						id
+						name
+					}
+				}
+			}
+		}
+	`
+
+	filter := map[string]interface{}{
+		"name": map[string]interface{}{"eq": name},
+	}
+
+	variables := map[string]interface{}{
+		"filter": filter,
+	}
+
+	resp, err := c.executeGraphQL(query, variables)
+	if err != nil {
+		return nil, err
+	}
+
+	milestonesData, ok := resp.Data["projectMilestones"].(map[string]interface{})
+	if !ok || milestonesData == nil {
+		return nil, fmt.Errorf("milestone with name '%s' not found", name)
+	}
+
+	nodes, ok := milestonesData["nodes"].([]interface{})
+	if !ok || len(nodes) == 0 {
+		return nil, fmt.Errorf("milestone with name '%s' not found", name)
+	}
+
+	milestoneData, ok := nodes[0].(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("failed to parse milestone data for name '%s'", name)
+	}
+
+	var milestone ProjectMilestone
+	milestoneBytes, err := json.Marshal(milestoneData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal milestone data: %w", err)
+	}
+
+	if err := json.Unmarshal(milestoneBytes, &milestone); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal milestone data: %w", err)
+	}
+
+	return &milestone, nil
+}
+
+// UpdateMilestone updates an existing project milestone.
+func (c *LinearClient) UpdateMilestone(id string, input ProjectMilestoneUpdateInput) (*ProjectMilestone, error) {
+	query := `
+		mutation ProjectMilestoneUpdate($id: String!, $input: ProjectMilestoneUpdateInput!) {
+			projectMilestoneUpdate(id: $id, input: $input) {
+				success
+				projectMilestone {
+					id
+					name
+					description
+					targetDate
+					project {
+						id
+						name
+					}
+				}
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"id":    id,
+		"input": input,
+	}
+
+	resp, err := c.executeGraphQL(query, variables)
+	if err != nil {
+		return nil, err
+	}
+
+	milestoneUpdateData, ok := resp.Data["projectMilestoneUpdate"].(map[string]interface{})
+	if !ok || milestoneUpdateData == nil {
+		return nil, errors.New("failed to update milestone")
+	}
+
+	success, ok := milestoneUpdateData["success"].(bool)
+	if !ok || !success {
+		return nil, errors.New("failed to update milestone")
+	}
+
+	milestoneData, ok := milestoneUpdateData["projectMilestone"].(map[string]interface{})
+	if !ok || milestoneData == nil {
+		return nil, errors.New("failed to update milestone")
+	}
+
+	var milestone ProjectMilestone
+	milestoneBytes, err := json.Marshal(milestoneData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal milestone data: %w", err)
+	}
+
+	if err := json.Unmarshal(milestoneBytes, &milestone); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal milestone data: %w", err)
+	}
+
+	return &milestone, nil
+}
+
+// CreateMilestone creates a new project milestone.
+func (c *LinearClient) CreateMilestone(input ProjectMilestoneCreateInput) (*ProjectMilestone, error) {
+	query := `
+		mutation ProjectMilestoneCreate($input: ProjectMilestoneCreateInput!) {
+			projectMilestoneCreate(input: $input) {
+				success
+				projectMilestone {
+					id
+					name
+					description
+					targetDate
+					project {
+						id
+						name
+					}
+				}
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"input": input,
+	}
+
+	resp, err := c.executeGraphQL(query, variables)
+	if err != nil {
+		return nil, err
+	}
+
+	milestoneCreateData, ok := resp.Data["projectMilestoneCreate"].(map[string]interface{})
+	if !ok || milestoneCreateData == nil {
+		return nil, errors.New("failed to create milestone")
+	}
+
+	success, ok := milestoneCreateData["success"].(bool)
+	if !ok || !success {
+		return nil, errors.New("failed to create milestone")
+	}
+
+	milestoneData, ok := milestoneCreateData["projectMilestone"].(map[string]interface{})
+	if !ok || milestoneData == nil {
+		return nil, errors.New("failed to create milestone")
+	}
+
+	var milestone ProjectMilestone
+	milestoneBytes, err := json.Marshal(milestoneData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal milestone data: %w", err)
+	}
+
+	if err := json.Unmarshal(milestoneBytes, &milestone); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal milestone data: %w", err)
+	}
+
+	return &milestone, nil
+}
+
+// GetInitiative gets an initiative by identifier (ID or name)
+func (c *LinearClient) GetInitiative(identifier string) (*Initiative, error) {
+	// First, try to get the initiative by ID
+	initiative, err := c.getInitiativeByID(identifier)
+	if err == nil {
+		return initiative, nil
+	}
+
+	// If not found by ID, try to get by name
+	return c.getInitiativeByName(identifier)
+}
+
+// getInitiativeByID gets an initiative by its UUID
+func (c *LinearClient) getInitiativeByID(id string) (*Initiative, error) {
+	query := `
+		query GetInitiative($id: String!) {
+			initiative(id: $id) {
+				id
+				name
+				description
+				url
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"id": id,
+	}
+
+	resp, err := c.executeGraphQL(query, variables)
+	if err != nil {
+		return nil, err
+	}
+
+	initiativeData, ok := resp.Data["initiative"].(map[string]interface{})
+	if !ok || initiativeData == nil {
+		return nil, fmt.Errorf("initiative with ID %s not found", id)
+	}
+
+	var initiative Initiative
+	initiativeBytes, err := json.Marshal(initiativeData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal initiative data: %w", err)
+	}
+
+	if err := json.Unmarshal(initiativeBytes, &initiative); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal initiative data: %w", err)
+	}
+
+	return &initiative, nil
+}
+
+// getInitiativeByName gets an initiative by its name
+func (c *LinearClient) getInitiativeByName(name string) (*Initiative, error) {
+	query := `
+		query GetInitiativeByName($filter: InitiativeFilter) {
+			initiatives(filter: $filter, first: 1) {
+				nodes {
+					id
+					name
+					description
+					url
+				}
+			}
+		}
+	`
+
+	filter := map[string]interface{}{
+		"name": map[string]interface{}{"eq": name},
+	}
+
+	variables := map[string]interface{}{
+		"filter": filter,
+	}
+
+	resp, err := c.executeGraphQL(query, variables)
+	if err != nil {
+		return nil, err
+	}
+
+	initiativesData, ok := resp.Data["initiatives"].(map[string]interface{})
+	if !ok || initiativesData == nil {
+		return nil, fmt.Errorf("initiative with name '%s' not found", name)
+	}
+
+	nodes, ok := initiativesData["nodes"].([]interface{})
+	if !ok || len(nodes) == 0 {
+		return nil, fmt.Errorf("initiative with name '%s' not found", name)
+	}
+
+	initiativeData, ok := nodes[0].(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("failed to parse initiative data for name '%s'", name)
+	}
+
+	var initiative Initiative
+	initiativeBytes, err := json.Marshal(initiativeData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal initiative data: %w", err)
+	}
+
+	if err := json.Unmarshal(initiativeBytes, &initiative); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal initiative data: %w", err)
+	}
+
+	return &initiative, nil
+}
+
+// UpdateInitiative updates an existing initiative.
+func (c *LinearClient) UpdateInitiative(id string, input InitiativeUpdateInput) (*Initiative, error) {
+	query := `
+		mutation InitiativeUpdate($id: String!, $input: InitiativeUpdateInput!) {
+			initiativeUpdate(id: $id, input: $input) {
+				success
+				initiative {
+					id
+					name
+					description
+					url
+				}
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"id":    id,
+		"input": input,
+	}
+
+	resp, err := c.executeGraphQL(query, variables)
+	if err != nil {
+		return nil, err
+	}
+
+	initiativeUpdateData, ok := resp.Data["initiativeUpdate"].(map[string]interface{})
+	if !ok || initiativeUpdateData == nil {
+		return nil, errors.New("failed to update initiative")
+	}
+
+	success, ok := initiativeUpdateData["success"].(bool)
+	if !ok || !success {
+		return nil, errors.New("failed to update initiative")
+	}
+
+	initiativeData, ok := initiativeUpdateData["initiative"].(map[string]interface{})
+	if !ok || initiativeData == nil {
+		return nil, errors.New("failed to update initiative")
+	}
+
+	var initiative Initiative
+	initiativeBytes, err := json.Marshal(initiativeData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal initiative data: %w", err)
+	}
+
+	if err := json.Unmarshal(initiativeBytes, &initiative); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal initiative data: %w", err)
+	}
+
+	return &initiative, nil
+}
+
+// CreateInitiative creates a new initiative.
+func (c *LinearClient) CreateInitiative(input InitiativeCreateInput) (*Initiative, error) {
+	query := `
+		mutation InitiativeCreate($input: InitiativeCreateInput!) {
+			initiativeCreate(input: $input) {
+				success
+				initiative {
+					id
+					name
+					description
+					url
+				}
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"input": input,
+	}
+
+	resp, err := c.executeGraphQL(query, variables)
+	if err != nil {
+		return nil, err
+	}
+
+	initiativeCreateData, ok := resp.Data["initiativeCreate"].(map[string]interface{})
+	if !ok || initiativeCreateData == nil {
+		return nil, errors.New("failed to create initiative")
+	}
+
+	success, ok := initiativeCreateData["success"].(bool)
+	if !ok || !success {
+		return nil, errors.New("failed to create initiative")
+	}
+
+	initiativeData, ok := initiativeCreateData["initiative"].(map[string]interface{})
+	if !ok || initiativeData == nil {
+		return nil, errors.New("failed to create initiative")
+	}
+
+	var initiative Initiative
+	initiativeBytes, err := json.Marshal(initiativeData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal initiative data: %w", err)
+	}
+
+	if err := json.Unmarshal(initiativeBytes, &initiative); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal initiative data: %w", err)
+	}
+
+	return &initiative, nil
 }
 
 // GetIssueComments gets paginated comments for an issue
@@ -458,6 +1253,14 @@ func (c *LinearClient) CreateIssue(input CreateIssueInput) (*Issue, error) {
 							name
 						}
 					}
+					project {
+						id
+						name
+					}
+					projectMilestone {
+						id
+						name
+					}
 				}
 			}
 		}
@@ -569,6 +1372,18 @@ func (c *LinearClient) UpdateIssue(input UpdateIssueInput) (*Issue, error) {
 
 	if input.Status != "" {
 		updateInput["stateId"] = input.Status
+	}
+
+	if input.Status != "" {
+		updateInput["teamId"] = input.TeamID
+	}
+
+	if input.ProjectID != "" {
+		updateInput["projectId"] = input.ProjectID
+	}
+
+	if input.MilestoneID != "" {
+		updateInput["milestoneId"] = input.MilestoneID
 	}
 
 	variables := map[string]interface{}{

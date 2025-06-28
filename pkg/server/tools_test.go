@@ -291,6 +291,294 @@ func TestHandlers(t *testing.T) {
 				"issue": ISSUE_ID,
 			},
 		},
+		// GetProjectHandler test cases
+		{
+			handler: "get_project",
+			name:    "By ID",
+			args: map[string]interface{}{
+				"project": "01bff2dd-ab7f-4464-b425-97073862013f",
+			},
+		},
+		{
+			handler: "get_project",
+			name:    "Missing project param",
+			args:    map[string]interface{}{},
+		},
+		{
+			handler: "get_project",
+			name:    "Invalid project",
+			args: map[string]interface{}{
+				"project": "NONEXISTENT-PROJECT",
+			},
+		},
+		{
+			handler: "get_project",
+			name:    "By slug",
+			args: map[string]interface{}{
+				"project": "mcp-tool-investigation-ae44897e42a7",
+			},
+		},
+		{
+			handler: "get_project",
+			name:    "By name",
+			args: map[string]interface{}{
+				"project": "MCP tool investigation",
+			},
+		},
+		{
+			handler: "get_project",
+			name:    "Non-existent slug",
+			args: map[string]interface{}{
+				"project": "non-existent-slug",
+			},
+		},
+		// SearchProjectsHandler test cases
+		{
+			handler: "search_projects",
+			name:    "Empty query",
+			args: map[string]interface{}{
+				"query": "",
+			},
+		},
+		{
+			handler: "search_projects",
+			name:    "No results",
+			args: map[string]interface{}{
+				"query": "non-existent-project-query",
+			},
+		},
+		{
+			handler: "search_projects",
+			name:    "Multiple results",
+			args: map[string]interface{}{
+				"query": "MCP",
+			},
+		},
+		// CreateProjectHandler test cases
+		{
+			handler: "create_project",
+			name:    "Valid project",
+			args: map[string]interface{}{
+				"name":    "Created Test Project",
+				"teamIds": TEAM_ID,
+			},
+			write: true,
+		},
+		{
+			handler: "create_project",
+			name:    "With all optional fields",
+			args: map[string]interface{}{
+				"name":        "Test Project 2",
+				"teamIds":     TEAM_ID,
+				"description": "Test Description",
+				"leadId":      USER_ID,
+				"startDate":   "2024-01-01",
+				"targetDate":  "2024-12-31",
+			},
+			write: true,
+		},
+		{
+			handler: "create_project",
+			name:    "Missing name",
+			args: map[string]interface{}{
+				"teamIds": TEAM_ID,
+			},
+			write: true,
+		},
+		{
+			handler: "create_project",
+			name:    "Invalid team ID",
+			args: map[string]interface{}{
+				"name":    "Test Project 3",
+				"teamIds": "invalid-team-id",
+			},
+			write: true,
+		},
+		// UpdateProjectHandler test cases
+		{
+			handler: "update_project",
+			name:    "Valid update",
+			args: map[string]interface{}{
+				"project": UPDATE_PROJECT_ID,
+				"name":    "Updated Project Name",
+			},
+			write: true,
+		},
+		{
+			handler: "update_project",
+			name:    "Update name and description",
+			args: map[string]interface{}{
+				"project":     UPDATE_PROJECT_ID,
+				"name":        "Updated Project Name 2",
+				"description": "Updated Description",
+			},
+			write: true,
+		},
+		{
+			handler: "update_project",
+			name:    "Non-existent project",
+			args: map[string]interface{}{
+				"project": "non-existent-project",
+				"name":    "Updated Project Name",
+			},
+			write: true,
+		},
+		{
+			handler: "update_project",
+			name:    "Update only description",
+			args: map[string]interface{}{
+				"project":     UPDATE_PROJECT_ID,
+				"description": "Updated Description Only",
+			},
+			write: true,
+		},
+		// GetMilestoneHandler test cases
+		{
+			handler: "get_milestone",
+			name:    "Valid milestone",
+			args: map[string]interface{}{
+				"milestone": MILESTONE_ID,
+			},
+		},
+		{
+			handler: "get_milestone",
+			name:    "By name",
+			args: map[string]interface{}{
+				"milestone": "Test Milestone 2",
+			},
+		},
+		{
+			handler: "get_milestone",
+			name:    "Non-existent milestone",
+			args: map[string]interface{}{
+				"milestone": "non-existent-milestone",
+			},
+		},
+		// CreateMilestoneHandler test cases
+		{
+			handler: "create_milestone",
+			name:    "Valid milestone",
+			args: map[string]interface{}{
+				"name":      "Test Milestone 2.2",
+				"projectId": UPDATE_PROJECT_ID,
+			},
+			write: true,
+		},
+		{
+			handler: "create_milestone",
+			name:    "With all optional fields",
+			args: map[string]interface{}{
+				"name":        "Test Milestone 3.2",
+				"projectId":   UPDATE_PROJECT_ID,
+				"description": "Test Description",
+				"targetDate":  "2024-12-31",
+			},
+			write: true,
+		},
+		{
+			handler: "create_milestone",
+			name:    "Missing name",
+			args: map[string]interface{}{
+				"projectId": UPDATE_PROJECT_ID,
+			},
+			write: true,
+		},
+		{
+			handler: "create_milestone",
+			name:    "Invalid project ID",
+			args: map[string]interface{}{
+				"name":      "Test Milestone 3.1",
+				"projectId": "invalid-project-id",
+			},
+			write: true,
+		},
+		// UpdateMilestoneHandler test cases
+		{
+			handler: "update_milestone",
+			name:    "Valid update",
+			args: map[string]interface{}{
+				"milestone":   UPDATE_MILESTONE_ID,
+				"name":        "Updated Milestone Name 22",
+				"description": "Updated Description",
+				"targetDate":  "2025-01-01",
+			},
+			write: true,
+		},
+		{
+			handler: "update_milestone",
+			name:    "Non-existent milestone",
+			args: map[string]interface{}{
+				"milestone": "non-existent-milestone",
+				"name":      "Updated Milestone Name",
+			},
+			write: true,
+		},
+		// GetInitiativeHandler test cases
+		{
+			handler: "get_initiative",
+			name:    "Valid initiative",
+			args: map[string]interface{}{
+				"initiative": INITIATIVE_ID,
+			},
+		},
+		{
+			handler: "get_initiative",
+			name:    "By name",
+			args: map[string]interface{}{
+				"initiative": "Push for MCP",
+			},
+		},
+		{
+			handler: "get_initiative",
+			name:    "Non-existent name",
+			args: map[string]interface{}{
+				"initiative": "non-existent-name",
+			},
+		},
+		// CreateInitiativeHandler test cases
+		{
+			handler: "create_initiative",
+			name:    "Valid initiative",
+			args: map[string]interface{}{
+				"name": "Created Test Initiative",
+			},
+			write: true,
+		},
+		{
+			handler: "create_initiative",
+			name:    "With description",
+			args: map[string]interface{}{
+				"name":        "Created Test Initiative 2",
+				"description": "Test Description",
+			},
+			write: true,
+		},
+		{
+			handler: "create_initiative",
+			name:    "Missing name",
+			args:    map[string]interface{}{},
+			write:   true,
+		},
+		// UpdateInitiativeHandler test cases
+		{
+			handler: "update_initiative",
+			name:    "Valid update",
+			args: map[string]interface{}{
+				"initiative":  UPDATE_INITIATIVE_ID,
+				"name":        "Updated Initiative Name",
+				"description": "Updated Description",
+			},
+			write: true,
+		},
+		{
+			handler: "update_initiative",
+			name:    "Non-existent initiative",
+			args: map[string]interface{}{
+				"initiative": "non-existent-initiative",
+				"name":       "Updated Initiative Name",
+			},
+			write: true,
+		},
 	}
 
 	for _, tt := range tests {
@@ -326,6 +614,26 @@ func TestHandlers(t *testing.T) {
 				handler = tools.GetIssueCommentsHandler(client)
 			case "add_comment":
 				handler = tools.AddCommentHandler(client)
+			case "get_project":
+				handler = tools.GetProjectHandler(client)
+			case "search_projects":
+				handler = tools.SearchProjectsHandler(client)
+			case "create_project":
+				handler = tools.CreateProjectHandler(client)
+			case "update_project":
+				handler = tools.UpdateProjectHandler(client)
+			case "get_milestone":
+				handler = tools.GetMilestoneHandler(client)
+			case "create_milestone":
+				handler = tools.CreateMilestoneHandler(client)
+			case "update_milestone":
+				handler = tools.UpdateMilestoneHandler(client)
+			case "get_initiative":
+				handler = tools.GetInitiativeHandler(client)
+			case "create_initiative":
+				handler = tools.CreateInitiativeHandler(client)
+			case "update_initiative":
+				handler = tools.UpdateInitiativeHandler(client)
 			default:
 				t.Fatalf("Unknown handler type: %s", tt.handler)
 			}

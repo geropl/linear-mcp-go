@@ -76,11 +76,15 @@ func (s *LinearMCPServer) GetLinearClient() *linear.LinearClient {
 // GetReadOnlyToolNames returns the names of all read-only tools
 func GetReadOnlyToolNames() map[string]bool {
 	return map[string]bool{
-		"linear_search_issues":      true,
-		"linear_get_user_issues":    true,
-		"linear_get_issue":          true,
-		"linear_get_issue_comments": true,
-		"linear_get_teams":          true,
+		"linear_search_issues":       true,
+		"linear_get_user_issues":     true,
+		"linear_get_issue":           true,
+		"linear_get_issue_comments":  true,
+		"linear_get_teams":           true,
+		"linear_get_project":         true,
+		"linear_search_projects":     true,
+		"linear_get_milestone":       true,
+		"linear_get_initiative":      true,
 	}
 }
 
@@ -103,6 +107,16 @@ func RegisterTools(s *mcpserver.MCPServer, linearClient *linear.LinearClient, wr
 	addTool(tools.GetIssueTool, tools.GetIssueHandler(linearClient))
 	addTool(tools.GetIssueCommentsTool, tools.GetIssueCommentsHandler(linearClient))
 	addTool(tools.GetTeamsTool, tools.GetTeamsHandler(linearClient))
+	addTool(tools.GetProjectTool, tools.GetProjectHandler(linearClient))
+	addTool(tools.SearchProjectsTool, tools.SearchProjectsHandler(linearClient))
+	addTool(tools.CreateProjectTool, tools.CreateProjectHandler(linearClient))
+	addTool(tools.UpdateProjectTool, tools.UpdateProjectHandler(linearClient))
+	addTool(tools.GetMilestoneTool, tools.GetMilestoneHandler(linearClient))
+	addTool(tools.CreateMilestoneTool, tools.CreateMilestoneHandler(linearClient))
+	addTool(tools.UpdateMilestoneTool, tools.UpdateMilestoneHandler(linearClient))
+	addTool(tools.GetInitiativeTool, tools.GetInitiativeHandler(linearClient))
+	addTool(tools.CreateInitiativeTool, tools.CreateInitiativeHandler(linearClient))
+	addTool(tools.UpdateInitiativeTool, tools.UpdateInitiativeHandler(linearClient))
 	addTool(tools.CreateIssueTool, tools.CreateIssueHandler(linearClient))
 	addTool(tools.UpdateIssueTool, tools.UpdateIssueHandler(linearClient))
 	addTool(tools.AddCommentTool, tools.AddCommentHandler(linearClient))
