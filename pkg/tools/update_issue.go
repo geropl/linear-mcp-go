@@ -16,6 +16,9 @@ var UpdateIssueTool = mcp.NewTool("linear_update_issue",
 	mcp.WithString("description", mcp.Description("New description")),
 	mcp.WithNumber("priority", mcp.Description("New priority (0-4)")),
 	mcp.WithString("status", mcp.Description("New status")),
+	mcp.WithString("team", mcp.Description("New team (UUID, name, or key)")),
+	mcp.WithString("projectId", mcp.Description("New project ID")),
+	mcp.WithString("milestoneId", mcp.Description("New milestone ID")),
 )
 
 // UpdateIssueHandler handles the linear_update_issue tool
@@ -42,7 +45,20 @@ func UpdateIssueHandler(linearClient *linear.LinearClient) func(ctx context.Cont
 			priority = &p
 		}
 
+		// Resolve team identifier to a team ID
+		var teamID string
+		team := request.GetString("team", "")
+		if team != "" {
+			// Resolve team identifier to a team ID
+			teamID, err = resolveTeamIdentifier(linearClient, team)
+			if err != nil {
+				return &mcp.CallToolResult{IsError: true, Content: []mcp.Content{mcp.TextContent{Type: "text", Text: fmt.Sprintf("Failed to resolve team: %v", err)}}}, nil
+			}
+		}
+
 		status := request.GetString("status", "")
+		projectID := request.GetString("projectId", "")
+		milestoneID := request.GetString("milestoneId", "")
 
 		// Update the issue
 		input := linear.UpdateIssueInput{
@@ -51,6 +67,9 @@ func UpdateIssueHandler(linearClient *linear.LinearClient) func(ctx context.Cont
 			Description: description,
 			Priority:    priority,
 			Status:      status,
+			TeamID:      teamID,
+			ProjectID:   projectID,
+			MilestoneID: milestoneID,
 		}
 
 		issue, err := linearClient.UpdateIssue(input)

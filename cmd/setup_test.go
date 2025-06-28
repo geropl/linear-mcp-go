@@ -70,7 +70,7 @@ func TestSetupCommand(t *testing.T) {
 									"env": {
 										"LINEAR_API_KEY": "test-api-key"
 									},
-									"autoApprove": ["linear_search_issues", "linear_get_user_issues", "linear_get_issue", "linear_get_teams", "linear_get_issue_comments"],
+									"autoApprove": ["linear_get_initiative", "linear_get_issue", "linear_get_issue_comments", "linear_get_milestone", "linear_get_project", "linear_get_teams", "linear_get_user_issues", "linear_search_issues", "linear_search_projects"],
 									"disabled": false
 								}
 							}
@@ -98,7 +98,7 @@ func TestSetupCommand(t *testing.T) {
 									"env": {
 										"LINEAR_API_KEY": "test-api-key"
 									},
-									"autoApprove": ["linear_search_issues", "linear_get_user_issues", "linear_get_issue", "linear_get_teams", "linear_get_issue_comments"],
+									"autoApprove": ["linear_get_initiative", "linear_get_issue", "linear_get_issue_comments", "linear_get_milestone", "linear_get_project", "linear_get_teams", "linear_get_user_issues", "linear_search_issues", "linear_search_projects"],
 									"disabled": false
 								}
 							}
@@ -126,7 +126,7 @@ func TestSetupCommand(t *testing.T) {
 									"env": {
 										"LINEAR_API_KEY": "test-api-key"
 									},
-									"autoApprove": ["linear_search_issues", "linear_get_user_issues", "linear_get_issue", "linear_get_teams", "linear_get_issue_comments"],
+									"autoApprove": ["linear_get_initiative", "linear_get_issue", "linear_get_issue_comments", "linear_get_milestone", "linear_get_project", "linear_get_teams", "linear_get_user_issues", "linear_search_issues", "linear_search_projects"],
 									"disabled": false
 								}
 							}
@@ -143,7 +143,7 @@ func TestSetupCommand(t *testing.T) {
 									"env": {
 										"LINEAR_API_KEY": "test-api-key"
 									},
-									"autoApprove": ["linear_search_issues", "linear_get_user_issues", "linear_get_issue", "linear_get_teams", "linear_get_issue_comments"],
+									"autoApprove": ["linear_get_initiative", "linear_get_issue", "linear_get_issue_comments", "linear_get_milestone", "linear_get_project", "linear_get_teams", "linear_get_user_issues", "linear_search_issues", "linear_search_projects"],
 									"disabled": false
 								}
 							}
@@ -171,7 +171,7 @@ func TestSetupCommand(t *testing.T) {
 									"env": {
 										"LINEAR_API_KEY": "test-api-key"
 									},
-									"autoApprove": ["linear_search_issues", "linear_get_user_issues", "linear_get_issue", "linear_get_teams", "linear_get_issue_comments"],
+									"autoApprove": ["linear_get_initiative", "linear_get_issue", "linear_get_issue_comments", "linear_get_milestone", "linear_get_project", "linear_get_teams", "linear_get_user_issues", "linear_search_issues", "linear_search_projects"],
 									"disabled": false
 								}
 							}
@@ -239,7 +239,7 @@ func TestSetupCommand(t *testing.T) {
 									"env": {
 										"LINEAR_API_KEY": "test-api-key"
 									},
-									"autoApprove": ["linear_search_issues", "linear_get_user_issues", "linear_get_issue", "linear_get_teams", "linear_get_issue_comments"],
+									"autoApprove": ["linear_get_initiative", "linear_get_issue", "linear_get_issue_comments", "linear_get_milestone", "linear_get_project", "linear_get_teams", "linear_get_user_issues", "linear_search_issues", "linear_search_projects"],
 									"disabled": false
 								}
 							},
@@ -856,7 +856,7 @@ func TestSetupCommand(t *testing.T) {
 											"command": "home/mcp-servers/linear-mcp-go",
 											"args": ["serve"],
 											"env": {"LINEAR_API_KEY": "test-api-key"},
-											"autoApprove": ["linear_search_issues", "linear_get_user_issues", "linear_get_issue", "linear_get_teams", "linear_get_issue_comments"],
+											"autoApprove": ["linear_get_initiative", "linear_get_issue", "linear_get_issue_comments", "linear_get_milestone", "linear_get_project", "linear_get_teams", "linear_get_user_issues", "linear_search_issues", "linear_search_projects"],
 											"disabled": false
 										},
 										"other-server": {
@@ -980,8 +980,8 @@ func TestSetupCommand(t *testing.T) {
 									"command": "home/mcp-servers/linear-mcp-go",
 									"args": ["serve"],
 									"env": {"LINEAR_API_KEY": "test-api-key"},
-									"autoApprove": ["linear_search_issues", "linear_get_user_issues", "linear_get_issue", "linear_get_teams", "linear_get_issue_comments"],
-									"disabled": false
+											"autoApprove": ["linear_get_initiative", "linear_get_issue", "linear_get_issue_comments", "linear_get_milestone", "linear_get_project", "linear_get_teams", "linear_get_user_issues", "linear_search_issues", "linear_search_projects"],
+											"disabled": false
 								},
 								"other-user-server": {
 									"command": "/path/to/other/user/server"

@@ -5,24 +5,34 @@ output: |
       Title: Sub Issue with Labels
       Priority: None
       Status: Backlog
+      Project: None
+      Milestone: None
       URL: https://linear.app/linear-mcp-go-test/issue/TEST-71/sub-issue-with-labels
     - Issue: TEST-70 (UUID: 2486653d-f073-4bdc-a94d-eab0e34587c9)
       Title: Issue with Labels
       Priority: None
       Status: Backlog
+      Project: None
+      Milestone: None
       URL: https://linear.app/linear-mcp-go-test/issue/TEST-70/issue-with-labels
     - Issue: TEST-69 (UUID: de74de85-b597-444e-abdd-c75052e72f37)
       Title: Sub Issue
       Priority: None
       Status: Backlog
+      Project: None
+      Milestone: None
       URL: https://linear.app/linear-mcp-go-test/issue/TEST-69/sub-issue
     - Issue: TEST-68 (UUID: 88460755-1c87-4a8a-927b-6a729275c9c7)
       Title: Sub Issue
       Priority: None
       Status: Backlog
+      Project: None
+      Milestone: None
       URL: https://linear.app/linear-mcp-go-test/issue/TEST-68/sub-issue
     - Issue: TEST-67 (UUID: 8a2c9f4a-88ce-4f02-9b42-81c257d7a4f7)
       Title: Test Issue with team key
       Priority: None
       Status: Backlog
+      Project: None
+      Milestone: None
       URL: https://linear.app/linear-mcp-go-test/issue/TEST-67/test-issue-with-team-key

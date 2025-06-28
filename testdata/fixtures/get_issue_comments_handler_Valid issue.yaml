@@ -54,13 +54,13 @@ interactions:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 1187
+        content_length: 1316
         transfer_encoding: []
         trailer: {}
         host: api.linear.app
         remote_addr: ""
         request_uri: ""
-        body: '{"query":"\n\t\tquery GetIssue($id: String!) {\n\t\t\tissue(id: $id) {\n\t\t\t\tid\n\t\t\t\tidentifier\n\t\t\t\ttitle\n\t\t\t\tdescription\n\t\t\t\tpriority\n\t\t\t\turl\n\t\t\t\tcreatedAt\n\t\t\t\tupdatedAt\n\t\t\t\tstate {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t}\n\t\t\t\tassignee {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\temail\n\t\t\t\t}\n\t\t\t\tteam {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\tkey\n\t\t\t\t}\n\t\t\t\trelations(first: 20) {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\ttype\n\t\t\t\t\t\trelatedIssue {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tidentifier\n\t\t\t\t\t\t\ttitle\n\t\t\t\t\t\t\turl\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tinverseRelations(first: 20) {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\ttype\n\t\t\t\t\t\tissue {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tidentifier\n\t\t\t\t\t\t\ttitle\n\t\t\t\t\t\t\turl\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tattachments(first: 50) {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\ttitle\n\t\t\t\t\t\tsubtitle\n\t\t\t\t\t\turl\n\t\t\t\t\t\tsourceType\n\t\t\t\t\t\tmetadata\n\t\t\t\t\t\tcreatedAt\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"id":"1c2de93f-4321-4015-bfde-ee893ef7976f"}}'
+        body: '{"query":"\n\t\tquery GetIssue($id: String!) {\n\t\t\tissue(id: $id) {\n\t\t\t\tid\n\t\t\t\tidentifier\n\t\t\t\ttitle\n\t\t\t\tdescription\n\t\t\t\tpriority\n\t\t\t\turl\n\t\t\t\tcreatedAt\n\t\t\t\tupdatedAt\n\t\t\t\tstate {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t}\n\t\t\t\tassignee {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\temail\n\t\t\t\t}\n\t\t\t\tteam {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\tkey\n\t\t\t\t}\n\t\t\t\tproject {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t}\n\t\t\t\tprojectMilestone {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t}\n\t\t\t\trelations(first: 20) {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\ttype\n\t\t\t\t\t\trelatedIssue {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tidentifier\n\t\t\t\t\t\t\ttitle\n\t\t\t\t\t\t\turl\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tinverseRelations(first: 20) {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\ttype\n\t\t\t\t\t\tissue {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tidentifier\n\t\t\t\t\t\t\ttitle\n\t\t\t\t\t\t\turl\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tattachments(first: 50) {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\ttitle\n\t\t\t\t\t\tsubtitle\n\t\t\t\t\t\turl\n\t\t\t\t\t\tsourceType\n\t\t\t\t\t\tmetadata\n\t\t\t\t\t\tcreatedAt\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"id":"1c2de93f-4321-4015-bfde-ee893ef7976f"}}'
         form: {}
         headers:
             Content-Type:
@@ -76,7 +76,7 @@ interactions:
         content_length: -1
         uncompressed: true
         body: |
-            {"data":{"issue":{"id":"1c2de93f-4321-4015-bfde-ee893ef7976f","identifier":"TEST-10","title":"Updated Test Issue","description":null,"priority":0,"url":"https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue","createdAt":"2025-03-03T11:34:49.241Z","updatedAt":"2025-03-30T14:30:13.569Z","state":{"id":"42f7ad15-fca3-4d11-b349-0e3c1385c256","name":"Backlog"},"assignee":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann","email":"gero.leinemann@googlemail.com"},"team":{"id":"234c5451-a839-4c8f-98d9-da00973f1060","name":"Test Team","key":"TEST"},"relations":{"nodes":[]},"inverseRelations":{"nodes":[]},"attachments":{"nodes":[]}}}}
+            {"data":{"issue":{"id":"1c2de93f-4321-4015-bfde-ee893ef7976f","identifier":"TEST-10","title":"Updated Test Issue","description":null,"priority":0,"url":"https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue","createdAt":"2025-03-03T11:34:49.241Z","updatedAt":"2025-06-28T19:53:27.855Z","state":{"id":"42f7ad15-fca3-4d11-b349-0e3c1385c256","name":"Backlog"},"assignee":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann","email":"gero.leinemann@googlemail.com"},"team":{"id":"234c5451-a839-4c8f-98d9-da00973f1060","name":"Test Team","key":"TEST"},"project":{"id":"01bff2dd-ab7f-4464-b425-97073862013f","name":"MCP tool investigation"},"projectMilestone":{"id":"5214c4d9-9c2a-4ae7-b5e5-e33058b3e131","name":"M1: Gather potential resources to investigate"},"relations":{"nodes":[]},"inverseRelations":{"nodes":[]},"attachments":{"nodes":[]}}}}
         headers:
             Alt-Svc:
                 - h3=":443"; ma=86400
@@ -87,7 +87,7 @@ interactions:
             Content-Type:
                 - application/json; charset=utf-8
             Etag:
-                - W/"29b-B9v+YOOa/xeg4rSh1wMdRwSL50Y"
+                - W/"36b-tillFLIUMm8VXol85JbmMotLYUg"
             Server:
                 - cloudflare
             Vary:

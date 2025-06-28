@@ -1,0 +1,51 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 458
+        transfer_encoding: []
+        trailer: {}
+        host: api.linear.app
+        remote_addr: ""
+        request_uri: ""
+        body: '{"query":"\n\t\tmutation ProjectMilestoneCreate($input: ProjectMilestoneCreateInput!) {\n\t\t\tprojectMilestoneCreate(input: $input) {\n\t\t\t\tsuccess\n\t\t\t\tprojectMilestone {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\tdescription\n\t\t\t\t\ttargetDate\n\t\t\t\t\tproject {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"input":{"name":"Test Milestone 2.2","projectId":"bfa49864-16c9-44db-994e-a11ba2b386f1"}}}'
+        form: {}
+        headers:
+            Content-Type:
+                - application/json
+        url: https://api.linear.app/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: |
+            {"data":{"projectMilestoneCreate":{"success":true,"projectMilestone":{"id":"2d95299d-1341-484b-ab00-5cb587f2cc67","name":"Test Milestone 2.2","description":null,"targetDate":null,"project":{"id":"bfa49864-16c9-44db-994e-a11ba2b386f1","name":"Updated Project Name 2"}}}}}
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=86400
+            Cache-Control:
+                - no-store
+            Cf-Cache-Status:
+                - DYNAMIC
+            Content-Type:
+                - application/json; charset=utf-8
+            Etag:
+                - W/"10f-qfcBByYXxFvyqjb46UAlsOog79A"
+            Server:
+                - cloudflare
+            Vary:
+                - Accept-Encoding
+            Via:
+                - 1.1 google
+        status: 200 OK
+        code: 200
+        duration: 0s

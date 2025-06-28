@@ -47,6 +47,18 @@ func GetIssueHandler(linearClient *linear.LinearClient) func(ctx context.Context
 
 		resultText += fmt.Sprintf("%s\n", formatTeamIdentifier(issue.Team))
 
+		if issue.Project != nil {
+			resultText += fmt.Sprintf("Project: %s (%s)\n", issue.Project.Name, issue.Project.ID)
+		} else {
+			resultText += "Project: None\n"
+		}
+
+		if issue.ProjectMilestone != nil {
+			resultText += fmt.Sprintf("Milestone: %s (%s)\n", issue.ProjectMilestone.Name, issue.ProjectMilestone.ID)
+		} else {
+			resultText += "Milestone: None\n"
+		}
+
 		// Add attachments section if there are attachments
 		if issue.Attachments != nil && len(issue.Attachments.Nodes) > 0 {
 			resultText += "\nAttachments:\n"
