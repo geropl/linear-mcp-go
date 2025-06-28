@@ -1,0 +1,10 @@
+{
+	"name": "Gitpod",
+	"build": {
+        "context": ".",
+        "dockerfile": "Dockerfile"
+    },
+	"features": {
+		"ghcr.io/devcontainers/features/go:1": {}
+	}
+}
