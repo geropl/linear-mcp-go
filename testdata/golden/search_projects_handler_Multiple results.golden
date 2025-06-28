@@ -5,10 +5,19 @@ output: |+
       State: backlog
       URL: https://linear.app/linear-mcp-go-test/project/totally-different-mcp-project-with-no-content-29129640a673
       Description: Summary goes here
+      Lead: None
+      Start Date: None
+      Target Date: None
+      Initiatives: None
 
     Project: MCP tool investigation
       ID: 01bff2dd-ab7f-4464-b425-97073862013f
       State: backlog
       URL: https://linear.app/linear-mcp-go-test/project/mcp-tool-investigation-ae44897e42a7
       Description: Summary text goes here
+      Lead: Gero Leinemann
+      Start Date: 2025-06-02
+      Target Date: 2025-06-30
+      Initiatives:
+        - Push for MCP (ID: 15e7c1bd-c0c5-4801-ac9a-8e98bf88ea7a)
 

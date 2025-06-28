@@ -6,13 +6,13 @@ interactions:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 311
+        content_length: 541
         transfer_encoding: []
         trailer: {}
         host: api.linear.app
         remote_addr: ""
         request_uri: ""
-        body: '{"query":"\n\t\tquery SearchProjects($filter: ProjectFilter) {\n\t\t\tprojects(filter: $filter) {\n\t\t\t\tnodes {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\tdescription\n\t\t\t\t\tslugId\n\t\t\t\t\tstate\n\t\t\t\t\turl\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"filter":{"name":{"containsIgnoreCase":"MCP"}}}}'
+        body: '{"query":"\n\t\tquery SearchProjects($filter: ProjectFilter) {\n\t\t\tprojects(filter: $filter) {\n\t\t\t\tnodes {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\tdescription\n\t\t\t\t\tslugId\n\t\t\t\t\tstate\n\t\t\t\t\turl\n\t\t\t\t\tinitiatives(first: 1) {\n\t\t\t\t\t\tnodes {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tname\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tlead {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t}\n\t\t\t\t\tstartDate\n\t\t\t\t\ttargetDate\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"filter":{"name":{"containsIgnoreCase":"MCP"}}}}'
         form: {}
         headers:
             Content-Type:
@@ -28,7 +28,7 @@ interactions:
         content_length: -1
         uncompressed: true
         body: |
-            {"data":{"projects":{"nodes":[{"id":"473d62ae-38fe-4439-9007-08763e51bf88","name":"Totally different MCP project with no content","description":"Summary goes here","slugId":"29129640a673","state":"backlog","url":"https://linear.app/linear-mcp-go-test/project/totally-different-mcp-project-with-no-content-29129640a673"},{"id":"01bff2dd-ab7f-4464-b425-97073862013f","name":"MCP tool investigation","description":"Summary text goes here","slugId":"ae44897e42a7","state":"backlog","url":"https://linear.app/linear-mcp-go-test/project/mcp-tool-investigation-ae44897e42a7"}]}}}
+            {"data":{"projects":{"nodes":[{"id":"473d62ae-38fe-4439-9007-08763e51bf88","name":"Totally different MCP project with no content","description":"Summary goes here","slugId":"29129640a673","state":"backlog","url":"https://linear.app/linear-mcp-go-test/project/totally-different-mcp-project-with-no-content-29129640a673","initiatives":{"nodes":[]},"lead":null,"startDate":null,"targetDate":null},{"id":"01bff2dd-ab7f-4464-b425-97073862013f","name":"MCP tool investigation","description":"Summary text goes here","slugId":"ae44897e42a7","state":"backlog","url":"https://linear.app/linear-mcp-go-test/project/mcp-tool-investigation-ae44897e42a7","initiatives":{"nodes":[{"id":"15e7c1bd-c0c5-4801-ac9a-8e98bf88ea7a","name":"Push for MCP"}]},"lead":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"},"startDate":"2025-06-02","targetDate":"2025-06-30"}]}}}
         headers:
             Alt-Svc:
                 - h3=":443"; ma=86400
@@ -39,7 +39,7 @@ interactions:
             Content-Type:
                 - application/json; charset=utf-8
             Etag:
-                - W/"23d-RbtDQzevWNSpRrZPpJzffPw9TOU"
+                - W/"365-vV3AiEsYIfWAgp5Ebe03XF87/Kw"
             Server:
                 - cloudflare
             Vary:

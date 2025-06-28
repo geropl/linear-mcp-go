@@ -4,4 +4,8 @@ output: |
       ID: bfa49864-16c9-44db-994e-a11ba2b386f1
       State: backlog
       URL: https://linear.app/linear-mcp-go-test/project/updated-project-name-e1153169a428
-      Description: Updated Description
+      Description: Updated Description Only
+      Lead: None
+      Start Date: None
+      Target Date: None
+      Initiatives: None

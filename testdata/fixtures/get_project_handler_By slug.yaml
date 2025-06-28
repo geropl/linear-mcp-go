@@ -6,13 +6,13 @@ interactions:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 582
+        content_length: 732
         transfer_encoding: []
         trailer: {}
         host: api.linear.app
         remote_addr: ""
         request_uri: ""
-        body: '{"query":"\n\t\tquery GetProject($id: String!) {\n\t\t\tproject(id: $id) {\n\t\t\t\tid\n\t\t\t\tname\n\t\t\t\tdescription\n\t\t\t\tslugId\n\t\t\t\tstate\n\t\t\t\turl\n\t\t\t\tcreatedAt\n\t\t\t\tupdatedAt\n\t\t\t\tlead {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\temail\n\t\t\t\t}\n\t\t\t\tmembers {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t\temail\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tteams {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t\tkey\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"id":"mcp-tool-investigation-ae44897e42a7"}}'
+        body: '{"query":"\n\t\tquery GetProject($id: String!) {\n\t\t\tproject(id: $id) {\n\t\t\t\tid\n\t\t\t\tname\n\t\t\t\tdescription\n\t\t\t\tslugId\n\t\t\t\tstate\n\t\t\t\turl\n\t\t\t\tcreatedAt\n\t\t\t\tupdatedAt\n\t\t\t\tlead {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\temail\n\t\t\t\t}\n\t\t\t\tmembers {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t\temail\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tteams {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t\tkey\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tinitiatives(first: 10) {\n\t\t\t\t\tnodes {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tstartDate\n\t\t\t\ttargetDate\n\t\t\t}\n\t\t}\n\t","variables":{"id":"mcp-tool-investigation-ae44897e42a7"}}'
         form: {}
         headers:
             Content-Type:
@@ -54,13 +54,13 @@ interactions:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 767
+        content_length: 932
         transfer_encoding: []
         trailer: {}
         host: api.linear.app
         remote_addr: ""
         request_uri: ""
-        body: '{"query":"\n\t\tquery GetProjectByNameOrSlug($filter: ProjectFilter) {\n\t\t\tprojects(filter: $filter, first: 1) {\n\t\t\t\tnodes {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\tdescription\n\t\t\t\t\tslugId\n\t\t\t\t\tstate\n\t\t\t\t\turl\n\t\t\t\t\tcreatedAt\n\t\t\t\t\tupdatedAt\n\t\t\t\t\tlead {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t\temail\n\t\t\t\t\t}\n\t\t\t\t\tmembers {\n\t\t\t\t\t\tnodes {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tname\n\t\t\t\t\t\t\temail\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tteams {\n\t\t\t\t\t\tnodes {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tname\n\t\t\t\t\t\t\tkey\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"filter":{"or":[{"name":{"eq":"mcp-tool-investigation-ae44897e42a7"}},{"slugId":{"eq":"ae44897e42a7"}}]}}}'
+        body: '{"query":"\n\t\tquery GetProjectByNameOrSlug($filter: ProjectFilter) {\n\t\t\tprojects(filter: $filter, first: 1) {\n\t\t\t\tnodes {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t\tdescription\n\t\t\t\t\tslugId\n\t\t\t\t\tstate\n\t\t\t\t\turl\n\t\t\t\t\tcreatedAt\n\t\t\t\t\tupdatedAt\n\t\t\t\t\tlead {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t\temail\n\t\t\t\t\t}\n\t\t\t\t\tmembers {\n\t\t\t\t\t\tnodes {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tname\n\t\t\t\t\t\t\temail\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tteams {\n\t\t\t\t\t\tnodes {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tname\n\t\t\t\t\t\t\tkey\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tinitiatives(first: 1) {\n\t\t\t\t\t\tnodes {\n\t\t\t\t\t\t\tid\n\t\t\t\t\t\t\tname\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tstartDate\n\t\t\t\t\ttargetDate\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"filter":{"or":[{"name":{"eq":"mcp-tool-investigation-ae44897e42a7"}},{"slugId":{"eq":"ae44897e42a7"}}]}}}'
         form: {}
         headers:
             Content-Type:
@@ -76,7 +76,7 @@ interactions:
         content_length: -1
         uncompressed: true
         body: |
-            {"data":{"projects":{"nodes":[{"id":"01bff2dd-ab7f-4464-b425-97073862013f","name":"MCP tool investigation","description":"Summary text goes here","slugId":"ae44897e42a7","state":"backlog","url":"https://linear.app/linear-mcp-go-test/project/mcp-tool-investigation-ae44897e42a7","createdAt":"2025-06-28T18:06:47.606Z","updatedAt":"2025-06-28T18:07:51.899Z","lead":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann","email":"gero.leinemann@googlemail.com"},"members":{"nodes":[{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann","email":"gero.leinemann@googlemail.com"}]},"teams":{"nodes":[{"id":"234c5451-a839-4c8f-98d9-da00973f1060","name":"Test Team","key":"TEST"}]}}]}}}
+            {"data":{"projects":{"nodes":[{"id":"01bff2dd-ab7f-4464-b425-97073862013f","name":"MCP tool investigation","description":"Summary text goes here","slugId":"ae44897e42a7","state":"backlog","url":"https://linear.app/linear-mcp-go-test/project/mcp-tool-investigation-ae44897e42a7","createdAt":"2025-06-28T18:06:47.606Z","updatedAt":"2025-06-28T18:07:51.899Z","lead":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann","email":"gero.leinemann@googlemail.com"},"members":{"nodes":[{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann","email":"gero.leinemann@googlemail.com"}]},"teams":{"nodes":[{"id":"234c5451-a839-4c8f-98d9-da00973f1060","name":"Test Team","key":"TEST"}]},"initiatives":{"nodes":[{"id":"15e7c1bd-c0c5-4801-ac9a-8e98bf88ea7a","name":"Push for MCP"}]},"startDate":"2025-06-02","targetDate":"2025-06-30"}]}}}
         headers:
             Alt-Svc:
                 - h3=":443"; ma=86400
@@ -87,7 +87,7 @@ interactions:
             Content-Type:
                 - application/json; charset=utf-8
             Etag:
-                - W/"2c4-k7W9pIeZqXHQFfiaZi9LDrXB8uU"
+                - W/"355-Jji1j11utIAgJU/7ATKvhRyba4g"
             Server:
                 - cloudflare
             Vary:

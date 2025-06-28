@@ -1,7 +1,11 @@
 err: ""
 output: |
     Project: Test Project 2
-      ID: 3e0c7d12-cfc3-4d38-bdf8-4f83a1be5841
+      ID: 5ce3e62b-766e-44d9-b7a4-e335492bfd1e
       State: backlog
-      URL: https://linear.app/linear-mcp-go-test/project/test-project-2-624ff0e39d61
+      URL: https://linear.app/linear-mcp-go-test/project/test-project-2-b73665fc5cc5
       Description: Test Description
+      Lead: None
+      Start Date: None
+      Target Date: None
+      Initiatives: None

@@ -176,5 +176,28 @@ func FormatProject(project linear.Project) string {
 	if project.Description != "" {
 		builder.WriteString(fmt.Sprintf("  Description: %s\n", project.Description))
 	}
+	if project.Lead == nil {
+		builder.WriteString("  Lead: None\n")
+	} else {
+		builder.WriteString(fmt.Sprintf("  Lead: %s\n", project.Lead.Name))
+	}
+	if project.StartDate == nil {
+		builder.WriteString("  Start Date: None\n")
+	} else {
+		builder.WriteString(fmt.Sprintf("  Start Date: %s\n", *project.StartDate))
+	}
+	if project.TargetDate == nil {
+		builder.WriteString("  Target Date: None\n")
+	} else {
+		builder.WriteString(fmt.Sprintf("  Target Date: %s\n", *project.TargetDate))
+	}
+	if project.Initiatives != nil && len(project.Initiatives.Nodes) > 0 {
+		builder.WriteString("  Initiatives:\n")
+		for _, i := range project.Initiatives.Nodes {
+			builder.WriteString(fmt.Sprintf("    - %s (ID: %s)\n", i.Name, i.ID))
+		}
+	} else {
+		builder.WriteString("  Initiatives: None\n")
+	}
 	return builder.String()
 }

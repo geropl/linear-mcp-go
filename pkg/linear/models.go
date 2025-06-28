@@ -4,26 +4,26 @@ import "time"
 
 // Issue represents a Linear issue
 type Issue struct {
-	ID              string                   `json:"id"`
-	Identifier      string                   `json:"identifier"`
-	Title           string                   `json:"title"`
-	Description     string                   `json:"description"`
-	Priority        int                      `json:"priority"`
-	Status          string                   `json:"status"`
-	Assignee        *User                    `json:"assignee,omitempty"`
-	Team            *Team                    `json:"team,omitempty"`
-	Project         *Project                 `json:"project,omitempty"`
-	ProjectMilestone *ProjectMilestone       `json:"projectMilestone,omitempty"`
-	URL             string                   `json:"url"`
-	CreatedAt       time.Time                `json:"createdAt"`
-	UpdatedAt       time.Time                `json:"updatedAt"`
-	Labels          *LabelConnection         `json:"labels,omitempty"`
-	State           *State                   `json:"state,omitempty"`
-	Estimate        *float64                 `json:"estimate,omitempty"`
-	Comments        *CommentConnection       `json:"comments,omitempty"`
-	Relations       *IssueRelationConnection `json:"relations,omitempty"`
+	ID               string                   `json:"id"`
+	Identifier       string                   `json:"identifier"`
+	Title            string                   `json:"title"`
+	Description      string                   `json:"description"`
+	Priority         int                      `json:"priority"`
+	Status           string                   `json:"status"`
+	Assignee         *User                    `json:"assignee,omitempty"`
+	Team             *Team                    `json:"team,omitempty"`
+	Project          *Project                 `json:"project,omitempty"`
+	ProjectMilestone *ProjectMilestone        `json:"projectMilestone,omitempty"`
+	URL              string                   `json:"url"`
+	CreatedAt        time.Time                `json:"createdAt"`
+	UpdatedAt        time.Time                `json:"updatedAt"`
+	Labels           *LabelConnection         `json:"labels,omitempty"`
+	State            *State                   `json:"state,omitempty"`
+	Estimate         *float64                 `json:"estimate,omitempty"`
+	Comments         *CommentConnection       `json:"comments,omitempty"`
+	Relations        *IssueRelationConnection `json:"relations,omitempty"`
 	InverseRelations *IssueRelationConnection `json:"inverseRelations,omitempty"`
-	Attachments     *AttachmentConnection    `json:"attachments,omitempty"`
+	Attachments      *AttachmentConnection    `json:"attachments,omitempty"`
 }
 
 // User represents a Linear user
@@ -52,11 +52,12 @@ type Project struct {
 	Lead        *User  `json:"lead,omitempty"`
 	// Members     *UserConnection `json:"members,omitempty"`
 	// Teams       *TeamConnection `json:"teams,omitempty"`
-	StartDate  *time.Time `json:"startDate,omitempty"`
-	TargetDate *time.Time `json:"targetDate,omitempty"`
-	Color      string     `json:"color"`
-	Icon       string     `json:"icon,omitempty"`
-	URL        string     `json:"url"`
+	Initiatives *InitiativeConnection `json:"initiatives,omitempty"`
+	StartDate   *string               `json:"startDate,omitempty"`
+	TargetDate  *string               `json:"targetDate,omitempty"`
+	Color       string                `json:"color"`
+	Icon        string                `json:"icon,omitempty"`
+	URL         string                `json:"url"`
 }
 
 // ProjectConnection represents a connection of projects
@@ -126,19 +127,19 @@ type PageInfo struct {
 
 // PaginatedCommentConnection represents a paginated connection of comments
 type PaginatedCommentConnection struct {
-	Nodes      []Comment `json:"nodes"`
-	PageInfo   PageInfo  `json:"pageInfo"`
+	Nodes    []Comment `json:"nodes"`
+	PageInfo PageInfo  `json:"pageInfo"`
 }
 
 // Comment represents a comment on a Linear issue
 type Comment struct {
-	ID         string            `json:"id"`
-	Body       string            `json:"body"`
-	User       *User             `json:"user,omitempty"`
-	CreatedAt  time.Time         `json:"createdAt"`
-	URL        string            `json:"url,omitempty"`
-	Parent     *Comment          `json:"parent,omitempty"`
-	Children   *CommentConnection `json:"children,omitempty"`
+	ID        string             `json:"id"`
+	Body      string             `json:"body"`
+	User      *User              `json:"user,omitempty"`
+	CreatedAt time.Time          `json:"createdAt"`
+	URL       string             `json:"url,omitempty"`
+	Parent    *Comment           `json:"parent,omitempty"`
+	Children  *CommentConnection `json:"children,omitempty"`
 }
 
 // IssueRelationConnection represents a connection of issue relations
@@ -172,11 +173,11 @@ type Attachment struct {
 
 // Organization represents a Linear organization
 type Organization struct {
-	ID     string  `json:"id"`
-	Name   string  `json:"name"`
-	URLKey string  `json:"urlKey"`
-	Teams  []Team  `json:"teams,omitempty"`
-	Users  []User  `json:"users,omitempty"`
+	ID     string `json:"id"`
+	Name   string `json:"name"`
+	URLKey string `json:"urlKey"`
+	Teams  []Team `json:"teams,omitempty"`
+	Users  []User `json:"users,omitempty"`
 }
 
 // LinearIssueResponse represents a simplified issue response
@@ -214,14 +215,14 @@ type CreateIssueInput struct {
 
 // UpdateIssueInput represents input for updating an issue
 type UpdateIssueInput struct {
-	ID          string  `json:"id"`
-	Title       string  `json:"title,omitempty"`
-	Description string  `json:"description,omitempty"`
-	Priority    *int    `json:"priority,omitempty"`
-	Status      string  `json:"status,omitempty"`
-	TeamID   	string  `json:"teamId,omitempty"`
-	ProjectID   string  `json:"projectId,omitempty"`
-	MilestoneID string  `json:"milestoneId,omitempty"`
+	ID          string `json:"id"`
+	Title       string `json:"title,omitempty"`
+	Description string `json:"description,omitempty"`
+	Priority    *int   `json:"priority,omitempty"`
+	Status      string `json:"status,omitempty"`
+	TeamID      string `json:"teamId,omitempty"`
+	ProjectID   string `json:"projectId,omitempty"`
+	MilestoneID string `json:"milestoneId,omitempty"`
 }
 
 // SearchIssuesInput represents input for searching issues
@@ -246,9 +247,9 @@ type GetUserIssuesInput struct {
 
 // GetIssueCommentsInput represents input for getting issue comments
 type GetIssueCommentsInput struct {
-	IssueID    string `json:"issueId"`
-	ParentID   string `json:"parentId,omitempty"`
-	Limit      int    `json:"limit,omitempty"`
+	IssueID     string `json:"issueId"`
+	ParentID    string `json:"parentId,omitempty"`
+	Limit       int    `json:"limit,omitempty"`
 	AfterCursor string `json:"afterCursor,omitempty"`
 }
 
