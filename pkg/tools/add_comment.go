@@ -21,35 +21,25 @@ var AddCommentTool = mcp.NewTool("linear_add_comment",
 func AddCommentHandler(linearClient *linear.LinearClient) func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 	return func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		// Extract arguments
-		args := request.Params.Arguments
-
-		// Validate required arguments
-		issueIdentifier, ok := args["issue"].(string)
-		if !ok || issueIdentifier == "" {
-			return mcp.NewToolResultError("issue must be a non-empty string"), nil
+		issueIdentifier, err := request.RequireString("issue")
+		if err != nil {
+			return &mcp.CallToolResult{IsError: true, Content: []mcp.Content{mcp.TextContent{Type: "text", Text: err.Error()}}}, nil
 		}
 
 		// Resolve issue identifier to a UUID
 		issueID, err := resolveIssueIdentifier(linearClient, issueIdentifier)
 		if err != nil {
-			return mcp.NewToolResultError(fmt.Sprintf("Failed to resolve issue: %v", err)), nil
+			return &mcp.CallToolResult{IsError: true, Content: []mcp.Content{mcp.TextContent{Type: "text", Text: fmt.Sprintf("Failed to resolve issue: %v", err)}}}, nil
 		}
 
-		body, ok := args["body"].(string)
-		if !ok || body == "" {
-			return mcp.NewToolResultError("body must be a non-empty string"), nil
+		body, err := request.RequireString("body")
+		if err != nil {
+			return &mcp.CallToolResult{IsError: true, Content: []mcp.Content{mcp.TextContent{Type: "text", Text: err.Error()}}}, nil
 		}
 
 		// Extract optional arguments
-		createAsUser := ""
-		if user, ok := args["createAsUser"].(string); ok {
-			createAsUser = user
-		}
-
-		parentID := ""
-		if parent, ok := args["thread"].(string); ok {
-			parentID = parent
-		}
+		createAsUser := request.GetString("createAsUser", "")
+		parentID := request.GetString("thread", "")
 
 		// Add the comment
 		input := linear.AddCommentInput{
@@ -61,7 +51,7 @@ func AddCommentHandler(linearClient *linear.LinearClient) func(ctx context.Conte
 
 		comment, issue, err := linearClient.AddComment(input)
 		if err != nil {
-			return mcp.NewToolResultError(fmt.Sprintf("Failed to add comment: %v", err)), nil
+			return &mcp.CallToolResult{IsError: true, Content: []mcp.Content{mcp.TextContent{Type: "text", Text: fmt.Sprintf("Failed to add comment: %v", err)}}}, nil
 		}
 
 		// Return the result
@@ -71,6 +61,6 @@ func AddCommentHandler(linearClient *linear.LinearClient) func(ctx context.Conte
 		}
 		resultText += fmt.Sprintf("Comment: %s\n", formatCommentIdentifier(comment))
 		resultText += fmt.Sprintf("URL: %s", comment.URL)
-		return mcp.NewToolResultText(resultText), nil
+		return &mcp.CallToolResult{Content: []mcp.Content{mcp.TextContent{Type: "text", Text: resultText}}}, nil
 	}
 }

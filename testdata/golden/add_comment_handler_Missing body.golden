@@ -1,2 +1,2 @@
-err: body must be a non-empty string
+err: required argument "body" not found
 output: ""

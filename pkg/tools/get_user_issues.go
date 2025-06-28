@@ -20,33 +20,25 @@ var GetUserIssuesTool = mcp.NewTool("linear_get_user_issues",
 // GetUserIssuesHandler handles the linear_get_user_issues tool
 func GetUserIssuesHandler(linearClient *linear.LinearClient) func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 	return func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-		// Extract arguments
-		args := request.Params.Arguments
-
 		// Build input
 		input := linear.GetUserIssuesInput{}
 
-		if user, ok := args["user"].(string); ok && user != "" {
+		if user, err := request.RequireString("user"); err == nil && user != "" {
 			// Resolve user identifier to a user ID
 			userID, err := resolveUserIdentifier(linearClient, user)
 			if err != nil {
-				return mcp.NewToolResultError(fmt.Sprintf("Failed to resolve user: %v", err)), nil
+				return &mcp.CallToolResult{IsError: true, Content: []mcp.Content{mcp.TextContent{Type: "text", Text: fmt.Sprintf("Failed to resolve user: %v", err)}}}, nil
 			}
 			input.UserID = userID
 		}
 
-		if includeArchived, ok := args["includeArchived"].(bool); ok {
-			input.IncludeArchived = includeArchived
-		}
-
-		if limit, ok := args["limit"].(float64); ok {
-			input.Limit = int(limit)
-		}
+		input.IncludeArchived = request.GetBool("includeArchived", false)
+		input.Limit = request.GetInt("limit", 50)
 
 		// Get user issues
 		issues, err := linearClient.GetUserIssues(input)
 		if err != nil {
-			return mcp.NewToolResultError(fmt.Sprintf("Failed to get user issues: %v", err)), nil
+			return &mcp.CallToolResult{IsError: true, Content: []mcp.Content{mcp.TextContent{Type: "text", Text: fmt.Sprintf("Failed to get user issues: %v", err)}}}, nil
 		}
 
 		// Format the result
@@ -57,7 +49,7 @@ func GetUserIssuesHandler(linearClient *linear.LinearClient) func(ctx context.Co
 				ID:         issue.ID,
 				Identifier: issue.Identifier,
 			}
-			
+
 			priorityStr := "None"
 			if issue.Priority > 0 {
 				priorityStr = strconv.Itoa(issue.Priority)
@@ -77,6 +69,6 @@ func GetUserIssuesHandler(linearClient *linear.LinearClient) func(ctx context.Co
 			resultText += fmt.Sprintf("  URL: %s\n", issue.URL)
 		}
 
-		return mcp.NewToolResultText(resultText), nil
+		return &mcp.CallToolResult{Content: []mcp.Content{mcp.TextContent{Type: "text", Text: resultText}}}, nil
 	}
 }

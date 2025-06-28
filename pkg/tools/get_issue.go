@@ -18,24 +18,21 @@ var GetIssueTool = mcp.NewTool("linear_get_issue",
 func GetIssueHandler(linearClient *linear.LinearClient) func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 	return func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		// Extract arguments
-		args := request.Params.Arguments
-
-		// Validate required arguments
-		issueIdentifier, ok := args["issue"].(string)
-		if !ok || issueIdentifier == "" {
-			return mcp.NewToolResultError("issue must be a non-empty string"), nil
+		issueIdentifier, err := request.RequireString("issue")
+		if err != nil {
+			return &mcp.CallToolResult{IsError: true, Content: []mcp.Content{mcp.TextContent{Type: "text", Text: err.Error()}}}, nil
 		}
 
 		// Resolve issue identifier to a UUID
 		issueID, err := resolveIssueIdentifier(linearClient, issueIdentifier)
 		if err != nil {
-			return mcp.NewToolResultError(fmt.Sprintf("Failed to resolve issue: %v", err)), nil
+			return &mcp.CallToolResult{IsError: true, Content: []mcp.Content{mcp.TextContent{Type: "text", Text: fmt.Sprintf("Failed to resolve issue: %v", err)}}}, nil
 		}
 
 		// Get the issue
 		issue, err := linearClient.GetIssue(issueID)
 		if err != nil {
-			return mcp.NewToolResultError(fmt.Sprintf("Failed to get issue: %v", err)), nil
+			return &mcp.CallToolResult{IsError: true, Content: []mcp.Content{mcp.TextContent{Type: "text", Text: fmt.Sprintf("Failed to get issue: %v", err)}}}, nil
 		}
 
 		// Format the result using the full issue formatting
@@ -102,6 +99,6 @@ func GetIssueHandler(linearClient *linear.LinearClient) func(ctx context.Context
 		// Note about comments
 		resultText += "\nComments: Use the linear_get_issue_comments tool to retrieve comments for this issue.\n"
 
-		return mcp.NewToolResultText(resultText), nil
+		return &mcp.CallToolResult{Content: []mcp.Content{mcp.TextContent{Type: "text", Text: resultText}}}, nil
 	}
 }

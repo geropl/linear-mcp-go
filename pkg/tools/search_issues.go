@@ -27,39 +27,32 @@ var SearchIssuesTool = mcp.NewTool("linear_search_issues",
 // SearchIssuesHandler handles the linear_search_issues tool
 func SearchIssuesHandler(linearClient *linear.LinearClient) func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 	return func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-		// Extract arguments
-		args := request.Params.Arguments
-
 		// Build search input
 		input := linear.SearchIssuesInput{}
 
-		if query, ok := args["query"].(string); ok {
-			input.Query = query
-		}
+		input.Query = request.GetString("query", "")
 
-		if team, ok := args["team"].(string); ok && team != "" {
+		if team, err := request.RequireString("team"); err == nil && team != "" {
 			// Resolve team identifier to a team ID
 			teamID, err := resolveTeamIdentifier(linearClient, team)
 			if err != nil {
-				return mcp.NewToolResultError(fmt.Sprintf("Failed to resolve team: %v", err)), nil
+				return &mcp.CallToolResult{IsError: true, Content: []mcp.Content{mcp.TextContent{Type: "text", Text: fmt.Sprintf("Failed to resolve team: %v", err)}}}, nil
 			}
 			input.TeamID = teamID
 		}
 
-		if status, ok := args["status"].(string); ok {
-			input.Status = status
-		}
+		input.Status = request.GetString("status", "")
 
-		if assignee, ok := args["assignee"].(string); ok && assignee != "" {
+		if assignee, err := request.RequireString("assignee"); err == nil && assignee != "" {
 			// Resolve assignee identifier to a user ID
 			assigneeID, err := resolveUserIdentifier(linearClient, assignee)
 			if err != nil {
-				return mcp.NewToolResultError(fmt.Sprintf("Failed to resolve assignee: %v", err)), nil
+				return &mcp.CallToolResult{IsError: true, Content: []mcp.Content{mcp.TextContent{Type: "text", Text: fmt.Sprintf("Failed to resolve assignee: %v", err)}}}, nil
 			}
 			input.AssigneeID = assigneeID
 		}
 
-		if labelsStr, ok := args["labels"].(string); ok && labelsStr != "" {
+		if labelsStr, err := request.RequireString("labels"); err == nil && labelsStr != "" {
 			// Split comma-separated labels
 			labels := []string{}
 			for _, label := range strings.Split(labelsStr, ",") {
@@ -71,27 +64,21 @@ func SearchIssuesHandler(linearClient *linear.LinearClient) func(ctx context.Con
 			input.Labels = labels
 		}
 
-		if priority, ok := args["priority"].(float64); ok {
-			pInt := int(priority)
-			input.Priority = &pInt
+		if priority, err := request.RequireInt("priority"); err == nil {
+			input.Priority = &priority
 		}
 
-		if estimate, ok := args["estimate"].(float64); ok {
+		if estimate, err := request.RequireFloat("estimate"); err == nil {
 			input.Estimate = &estimate
 		}
 
-		if includeArchived, ok := args["includeArchived"].(bool); ok {
-			input.IncludeArchived = includeArchived
-		}
-
-		if limit, ok := args["limit"].(float64); ok {
-			input.Limit = int(limit)
-		}
+		input.IncludeArchived = request.GetBool("includeArchived", false)
+		input.Limit = request.GetInt("limit", 10)
 
 		// Search for issues
 		issues, err := linearClient.SearchIssues(input)
 		if err != nil {
-			return mcp.NewToolResultError(fmt.Sprintf("Failed to search issues: %v", err)), nil
+			return &mcp.CallToolResult{IsError: true, Content: []mcp.Content{mcp.TextContent{Type: "text", Text: fmt.Sprintf("Failed to search issues: %v", err)}}}, nil
 		}
 
 		// Format the result
@@ -102,7 +89,7 @@ func SearchIssuesHandler(linearClient *linear.LinearClient) func(ctx context.Con
 				ID:         issue.ID,
 				Identifier: issue.Identifier,
 			}
-			
+
 			priorityStr := "None"
 			if issue.Priority > 0 {
 				priorityStr = strconv.Itoa(issue.Priority)
@@ -122,6 +109,6 @@ func SearchIssuesHandler(linearClient *linear.LinearClient) func(ctx context.Con
 			resultText += fmt.Sprintf("  URL: %s\n", issue.URL)
 		}
 
-		return mcp.NewToolResultText(resultText), nil
+		return &mcp.CallToolResult{Content: []mcp.Content{mcp.TextContent{Type: "text", Text: resultText}}}, nil
 	}
 }

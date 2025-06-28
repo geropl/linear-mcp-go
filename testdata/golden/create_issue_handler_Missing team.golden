@@ -1,2 +1,2 @@
-err: team must be a non-empty string (UUID, name, or key)
+err: required argument "team" not found
 output: ""
