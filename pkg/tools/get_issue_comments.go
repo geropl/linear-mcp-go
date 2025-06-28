@@ -21,40 +21,26 @@ var GetIssueCommentsTool = mcp.NewTool("linear_get_issue_comments",
 func GetIssueCommentsHandler(linearClient *linear.LinearClient) func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 	return func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		// Extract arguments
-		args := request.Params.Arguments
-
-		// Validate required arguments
-		issueIdentifier, ok := args["issue"].(string)
-		if !ok || issueIdentifier == "" {
-			return mcp.NewToolResultError("issue must be a non-empty string"), nil
+		issueIdentifier, err := request.RequireString("issue")
+		if err != nil {
+			return &mcp.CallToolResult{IsError: true, Content: []mcp.Content{mcp.TextContent{Type: "text", Text: err.Error()}}}, nil
 		}
 
 		// Extract optional arguments
-		var parentID string
-		if parentIDArg, ok := args["thread"].(string); ok {
-			parentID = parentIDArg
-		}
-
-		var limit int
-		if limitArg, ok := args["limit"].(float64); ok {
-			limit = int(limitArg)
-		}
-
-		var afterCursor string
-		if afterArg, ok := args["after"].(string); ok {
-			afterCursor = afterArg
-		}
+		parentID := request.GetString("thread", "")
+		limit := request.GetInt("limit", 10)
+		afterCursor := request.GetString("after", "")
 
 		// Resolve issue identifier to a UUID
 		issueID, err := resolveIssueIdentifier(linearClient, issueIdentifier)
 		if err != nil {
-			return mcp.NewToolResultError(fmt.Sprintf("Failed to resolve issue: %v", err)), nil
+			return &mcp.CallToolResult{IsError: true, Content: []mcp.Content{mcp.TextContent{Type: "text", Text: fmt.Sprintf("Failed to resolve issue: %v", err)}}}, nil
 		}
 
 		// Get the issue for basic information
 		issue, err := linearClient.GetIssue(issueID)
 		if err != nil {
-			return mcp.NewToolResultError(fmt.Sprintf("Failed to get issue: %v", err)), nil
+			return &mcp.CallToolResult{IsError: true, Content: []mcp.Content{mcp.TextContent{Type: "text", Text: fmt.Sprintf("Failed to get issue: %v", err)}}}, nil
 		}
 
 		// Get the comments
@@ -67,7 +53,7 @@ func GetIssueCommentsHandler(linearClient *linear.LinearClient) func(ctx context
 
 		comments, err := linearClient.GetIssueComments(commentsInput)
 		if err != nil {
-			return mcp.NewToolResultError(fmt.Sprintf("Failed to get comments: %v", err)), nil
+			return &mcp.CallToolResult{IsError: true, Content: []mcp.Content{mcp.TextContent{Type: "text", Text: fmt.Sprintf("Failed to get comments: %v", err)}}}, nil
 		}
 
 		// Format the result
@@ -115,7 +101,7 @@ func GetIssueCommentsHandler(linearClient *linear.LinearClient) func(ctx context
 			resultText += fmt.Sprintf("Next cursor: %s\n", comments.PageInfo.EndCursor)
 		}
 
-		return mcp.NewToolResultText(resultText), nil
+		return &mcp.CallToolResult{Content: []mcp.Content{mcp.TextContent{Type: "text", Text: resultText}}}, nil
 	}
 }
 

@@ -1,2 +1,2 @@
-err: title must be a non-empty string
+err: required argument "title" not found
 output: ""

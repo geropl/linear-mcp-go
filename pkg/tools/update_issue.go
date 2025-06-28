@@ -22,41 +22,27 @@ var UpdateIssueTool = mcp.NewTool("linear_update_issue",
 func UpdateIssueHandler(linearClient *linear.LinearClient) func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 	return func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		// Extract arguments
-		args := request.Params.Arguments
-
-		// Validate required arguments
-		issueIdentifier, ok := args["issue"].(string)
-		if !ok || issueIdentifier == "" {
-			return mcp.NewToolResultError("issue must be a non-empty string"), nil
+		issueIdentifier, err := request.RequireString("issue")
+		if err != nil {
+			return &mcp.CallToolResult{IsError: true, Content: []mcp.Content{mcp.TextContent{Type: "text", Text: err.Error()}}}, nil
 		}
 
 		// Resolve issue identifier to a UUID
 		id, err := resolveIssueIdentifier(linearClient, issueIdentifier)
 		if err != nil {
-			return mcp.NewToolResultError(fmt.Sprintf("Failed to resolve issue: %v", err)), nil
+			return &mcp.CallToolResult{IsError: true, Content: []mcp.Content{mcp.TextContent{Type: "text", Text: fmt.Sprintf("Failed to resolve issue: %v", err)}}}, nil
 		}
 
 		// Extract optional arguments
-		title := ""
-		if t, ok := args["title"].(string); ok {
-			title = t
-		}
-
-		description := ""
-		if desc, ok := args["description"].(string); ok {
-			description = desc
-		}
+		title := request.GetString("title", "")
+		description := request.GetString("description", "")
 
 		var priority *int
-		if p, ok := args["priority"].(float64); ok {
-			pInt := int(p)
-			priority = &pInt
+		if p, err := request.RequireInt("priority"); err == nil {
+			priority = &p
 		}
 
-		status := ""
-		if s, ok := args["status"].(string); ok {
-			status = s
-		}
+		status := request.GetString("status", "")
 
 		// Update the issue
 		input := linear.UpdateIssueInput{
@@ -69,12 +55,12 @@ func UpdateIssueHandler(linearClient *linear.LinearClient) func(ctx context.Cont
 
 		issue, err := linearClient.UpdateIssue(input)
 		if err != nil {
-			return mcp.NewToolResultError(fmt.Sprintf("Failed to update issue: %v", err)), nil
+			return &mcp.CallToolResult{IsError: true, Content: []mcp.Content{mcp.TextContent{Type: "text", Text: fmt.Sprintf("Failed to update issue: %v", err)}}}, nil
 		}
 
 		// Return the result
 		resultText := fmt.Sprintf("Updated %s", formatIssueIdentifier(issue))
 		resultText += fmt.Sprintf("\nURL: %s", issue.URL)
-		return mcp.NewToolResultText(resultText), nil
+		return &mcp.CallToolResult{Content: []mcp.Content{mcp.TextContent{Type: "text", Text: resultText}}}, nil
 	}
 }

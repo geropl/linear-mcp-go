@@ -1,2 +1,2 @@
-err: issue must be a non-empty string
+err: required argument "issue" not found
 output: ""

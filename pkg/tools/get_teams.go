@@ -18,18 +18,12 @@ var GetTeamsTool = mcp.NewTool("linear_get_teams",
 func GetTeamsHandler(linearClient *linear.LinearClient) func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 	return func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		// Extract arguments
-		args := request.Params.Arguments
-
-		// Extract optional name filter
-		name := ""
-		if nameArg, ok := args["name"].(string); ok {
-			name = nameArg
-		}
+		name := request.GetString("name", "")
 
 		// Get teams
 		teams, err := linearClient.GetTeams(name)
 		if err != nil {
-			return mcp.NewToolResultError(fmt.Sprintf("Failed to get teams: %v", err)), nil
+			return &mcp.CallToolResult{IsError: true, Content: []mcp.Content{mcp.TextContent{Type: "text", Text: fmt.Sprintf("Failed to get teams: %v", err)}}}, nil
 		}
 
 		// Format the result
@@ -41,6 +35,6 @@ func GetTeamsHandler(linearClient *linear.LinearClient) func(ctx context.Context
 			resultText += fmt.Sprintf("  Key: %s\n", team.Key)
 		}
 
-		return mcp.NewToolResultText(resultText), nil
+		return &mcp.CallToolResult{Content: []mcp.Content{mcp.TextContent{Type: "text", Text: resultText}}}, nil
 	}
 }
