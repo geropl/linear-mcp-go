@@ -993,6 +993,108 @@ func TestSetupCommand(t *testing.T) {
 				exitCode: 0,
 			},
 		},
+		{
+			name:        "Ona Only",
+			toolParam:   "ona",
+			writeAccess: true,
+			autoApprove: "allow-read-only",
+			expect: expectations{
+				files: map[string]fileExpectation{
+					"ona": {
+						path:      ".gitpod/mcp-config.json",
+						mustExist: true,
+						content: `{
+							"servers": {
+								"linear": {
+									"name": "linear",
+									"command": "home/mcp-servers/linear-mcp-go",
+									"args": ["serve", "--write-access=true"],
+									"env": {
+										"LINEAR_API_KEY": "test-api-key"
+									},
+									"autoApprove": ["linear_get_initiative", "linear_get_issue", "linear_get_issue_comments", "linear_get_milestone", "linear_get_project", "linear_get_teams", "linear_get_user_issues", "linear_search_issues", "linear_search_projects"]
+								}
+							}
+						}`,
+					},
+				},
+				exitCode: 0,
+			},
+		},
+		{
+			name:        "Ona with Project Path",
+			toolParam:   "ona",
+			projectPath: "/workspace/test-project",
+			writeAccess: false,
+			autoApprove: "linear_get_issue,linear_search_issues",
+			expect: expectations{
+				files: map[string]fileExpectation{
+					"ona": {
+						path:      "/workspace/test-project/.gitpod/mcp-config.json",
+						mustExist: true,
+						content: `{
+							"servers": {
+								"linear": {
+									"name": "linear",
+									"command": "home/mcp-servers/linear-mcp-go",
+									"args": ["serve"],
+									"env": {
+										"LINEAR_API_KEY": "test-api-key"
+									},
+									"autoApprove": ["linear_get_issue", "linear_search_issues"]
+								}
+							}
+						}`,
+					},
+				},
+				exitCode: 0,
+			},
+		},
+		{
+			name:        "Ona with Existing Config",
+			toolParam:   "ona",
+			writeAccess: true,
+			preExistingFiles: map[string]preExistingFile{
+				"ona": {
+					path: ".gitpod/mcp-config.json",
+					content: `{
+						"servers": {
+							"playwright": {
+								"name": "playwright",
+								"command": "npx",
+								"args": ["-y", "@executeautomation/playwright-mcp-server"]
+							}
+						}
+					}`,
+				},
+			},
+			expect: expectations{
+				files: map[string]fileExpectation{
+					"ona": {
+						path:      ".gitpod/mcp-config.json",
+						mustExist: true,
+						content: `{
+							"servers": {
+								"playwright": {
+									"name": "playwright",
+									"command": "npx",
+									"args": ["-y", "@executeautomation/playwright-mcp-server"]
+								},
+								"linear": {
+									"name": "linear",
+									"command": "home/mcp-servers/linear-mcp-go",
+									"args": ["serve", "--write-access=true"],
+									"env": {
+										"LINEAR_API_KEY": "test-api-key"
+									}
+								}
+							}
+						}`,
+					},
+				},
+				exitCode: 0,
+			},
+		},
 	}
 
 	// Run each test case
@@ -1052,6 +1154,7 @@ func TestSetupCommand(t *testing.T) {
 
 			// Execute the command
 			cmd := exec.Command(tempBinaryPath, args...)
+			cmd.Dir = rootDir // Set working directory to the test root
 			var stdout, stderr bytes.Buffer
 			cmd.Stdout = &stdout
 			cmd.Stderr = &stderr
@@ -1140,30 +1243,32 @@ func normalizeJSON(jsonObj map[string]interface{}) {
 func normalizeJSONRecursive(obj interface{}) {
 	switch v := obj.(type) {
 	case map[string]interface{}:
-		// Handle mcpServers specially
-		if mcpServers, ok := v["mcpServers"].(map[string]interface{}); ok {
-			for _, serverConfig := range mcpServers {
-				if serverMap, ok := serverConfig.(map[string]interface{}); ok {
-					// Normalize the command field by stripping temporary directory prefix
-					if command, ok := serverMap["command"].(string); ok {
-						// Strip the temporary test directory prefix, keeping only the meaningful part
-						// Pattern: /tmp/linear-mcp-go-test-*/home/... -> home/...
-						if strings.Contains(command, "/home/") {
-							parts := strings.Split(command, "/home/")
-							if len(parts) > 1 {
-								serverMap["command"] = "home/" + parts[1]
+		// Handle mcpServers and servers specially
+		for _, serverKey := range []string{"mcpServers", "servers"} {
+			if servers, ok := v[serverKey].(map[string]interface{}); ok {
+				for _, serverConfig := range servers {
+					if serverMap, ok := serverConfig.(map[string]interface{}); ok {
+						// Normalize the command field by stripping temporary directory prefix
+						if command, ok := serverMap["command"].(string); ok {
+							// Strip the temporary test directory prefix, keeping only the meaningful part
+							// Pattern: /tmp/linear-mcp-go-test-*/home/... -> home/...
+							if strings.Contains(command, "/home/") {
+								parts := strings.Split(command, "/home/")
+								if len(parts) > 1 {
+									serverMap["command"] = "home/" + parts[1]
+								}
 							}
 						}
+						// Sort arrays in all servers
+						normalizeJSONRecursive(serverMap)
 					}
-					// Sort arrays in all servers
-					normalizeJSONRecursive(serverMap)
 				}
 			}
 		}
 
 		// Process all other map entries recursively
 		for key, value := range v {
-			if key != "mcpServers" { // Already handled above
+			if key != "mcpServers" && key != "servers" { // Already handled above
 				normalizeJSONRecursive(value)
 			}
 		}
