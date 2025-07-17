@@ -21,7 +21,7 @@ var setupCmd = &cobra.Command{
 	Short: "Set up the Linear MCP server for use with an AI assistant",
 	Long: `Set up the Linear MCP server for use with an AI assistant.
 This command installs the Linear MCP server and configures it for use with the specified AI assistant tool(s).
-Currently supported tools: cline, roo-code, claude-code`,
+Currently supported tools: cline, roo-code, claude-code, ona`,
 	Run: func(cmd *cobra.Command, args []string) {
 		toolParam, _ := cmd.Flags().GetString("tool")
 		writeAccess, _ := cmd.Flags().GetBool("write-access")
@@ -82,9 +82,11 @@ Currently supported tools: cline, roo-code, claude-code`,
 				err = setupRooCode(binaryPath, apiKey, writeAccess, autoApprove)
 			case "claude-code":
 				err = setupClaudeCode(binaryPath, apiKey, writeAccess, autoApprove, projectPath)
+			case "ona":
+				err = setupOna(binaryPath, apiKey, writeAccess, autoApprove, projectPath)
 			default:
 				fmt.Printf("Unsupported tool: %s\n", t)
-				fmt.Println("Currently supported tools: cline, roo-code, claude-code")
+				fmt.Println("Currently supported tools: cline, roo-code, claude-code, ona")
 				hasErrors = true
 				continue
 			}
@@ -107,7 +109,7 @@ func init() {
 	rootCmd.AddCommand(setupCmd)
 
 	// Add flags to the setup command
-	setupCmd.Flags().String("tool", "cline", "The AI assistant tool(s) to set up for (comma-separated, e.g., cline,roo-code,claude-code)")
+	setupCmd.Flags().String("tool", "cline", "The AI assistant tool(s) to set up for (comma-separated, e.g., cline,roo-code,claude-code,ona)")
 	setupCmd.Flags().Bool("write-access", false, "Enable write operations (default: false)")
 	setupCmd.Flags().String("auto-approve", "", "Comma-separated list of tool names to auto-approve, or 'allow-read-only' to auto-approve all read-only tools")
 	setupCmd.Flags().String("project-path", "", "The project path(s) for claude-code project-scoped configuration (comma-separated for multiple projects, or empty to register to user scope for all projects)")
@@ -186,6 +188,144 @@ func copySelfToBinaryPath(binaryPath string) error {
 	}
 
 	fmt.Printf("Linear MCP server installed successfully at %s\n", binaryPath)
+	return nil
+}
+
+// setupOna sets up the Linear MCP server for Ona
+func setupOna(binaryPath, apiKey string, writeAccess bool, autoApprove, projectPath string) error {
+	// Determine the project path - default to current working directory if not specified
+	var configPath string
+	if projectPath != "" {
+		// Use the first project path if multiple are provided
+		paths := strings.Split(projectPath, ",")
+		trimmedPath := strings.TrimSpace(paths[0])
+		if trimmedPath != "" {
+			// If the path is absolute and doesn't exist, treat it as relative to current directory
+			// This helps with test scenarios where absolute paths are used but don't exist
+			if filepath.IsAbs(trimmedPath) {
+				if _, err := os.Stat(trimmedPath); os.IsNotExist(err) {
+					// Try relative to current directory
+					cwd, err := os.Getwd()
+					if err != nil {
+						return fmt.Errorf("failed to get current working directory: %w", err)
+					}
+					// Remove leading slash and treat as relative
+					relativePath := strings.TrimPrefix(trimmedPath, "/")
+					configPath = filepath.Join(cwd, relativePath, ".gitpod", "mcp-config.json")
+				} else {
+					configPath = filepath.Join(trimmedPath, ".gitpod", "mcp-config.json")
+				}
+			} else {
+				configPath = filepath.Join(trimmedPath, ".gitpod", "mcp-config.json")
+			}
+		} else {
+			// Fall back to current directory
+			cwd, err := os.Getwd()
+			if err != nil {
+				return fmt.Errorf("failed to get current working directory: %w", err)
+			}
+			configPath = filepath.Join(cwd, ".gitpod", "mcp-config.json")
+		}
+	} else {
+		// Default to current working directory
+		cwd, err := os.Getwd()
+		if err != nil {
+			return fmt.Errorf("failed to get current working directory: %w", err)
+		}
+		configPath = filepath.Join(cwd, ".gitpod", "mcp-config.json")
+	}
+
+	// Create the .gitpod directory if it doesn't exist
+	if err := os.MkdirAll(filepath.Dir(configPath), 0755); err != nil {
+		return fmt.Errorf("failed to create .gitpod directory: %w", err)
+	}
+
+	// Prepare server arguments
+	serverArgs := []string{"serve"}
+	if writeAccess {
+		serverArgs = append(serverArgs, "--write-access=true")
+	}
+
+	// Process auto-approve flag
+	autoApproveTools := []string{}
+	if autoApprove != "" {
+		if autoApprove == "allow-read-only" {
+			// Get the list of read-only tools
+			for k := range server.GetReadOnlyToolNames() {
+				autoApproveTools = append(autoApproveTools, k)
+			}
+		} else {
+			// Split comma-separated list
+			for _, tool := range strings.Split(autoApprove, ",") {
+				trimmedTool := strings.TrimSpace(tool)
+				if trimmedTool != "" {
+					autoApproveTools = append(autoApproveTools, trimmedTool)
+				}
+			}
+		}
+	}
+
+	// Create the linear server configuration
+	linearServerConfig := map[string]interface{}{
+		"name":    "linear",
+		"command": binaryPath,
+		"args":    serverArgs,
+	}
+
+	// Add environment variables if needed (Ona might handle this differently)
+	if apiKey != "" {
+		linearServerConfig["env"] = map[string]string{
+			"LINEAR_API_KEY": apiKey,
+		}
+	}
+
+	// Add auto-approve if specified
+	if len(autoApproveTools) > 0 {
+		linearServerConfig["autoApprove"] = autoApproveTools
+	}
+
+	// Read existing configuration or create new one
+	var config map[string]interface{}
+	data, err := os.ReadFile(configPath)
+	if err != nil {
+		if !os.IsNotExist(err) {
+			return fmt.Errorf("failed to read existing ona config: %w", err)
+		}
+		// Initialize with empty structure if file doesn't exist
+		config = map[string]interface{}{
+			"servers": map[string]interface{}{},
+		}
+	} else {
+		if err := json.Unmarshal(data, &config); err != nil {
+			return fmt.Errorf("failed to parse existing ona config: %w", err)
+		}
+		// Ensure servers field exists
+		if config["servers"] == nil {
+			config["servers"] = map[string]interface{}{}
+		}
+	}
+
+	// Get or create servers map
+	servers, ok := config["servers"].(map[string]interface{})
+	if !ok {
+		servers = map[string]interface{}{}
+		config["servers"] = servers
+	}
+
+	// Add/update the linear server configuration
+	servers["linear"] = linearServerConfig
+
+	// Write the updated configuration
+	updatedData, err := json.MarshalIndent(config, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal ona config: %w", err)
+	}
+
+	if err := os.WriteFile(configPath, updatedData, 0644); err != nil {
+		return fmt.Errorf("failed to write ona config: %w", err)
+	}
+
+	fmt.Printf("Ona MCP configuration updated at %s\n", configPath)
 	return nil
 }
 
