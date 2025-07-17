@@ -191,48 +191,40 @@ func copySelfToBinaryPath(binaryPath string) error {
 	return nil
 }
 
-// setupOna sets up the Linear MCP server for Ona
-func setupOna(binaryPath, apiKey string, writeAccess bool, autoApprove, projectPath string) error {
-	// Determine the project path - default to current working directory if not specified
-	var configPath string
+// getOnaConfigPath determines the configuration file path for Ona
+func getOnaConfigPath(projectPath string) (string, error) {
+	cwd, err := os.Getwd()
+	if err != nil {
+		return "", fmt.Errorf("failed to get current working directory: %w", err)
+	}
+
+	// Default to current working directory
+	baseDir := cwd
+
+	// If project path is specified, use the first one
 	if projectPath != "" {
-		// Use the first project path if multiple are provided
 		paths := strings.Split(projectPath, ",")
 		trimmedPath := strings.TrimSpace(paths[0])
 		if trimmedPath != "" {
-			// If the path is absolute and doesn't exist, treat it as relative to current directory
-			// This helps with test scenarios where absolute paths are used but don't exist
+			baseDir = trimmedPath
+			// If absolute path doesn't exist, treat as relative to current directory
 			if filepath.IsAbs(trimmedPath) {
 				if _, err := os.Stat(trimmedPath); os.IsNotExist(err) {
-					// Try relative to current directory
-					cwd, err := os.Getwd()
-					if err != nil {
-						return fmt.Errorf("failed to get current working directory: %w", err)
-					}
-					// Remove leading slash and treat as relative
 					relativePath := strings.TrimPrefix(trimmedPath, "/")
-					configPath = filepath.Join(cwd, relativePath, ".gitpod", "mcp-config.json")
-				} else {
-					configPath = filepath.Join(trimmedPath, ".gitpod", "mcp-config.json")
+					baseDir = filepath.Join(cwd, relativePath)
 				}
-			} else {
-				configPath = filepath.Join(trimmedPath, ".gitpod", "mcp-config.json")
 			}
-		} else {
-			// Fall back to current directory
-			cwd, err := os.Getwd()
-			if err != nil {
-				return fmt.Errorf("failed to get current working directory: %w", err)
-			}
-			configPath = filepath.Join(cwd, ".gitpod", "mcp-config.json")
 		}
-	} else {
-		// Default to current working directory
-		cwd, err := os.Getwd()
-		if err != nil {
-			return fmt.Errorf("failed to get current working directory: %w", err)
-		}
-		configPath = filepath.Join(cwd, ".gitpod", "mcp-config.json")
+	}
+
+	return filepath.Join(baseDir, ".gitpod", "mcp-config.json"), nil
+}
+
+// setupOna sets up the Linear MCP server for Ona
+func setupOna(binaryPath, apiKey string, writeAccess bool, autoApprove, projectPath string) error {
+	configPath, err := getOnaConfigPath(projectPath)
+	if err != nil {
+		return err
 	}
 
 	// Create the .gitpod directory if it doesn't exist
@@ -246,25 +238,6 @@ func setupOna(binaryPath, apiKey string, writeAccess bool, autoApprove, projectP
 		serverArgs = append(serverArgs, "--write-access=true")
 	}
 
-	// Process auto-approve flag
-	autoApproveTools := []string{}
-	if autoApprove != "" {
-		if autoApprove == "allow-read-only" {
-			// Get the list of read-only tools
-			for k := range server.GetReadOnlyToolNames() {
-				autoApproveTools = append(autoApproveTools, k)
-			}
-		} else {
-			// Split comma-separated list
-			for _, tool := range strings.Split(autoApprove, ",") {
-				trimmedTool := strings.TrimSpace(tool)
-				if trimmedTool != "" {
-					autoApproveTools = append(autoApproveTools, trimmedTool)
-				}
-			}
-		}
-	}
-
 	// Create the linear server configuration
 	linearServerConfig := map[string]interface{}{
 		"name":    "linear",
@@ -272,16 +245,11 @@ func setupOna(binaryPath, apiKey string, writeAccess bool, autoApprove, projectP
 		"args":    serverArgs,
 	}
 
-	// Add environment variables if needed (Ona might handle this differently)
+	// Add environment variables
 	if apiKey != "" {
 		linearServerConfig["env"] = map[string]string{
 			"LINEAR_API_KEY": apiKey,
 		}
-	}
-
-	// Add auto-approve if specified
-	if len(autoApproveTools) > 0 {
-		linearServerConfig["autoApprove"] = autoApproveTools
 	}
 
 	// Read existing configuration or create new one
