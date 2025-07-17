@@ -997,7 +997,6 @@ func TestSetupCommand(t *testing.T) {
 			name:        "Ona Only",
 			toolParam:   "ona",
 			writeAccess: true,
-			autoApprove: "allow-read-only",
 			expect: expectations{
 				files: map[string]fileExpectation{
 					"ona": {
@@ -1011,8 +1010,7 @@ func TestSetupCommand(t *testing.T) {
 									"args": ["serve", "--write-access=true"],
 									"env": {
 										"LINEAR_API_KEY": "test-api-key"
-									},
-									"autoApprove": ["linear_get_initiative", "linear_get_issue", "linear_get_issue_comments", "linear_get_milestone", "linear_get_project", "linear_get_teams", "linear_get_user_issues", "linear_search_issues", "linear_search_projects"]
+									}
 								}
 							}
 						}`,
@@ -1026,7 +1024,6 @@ func TestSetupCommand(t *testing.T) {
 			toolParam:   "ona",
 			projectPath: "/workspace/test-project",
 			writeAccess: false,
-			autoApprove: "linear_get_issue,linear_search_issues",
 			expect: expectations{
 				files: map[string]fileExpectation{
 					"ona": {
@@ -1040,8 +1037,7 @@ func TestSetupCommand(t *testing.T) {
 									"args": ["serve"],
 									"env": {
 										"LINEAR_API_KEY": "test-api-key"
-									},
-									"autoApprove": ["linear_get_issue", "linear_search_issues"]
+									}
 								}
 							}
 						}`,
