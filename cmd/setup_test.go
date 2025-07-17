@@ -1091,6 +1091,213 @@ func TestSetupCommand(t *testing.T) {
 				exitCode: 0,
 			},
 		},
+		{
+			name:        "Ona with Complex Nested Config",
+			toolParam:   "ona",
+			writeAccess: false,
+			preExistingFiles: map[string]preExistingFile{
+				"ona": {
+					path: ".gitpod/mcp-config.json",
+					content: `{
+						"version": "1.0.0",
+						"metadata": {
+							"created": "2024-01-01T00:00:00Z",
+							"author": "test-user",
+							"tags": ["development", "testing", "automation"],
+							"config": {
+								"nested": {
+									"deeply": {
+										"properties": ["value1", "value2", "value3"],
+										"settings": {
+											"enabled": true,
+											"timeout": 30000,
+											"retries": 3,
+											"features": {
+												"advanced": {
+													"caching": true,
+													"compression": false,
+													"encryption": {
+														"algorithm": "AES-256",
+														"keySize": 256,
+														"modes": ["CBC", "GCM", "CTR"]
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						},
+						"servers": {
+							"custom-server": {
+								"name": "custom-server",
+								"command": "/usr/local/bin/custom-mcp-server",
+								"args": ["--mode", "production", "--verbose"],
+								"env": {
+									"CUSTOM_API_KEY": "secret-key-123",
+									"CUSTOM_ENDPOINT": "https://api.example.com/v1"
+								},
+								"timeout": 60000,
+								"retries": 5,
+								"features": {
+									"streaming": true,
+									"batching": false,
+									"compression": {
+										"enabled": true,
+										"algorithm": "gzip",
+										"level": 6
+									}
+								},
+								"customArrays": {
+									"supportedFormats": ["json", "xml", "yaml"],
+									"allowedOrigins": ["localhost", "*.example.com", "api.test.com"],
+									"permissions": ["read", "write", "execute"]
+								},
+								"nestedConfig": {
+									"database": {
+										"connection": {
+											"host": "localhost",
+											"port": 5432,
+											"ssl": {
+												"enabled": true,
+												"cert": "/path/to/cert.pem",
+												"key": "/path/to/key.pem",
+												"ca": "/path/to/ca.pem"
+											}
+										},
+										"pool": {
+											"min": 5,
+											"max": 20,
+											"idle": 300
+										}
+									}
+								}
+							}
+						},
+						"globalSettings": {
+							"logLevel": "info",
+							"enableMetrics": true,
+							"metricsConfig": {
+								"endpoint": "http://metrics.example.com:9090",
+								"interval": 30,
+								"labels": {
+									"environment": "test",
+									"service": "mcp-server",
+									"version": "1.0.0"
+								}
+							}
+						}
+					}`,
+				},
+			},
+			expect: expectations{
+				files: map[string]fileExpectation{
+					"ona": {
+						path:      ".gitpod/mcp-config.json",
+						mustExist: true,
+						content: `{
+							"version": "1.0.0",
+							"metadata": {
+								"created": "2024-01-01T00:00:00Z",
+								"author": "test-user",
+								"tags": ["development", "testing", "automation"],
+								"config": {
+									"nested": {
+										"deeply": {
+											"properties": ["value1", "value2", "value3"],
+											"settings": {
+												"enabled": true,
+												"timeout": 30000,
+												"retries": 3,
+												"features": {
+													"advanced": {
+														"caching": true,
+														"compression": false,
+														"encryption": {
+															"algorithm": "AES-256",
+															"keySize": 256,
+															"modes": ["CBC", "GCM", "CTR"]
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							},
+							"servers": {
+								"custom-server": {
+									"name": "custom-server",
+									"command": "/usr/local/bin/custom-mcp-server",
+									"args": ["--mode", "production", "--verbose"],
+									"env": {
+										"CUSTOM_API_KEY": "secret-key-123",
+										"CUSTOM_ENDPOINT": "https://api.example.com/v1"
+									},
+									"timeout": 60000,
+									"retries": 5,
+									"features": {
+										"streaming": true,
+										"batching": false,
+										"compression": {
+											"enabled": true,
+											"algorithm": "gzip",
+											"level": 6
+										}
+									},
+									"customArrays": {
+										"supportedFormats": ["json", "xml", "yaml"],
+										"allowedOrigins": ["localhost", "*.example.com", "api.test.com"],
+										"permissions": ["read", "write", "execute"]
+									},
+									"nestedConfig": {
+										"database": {
+											"connection": {
+												"host": "localhost",
+												"port": 5432,
+												"ssl": {
+													"enabled": true,
+													"cert": "/path/to/cert.pem",
+													"key": "/path/to/key.pem",
+													"ca": "/path/to/ca.pem"
+												}
+											},
+											"pool": {
+												"min": 5,
+												"max": 20,
+												"idle": 300
+											}
+										}
+									}
+								},
+								"linear": {
+									"name": "linear",
+									"command": "home/mcp-servers/linear-mcp-go",
+									"args": ["serve"],
+									"env": {
+										"LINEAR_API_KEY": "test-api-key"
+									}
+								}
+							},
+							"globalSettings": {
+								"logLevel": "info",
+								"enableMetrics": true,
+								"metricsConfig": {
+									"endpoint": "http://metrics.example.com:9090",
+									"interval": 30,
+									"labels": {
+										"environment": "test",
+										"service": "mcp-server",
+										"version": "1.0.0"
+									}
+								}
+							}
+						}`,
+					},
+				},
+				exitCode: 0,
+			},
+		},
 	}
 
 	// Run each test case
@@ -1232,41 +1439,67 @@ func verifyFileExpectations(t *testing.T, rootDir string, fileExpects map[string
 // normalizeJSON processes a JSON object to make it comparable
 // by removing fields that may vary and sorting arrays
 func normalizeJSON(jsonObj map[string]interface{}) {
+	normalizeCommandPaths(jsonObj)
 	normalizeJSONRecursive(jsonObj)
+}
+
+// normalizeCommandPaths normalizes command paths in server configurations
+func normalizeCommandPaths(obj interface{}) {
+	switch v := obj.(type) {
+	case map[string]interface{}:
+		// Look for server configuration containers
+		if isServerContainer(v) {
+			for _, serverConfig := range v {
+				if serverMap, ok := serverConfig.(map[string]interface{}); ok {
+					// Normalize the command field by stripping temporary directory prefix
+					if command, ok := serverMap["command"].(string); ok {
+						// Strip the temporary test directory prefix, keeping only the meaningful part
+						// Pattern: /tmp/linear-mcp-go-test-*/home/... -> home/...
+						if strings.Contains(command, "/home/") {
+							parts := strings.Split(command, "/home/")
+							if len(parts) > 1 {
+								serverMap["command"] = "home/" + parts[1]
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// Process nested objects recursively
+		for _, value := range v {
+			normalizeCommandPaths(value)
+		}
+
+	case []interface{}:
+		// Process array elements recursively
+		for _, item := range v {
+			normalizeCommandPaths(item)
+		}
+	}
+}
+
+// isServerContainer checks if a map contains server configurations
+func isServerContainer(m map[string]interface{}) bool {
+	// Check if this looks like a server container by examining its values
+	for _, value := range m {
+		if serverMap, ok := value.(map[string]interface{}); ok {
+			// If it has command field, it's likely a server config container
+			if _, hasCommand := serverMap["command"]; hasCommand {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 // normalizeJSONRecursive recursively processes JSON objects to normalize them for comparison
 func normalizeJSONRecursive(obj interface{}) {
 	switch v := obj.(type) {
 	case map[string]interface{}:
-		// Handle mcpServers and servers specially
-		for _, serverKey := range []string{"mcpServers", "servers"} {
-			if servers, ok := v[serverKey].(map[string]interface{}); ok {
-				for _, serverConfig := range servers {
-					if serverMap, ok := serverConfig.(map[string]interface{}); ok {
-						// Normalize the command field by stripping temporary directory prefix
-						if command, ok := serverMap["command"].(string); ok {
-							// Strip the temporary test directory prefix, keeping only the meaningful part
-							// Pattern: /tmp/linear-mcp-go-test-*/home/... -> home/...
-							if strings.Contains(command, "/home/") {
-								parts := strings.Split(command, "/home/")
-								if len(parts) > 1 {
-									serverMap["command"] = "home/" + parts[1]
-								}
-							}
-						}
-						// Sort arrays in all servers
-						normalizeJSONRecursive(serverMap)
-					}
-				}
-			}
-		}
-
-		// Process all other map entries recursively
-		for key, value := range v {
-			if key != "mcpServers" && key != "servers" { // Already handled above
-				normalizeJSONRecursive(value)
-			}
+		// Process all map entries recursively
+		for _, value := range v {
+			normalizeJSONRecursive(value)
 		}
 
 	case []interface{}:
