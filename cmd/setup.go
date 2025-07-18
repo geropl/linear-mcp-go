@@ -14,7 +14,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-
 // setupCmd represents the setup command
 var setupCmd = &cobra.Command{
 	Use:   "setup",
@@ -234,9 +233,7 @@ func setupOna(binaryPath, apiKey string, writeAccess bool, autoApprove, projectP
 
 	// Prepare server arguments
 	serverArgs := []string{"serve"}
-	if writeAccess {
-		serverArgs = append(serverArgs, "--write-access=true")
-	}
+	serverArgs = append(serverArgs, fmt.Sprintf("--write-access=%t", writeAccess))
 
 	// Create the linear server configuration
 	linearServerConfig := map[string]interface{}{
@@ -512,7 +509,7 @@ func setupClaudeCode(binaryPath, apiKey string, writeAccess bool, autoApprove, p
 		if len(targetProjects) == 0 {
 			return fmt.Errorf("no valid project paths provided")
 		}
-		
+
 		fmt.Printf("Registering Linear MCP server to %d specified projects\n", len(targetProjects))
 		for _, projPath := range targetProjects {
 			if err := registerLinearToProject(settings, projPath, linearServerConfig); err != nil {
