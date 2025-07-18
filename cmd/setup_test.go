@@ -1034,7 +1034,7 @@ func TestSetupCommand(t *testing.T) {
 								"linear": {
 									"name": "linear",
 									"command": "home/mcp-servers/linear-mcp-go",
-									"args": ["serve"],
+									"args": ["serve", "--write-access=false"],
 									"env": {
 										"LINEAR_API_KEY": "test-api-key"
 									}
@@ -1273,7 +1273,7 @@ func TestSetupCommand(t *testing.T) {
 								"linear": {
 									"name": "linear",
 									"command": "home/mcp-servers/linear-mcp-go",
-									"args": ["serve"],
+									"args": ["serve", "--write-access=false"],
 									"env": {
 										"LINEAR_API_KEY": "test-api-key"
 									}
