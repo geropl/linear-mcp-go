@@ -118,6 +118,31 @@ func isValidUUID(uuidStr string) bool {
 	return uuid.Validate(uuidStr) == nil
 }
 
+// resolveCommentIdentifier resolves a comment identifier (UUID or shorthand like "comment-53099b37") to a UUID
+func resolveCommentIdentifier(linearClient *linear.LinearClient, identifier string) (string, error) {
+	// If it's a valid UUID, use it directly
+	if isValidUUID(identifier) {
+		return identifier, nil
+	}
+
+	// Handle shorthand format like "comment-53099b37" or just "53099b37"
+	var hash string
+	if strings.HasPrefix(identifier, "comment-") {
+		hash = strings.TrimPrefix(identifier, "comment-")
+	} else {
+		// Assume it's already just the hash part
+		hash = identifier
+	}
+
+	// Try to get the comment by hash
+	comment, err := linearClient.GetCommentByHash(hash)
+	if err != nil {
+		return "", fmt.Errorf("failed to resolve comment identifier '%s': %v", identifier, err)
+	}
+
+	return comment.ID, nil
+}
+
 // resolveTeamIdentifier resolves a team identifier (UUID, name, or key) to a team ID
 func resolveTeamIdentifier(linearClient *linear.LinearClient, identifier string) (string, error) {
 	// If it's a valid UUID, use it directly

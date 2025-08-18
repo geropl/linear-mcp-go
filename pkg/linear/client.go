@@ -1794,6 +1794,139 @@ func (c *LinearClient) AddComment(input AddCommentInput) (*Comment, *Issue, erro
 	return &comment, &issue, nil
 }
 
+// UpdateComment updates an existing comment
+func (c *LinearClient) UpdateComment(input UpdateCommentInput) (*Comment, *Issue, error) {
+	query := `
+		mutation UpdateComment($id: String!, $input: CommentUpdateInput!) {
+			commentUpdate(id: $id, input: $input) {
+				success
+				comment {
+					id
+					body
+					url
+					createdAt
+					user {
+						id
+						name
+					}
+					issue {
+						id
+						identifier
+						title
+						url
+					}
+				}
+			}
+		}
+	`
+
+	// Prepare variables
+	commentInput := map[string]interface{}{
+		"body": input.Body,
+	}
+
+	variables := map[string]interface{}{
+		"id":    input.CommentID,
+		"input": commentInput,
+	}
+
+	resp, err := c.executeGraphQL(query, variables)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// Extract the comment from the response
+	commentUpdateData, ok := resp.Data["commentUpdate"].(map[string]interface{})
+	if !ok || commentUpdateData == nil {
+		return nil, nil, errors.New("failed to update comment")
+	}
+
+	success, ok := commentUpdateData["success"].(bool)
+	if !ok || !success {
+		return nil, nil, errors.New("failed to update comment")
+	}
+
+	commentData, ok := commentUpdateData["comment"].(map[string]interface{})
+	if !ok || commentData == nil {
+		return nil, nil, errors.New("failed to update comment")
+	}
+
+	issueData, ok := commentData["issue"].(map[string]interface{})
+	if !ok || issueData == nil {
+		return nil, nil, errors.New("failed to get issue for comment")
+	}
+
+	// Parse the comment data
+	var comment Comment
+	commentBytes, err := json.Marshal(commentData)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to marshal comment data: %w", err)
+	}
+
+	if err := json.Unmarshal(commentBytes, &comment); err != nil {
+		return nil, nil, fmt.Errorf("failed to unmarshal comment data: %w", err)
+	}
+
+	// Parse the issue data
+	var issue Issue
+	issueBytes, err := json.Marshal(issueData)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to marshal issue data: %w", err)
+	}
+
+	if err := json.Unmarshal(issueBytes, &issue); err != nil {
+		return nil, nil, fmt.Errorf("failed to unmarshal issue data: %w", err)
+	}
+
+	return &comment, &issue, nil
+}
+
+// GetCommentByHash gets a comment by its hash (shorthand ID)
+func (c *LinearClient) GetCommentByHash(hash string) (*Comment, error) {
+	query := `
+		query GetCommentByHash($hash: String!) {
+			comment(hash: $hash) {
+				id
+				body
+				url
+				createdAt
+				user {
+					id
+					name
+				}
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"hash": hash,
+	}
+
+	resp, err := c.executeGraphQL(query, variables)
+	if err != nil {
+		return nil, err
+	}
+
+	// Extract the comment from the response
+	commentData, ok := resp.Data["comment"].(map[string]interface{})
+	if !ok || commentData == nil {
+		return nil, errors.New("comment not found")
+	}
+
+	// Parse the comment data
+	var comment Comment
+	commentBytes, err := json.Marshal(commentData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal comment data: %w", err)
+	}
+
+	if err := json.Unmarshal(commentBytes, &comment); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal comment data: %w", err)
+	}
+
+	return &comment, nil
+}
+
 // GetTeamIssues gets issues for a team
 func (c *LinearClient) GetTeamIssues(teamID string) ([]LinearIssueResponse, error) {
 	query := `

@@ -1,0 +1,51 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 265
+        transfer_encoding: []
+        trailer: {}
+        host: api.linear.app
+        remote_addr: ""
+        request_uri: ""
+        body: '{"query":"\n\t\tquery GetCommentByHash($hash: String!) {\n\t\t\tcomment(hash: $hash) {\n\t\t\t\tid\n\t\t\t\tbody\n\t\t\t\turl\n\t\t\t\tcreatedAt\n\t\t\t\tuser {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"hash":"invalid-comment-id"}}'
+        form: {}
+        headers:
+            Content-Type:
+                - application/json
+        url: https://api.linear.app/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: |
+            {"errors":[{"message":"Entity not found: Comment: could not find by hash","path":["comment"],"locations":[{"line":3,"column":4}],"extensions":{"type":"invalid input","code":"INPUT_ERROR","statusCode":400,"userError":true,"userPresentableMessage":"Could not find referenced comment."}}],"data":null}
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=86400
+            Cache-Control:
+                - no-store
+            Cf-Cache-Status:
+                - DYNAMIC
+            Content-Type:
+                - application/json; charset=utf-8
+            Etag:
+                - W/"12b-3YQeaABMZ487ZUXapKwikGiK6Xw"
+            Server:
+                - cloudflare
+            Vary:
+                - Accept-Encoding
+            Via:
+                - 1.1 google
+        status: 200 OK
+        code: 200
+        duration: 0s
