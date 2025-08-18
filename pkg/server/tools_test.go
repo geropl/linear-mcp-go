@@ -291,6 +291,57 @@ func TestHandlers(t *testing.T) {
 				"issue": ISSUE_ID,
 			},
 		},
+		// UpdateCommentHandler test cases
+		{
+			handler: "update_comment",
+			name:    "Valid comment update",
+			write:   true,
+			args: map[string]interface{}{
+				"comment": "ae3d62d6-3f40-4990-867b-5c97dd265a40",
+				"body":    "Updated comment text",
+			},
+		},
+		{
+			handler: "update_comment",
+			name:    "Valid comment update with shorthand",
+			write:   true,
+			args: map[string]interface{}{
+				"comment": "comment-ae3d62d6",
+				"body":    "Updated comment text via shorthand",
+			},
+		},
+		{
+			handler: "update_comment",
+			name:    "Valid comment update with hash only",
+			write:   true,
+			args: map[string]interface{}{
+				"comment": "ae3d62d6",
+				"body":    "Updated comment text via hash",
+			},
+		},
+		{
+			handler: "update_comment",
+			name:    "Missing comment",
+			args: map[string]interface{}{
+				"body": "Updated comment text",
+			},
+		},
+		{
+			handler: "update_comment",
+			name:    "Missing body",
+			args: map[string]interface{}{
+				"comment": "ae3d62d6-3f40-4990-867b-5c97dd265a40",
+			},
+		},
+		{
+			handler: "update_comment",
+			name:    "Invalid comment identifier",
+			write:   true,
+			args: map[string]interface{}{
+				"comment": "invalid-comment-id",
+				"body":    "Updated comment text",
+			},
+		},
 		// GetProjectHandler test cases
 		{
 			handler: "get_project",
@@ -614,6 +665,8 @@ func TestHandlers(t *testing.T) {
 				handler = tools.GetIssueCommentsHandler(client)
 			case "add_comment":
 				handler = tools.AddCommentHandler(client)
+			case "update_comment":
+				handler = tools.UpdateCommentHandler(client)
 			case "get_project":
 				handler = tools.GetProjectHandler(client)
 			case "search_projects":

@@ -261,6 +261,12 @@ type AddCommentInput struct {
 	ParentID     string `json:"parentId,omitempty"`
 }
 
+// UpdateCommentInput represents the input for updating a comment
+type UpdateCommentInput struct {
+	CommentID string `json:"commentId"`
+	Body      string `json:"body"`
+}
+
 // ProjectCreateInput represents the input for creating a project.
 type ProjectCreateInput struct {
 	Name        string   `json:"name"`

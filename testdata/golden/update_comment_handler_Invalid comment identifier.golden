@@ -1,0 +1,2 @@
+err: 'Failed to resolve comment: failed to resolve comment identifier ''invalid-comment-id'': GraphQL error: Entity not found: Comment: could not find by hash'
+output: ""
