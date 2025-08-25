@@ -1007,10 +1007,7 @@ func TestSetupCommand(t *testing.T) {
 								"linear": {
 									"name": "linear",
 									"command": "home/mcp-servers/linear-mcp-go",
-									"args": ["serve", "--write-access=true"],
-									"env": {
-										"LINEAR_API_KEY": "test-api-key"
-									}
+									"args": ["serve", "--write-access=true"]
 								}
 							}
 						}`,
@@ -1034,10 +1031,7 @@ func TestSetupCommand(t *testing.T) {
 								"linear": {
 									"name": "linear",
 									"command": "home/mcp-servers/linear-mcp-go",
-									"args": ["serve", "--write-access=false"],
-									"env": {
-										"LINEAR_API_KEY": "test-api-key"
-									}
+									"args": ["serve", "--write-access=false"]
 								}
 							}
 						}`,
@@ -1079,10 +1073,7 @@ func TestSetupCommand(t *testing.T) {
 								"linear": {
 									"name": "linear",
 									"command": "home/mcp-servers/linear-mcp-go",
-									"args": ["serve", "--write-access=true"],
-									"env": {
-										"LINEAR_API_KEY": "test-api-key"
-									}
+									"args": ["serve", "--write-access=true"]
 								}
 							}
 						}`,
@@ -1273,10 +1264,7 @@ func TestSetupCommand(t *testing.T) {
 								"linear": {
 									"name": "linear",
 									"command": "home/mcp-servers/linear-mcp-go",
-									"args": ["serve", "--write-access=false"],
-									"env": {
-										"LINEAR_API_KEY": "test-api-key"
-									}
+									"args": ["serve", "--write-access=false"]
 								}
 							},
 							"globalSettings": {

@@ -71,6 +71,7 @@ The `setup` command automates the installation and configuration process for var
 
 ```bash
 # Set your Linear API key as an environment variable
+# Only exception: Ona does not require this for setup!
 export LINEAR_API_KEY=your_linear_api_key
 
 # Set up for Cline (default)
