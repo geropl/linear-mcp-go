@@ -27,13 +27,21 @@ Currently supported tools: cline, roo-code, claude-code, ona`,
 		autoApprove, _ := cmd.Flags().GetString("auto-approve")
 		projectPath, _ := cmd.Flags().GetString("project-path")
 
-		// Check if the Linear API key is provided in the environment
+		// Check if the Linear API key is provided in the environment (for tools that need it)
 		apiKey := os.Getenv("LINEAR_API_KEY")
-		if apiKey == "" {
-			fmt.Println("Error: LINEAR_API_KEY environment variable is required")
-			fmt.Println("Please set it before running the setup command:")
-			fmt.Println("export LINEAR_API_KEY=your_linear_api_key")
-			os.Exit(1)
+		tools := strings.Split(toolParam, ",")
+		for _, t := range tools {
+			doesNotNeedApiKey := strings.TrimSpace(t) == "ona"
+			if doesNotNeedApiKey {
+				continue
+			}
+
+			if apiKey == "" {
+				fmt.Println("Error: LINEAR_API_KEY environment variable is required")
+				fmt.Println("Please set it before running the setup command:")
+				fmt.Println("export LINEAR_API_KEY=your_linear_api_key")
+				os.Exit(1)
+			}
 		}
 
 		// Create the MCP servers directory if it doesn't exist
@@ -61,9 +69,7 @@ Currently supported tools: cline, roo-code, claude-code, ona`,
 		}
 
 		// Process each tool
-		tools := strings.Split(toolParam, ",")
 		hasErrors := false
-
 		for _, t := range tools {
 			t = strings.TrimSpace(t)
 			if t == "" {
@@ -242,12 +248,8 @@ func setupOna(binaryPath, apiKey string, writeAccess bool, autoApprove, projectP
 		"args":    serverArgs,
 	}
 
-	// Add environment variables
-	if apiKey != "" {
-		linearServerConfig["env"] = map[string]string{
-			"LINEAR_API_KEY": apiKey,
-		}
-	}
+	// Ona will automatically provide LINEAR_API_KEY from environment
+	// No need to explicitly set it in the configuration
 
 	// Read existing configuration or create new one
 	var config map[string]interface{}
