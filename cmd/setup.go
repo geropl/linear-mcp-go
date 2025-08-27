@@ -243,9 +243,9 @@ func setupOna(binaryPath, apiKey string, writeAccess bool, autoApprove, projectP
 
 	// Create the linear server configuration
 	linearServerConfig := map[string]interface{}{
-		"name":    "linear",
-		"command": binaryPath,
-		"args":    serverArgs,
+		"command":  binaryPath,
+		"args":     serverArgs,
+		"disabled": false,
 	}
 
 	// Ona will automatically provide LINEAR_API_KEY from environment
@@ -260,27 +260,27 @@ func setupOna(binaryPath, apiKey string, writeAccess bool, autoApprove, projectP
 		}
 		// Initialize with empty structure if file doesn't exist
 		config = map[string]interface{}{
-			"servers": map[string]interface{}{},
+			"mcpServers": map[string]interface{}{},
 		}
 	} else {
 		if err := json.Unmarshal(data, &config); err != nil {
 			return fmt.Errorf("failed to parse existing ona config: %w", err)
 		}
-		// Ensure servers field exists
-		if config["servers"] == nil {
-			config["servers"] = map[string]interface{}{}
+		// Ensure mcpServers field exists
+		if config["mcpServers"] == nil {
+			config["mcpServers"] = map[string]interface{}{}
 		}
 	}
 
-	// Get or create servers map
-	servers, ok := config["servers"].(map[string]interface{})
+	// Get or create mcpServers map
+	mcpServers, ok := config["mcpServers"].(map[string]interface{})
 	if !ok {
-		servers = map[string]interface{}{}
-		config["servers"] = servers
+		mcpServers = map[string]interface{}{}
+		config["mcpServers"] = mcpServers
 	}
 
 	// Add/update the linear server configuration
-	servers["linear"] = linearServerConfig
+	mcpServers["linear"] = linearServerConfig
 
 	// Write the updated configuration
 	updatedData, err := json.MarshalIndent(config, "", "  ")

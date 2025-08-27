@@ -1003,11 +1003,11 @@ func TestSetupCommand(t *testing.T) {
 						path:      ".gitpod/mcp-config.json",
 						mustExist: true,
 						content: `{
-							"servers": {
+							"mcpServers": {
 								"linear": {
-									"name": "linear",
 									"command": "home/mcp-servers/linear-mcp-go",
-									"args": ["serve", "--write-access=true"]
+									"args": ["serve", "--write-access=true"],
+									"disabled": false
 								}
 							}
 						}`,
@@ -1027,11 +1027,11 @@ func TestSetupCommand(t *testing.T) {
 						path:      "/workspace/test-project/.gitpod/mcp-config.json",
 						mustExist: true,
 						content: `{
-							"servers": {
+							"mcpServers": {
 								"linear": {
-									"name": "linear",
 									"command": "home/mcp-servers/linear-mcp-go",
-									"args": ["serve", "--write-access=false"]
+									"args": ["serve", "--write-access=false"],
+									"disabled": false
 								}
 							}
 						}`,
@@ -1048,7 +1048,7 @@ func TestSetupCommand(t *testing.T) {
 				"ona": {
 					path: ".gitpod/mcp-config.json",
 					content: `{
-						"servers": {
+						"mcpServers": {
 							"playwright": {
 								"name": "playwright",
 								"command": "npx",
@@ -1064,16 +1064,16 @@ func TestSetupCommand(t *testing.T) {
 						path:      ".gitpod/mcp-config.json",
 						mustExist: true,
 						content: `{
-							"servers": {
+							"mcpServers": {
 								"playwright": {
 									"name": "playwright",
 									"command": "npx",
 									"args": ["-y", "@executeautomation/playwright-mcp-server"]
 								},
 								"linear": {
-									"name": "linear",
 									"command": "home/mcp-servers/linear-mcp-go",
-									"args": ["serve", "--write-access=true"]
+									"args": ["serve", "--write-access=true"],
+									"disabled": false
 								}
 							}
 						}`,
@@ -1119,7 +1119,7 @@ func TestSetupCommand(t *testing.T) {
 								}
 							}
 						},
-						"servers": {
+						"mcpServers": {
 							"custom-server": {
 								"name": "custom-server",
 								"command": "/usr/local/bin/custom-mcp-server",
@@ -1216,7 +1216,7 @@ func TestSetupCommand(t *testing.T) {
 									}
 								}
 							},
-							"servers": {
+							"mcpServers": {
 								"custom-server": {
 									"name": "custom-server",
 									"command": "/usr/local/bin/custom-mcp-server",
@@ -1262,9 +1262,9 @@ func TestSetupCommand(t *testing.T) {
 									}
 								},
 								"linear": {
-									"name": "linear",
 									"command": "home/mcp-servers/linear-mcp-go",
-									"args": ["serve", "--write-access=false"]
+									"args": ["serve", "--write-access=false"],
+									"disabled": false
 								}
 							},
 							"globalSettings": {
