@@ -1030,7 +1030,7 @@ func TestSetupCommand(t *testing.T) {
 							"mcpServers": {
 								"linear": {
 									"command": "home/mcp-servers/linear-mcp-go",
-									"args": ["serve", "--write-access=false"],
+									"args": ["serve"],
 									"disabled": false
 								}
 							}
@@ -1263,7 +1263,7 @@ func TestSetupCommand(t *testing.T) {
 								},
 								"linear": {
 									"command": "home/mcp-servers/linear-mcp-go",
-									"args": ["serve", "--write-access=false"],
+									"args": ["serve"],
 									"disabled": false
 								}
 							},

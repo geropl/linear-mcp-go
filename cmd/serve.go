@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/geropl/linear-mcp-go/pkg/server"
 	"github.com/spf13/cobra"
@@ -16,6 +17,20 @@ var serveCmd = &cobra.Command{
 The server provides tools for interacting with the Linear API through the MCP protocol.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		writeAccess, _ := cmd.Flags().GetBool("write-access")
+		writeAccessChanged := cmd.Flags().Changed("write-access")
+
+		// Check LINEAR_WRITE_ACCESS environment variable if flag wasn't explicitly set
+		if !writeAccessChanged {
+			if envWriteAccess := os.Getenv("LINEAR_WRITE_ACCESS"); envWriteAccess != "" {
+				envValue := strings.ToLower(strings.TrimSpace(envWriteAccess))
+				if envValue == "true" {
+					writeAccess = true
+				} else if envValue == "false" {
+					writeAccess = false
+				}
+				// If the env var is set to something other than "true" or "false", ignore it and use default
+			}
+		}
 
 		// Create the Linear MCP server
 		linearServer, err := server.NewLinearMCPServer(writeAccess)
