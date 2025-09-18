@@ -24,6 +24,7 @@ Currently supported tools: cline, roo-code, claude-code, ona`,
 	Run: func(cmd *cobra.Command, args []string) {
 		toolParam, _ := cmd.Flags().GetString("tool")
 		writeAccess, _ := cmd.Flags().GetBool("write-access")
+		writeAccessChanged := cmd.Flags().Changed("write-access")
 		autoApprove, _ := cmd.Flags().GetString("auto-approve")
 		projectPath, _ := cmd.Flags().GetString("project-path")
 
@@ -88,7 +89,7 @@ Currently supported tools: cline, roo-code, claude-code, ona`,
 			case "claude-code":
 				err = setupClaudeCode(binaryPath, apiKey, writeAccess, autoApprove, projectPath)
 			case "ona":
-				err = setupOna(binaryPath, apiKey, writeAccess, autoApprove, projectPath)
+				err = setupOna(binaryPath, apiKey, writeAccess, writeAccessChanged, autoApprove, projectPath)
 			default:
 				fmt.Printf("Unsupported tool: %s\n", t)
 				fmt.Println("Currently supported tools: cline, roo-code, claude-code, ona")
@@ -226,7 +227,7 @@ func getOnaConfigPath(projectPath string) (string, error) {
 }
 
 // setupOna sets up the Linear MCP server for Ona
-func setupOna(binaryPath, apiKey string, writeAccess bool, autoApprove, projectPath string) error {
+func setupOna(binaryPath, apiKey string, writeAccess bool, writeAccessChanged bool, autoApprove, projectPath string) error {
 	configPath, err := getOnaConfigPath(projectPath)
 	if err != nil {
 		return err
@@ -239,7 +240,10 @@ func setupOna(binaryPath, apiKey string, writeAccess bool, autoApprove, projectP
 
 	// Prepare server arguments
 	serverArgs := []string{"serve"}
-	serverArgs = append(serverArgs, fmt.Sprintf("--write-access=%t", writeAccess))
+	// Only add write-access argument if it was explicitly set
+	if writeAccessChanged {
+		serverArgs = append(serverArgs, fmt.Sprintf("--write-access=%t", writeAccess))
+	}
 
 	// Create the linear server configuration
 	linearServerConfig := map[string]interface{}{
