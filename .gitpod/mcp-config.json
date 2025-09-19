@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "linear": {
+      "args": [
+        "serve"
+      ],
+      "command": "/home/vscode/mcp-servers/linear-mcp-go",
+      "disabled": false
+    }
+  }
+}
