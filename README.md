@@ -45,6 +45,16 @@ chmod +x ./linear-mcp-go
 
 ## Usage
 
+### Checking Version
+
+To check the version of the Linear MCP server:
+
+```bash
+./linear-mcp-go version
+```
+
+This will display the version, git commit, and build date information.
+
 ### Running the Server
 
 1. Set your Linear API key as an environment variable:
@@ -219,23 +229,52 @@ Updates all .golden fields.
 
 ## Release Process
 
-The project uses GitHub Actions for automated testing and releases:
+The project uses GitHub Actions for automated testing and releases. The version is managed through the `ServerVersion` constant in `pkg/server/server.go`.
+
+### Automated Testing and Building
 
 1. All pushes to the main branch and pull requests are automatically tested
 2. When a tag matching the pattern `v*` (e.g., `v1.0.0`) is pushed, a new release is automatically created
-3. Binaries for Linux, macOS, and Windows are built and attached to the release
+3. Binaries for Linux, macOS, and Windows are built and attached to the release with build-time information (git commit and build date)
 
-To create a new release:
+### Creating a New Release
 
-1. Update the version in `pkg/server/server.go`
-2. Commit the changes
-3. Create and push a tag matching the version:
-```bash
-git tag v1.0.0
-git push origin v1.0.0
-```
+**Important**: Version tags should only be created against the `main` branch after all changes have been merged.
 
-The GitHub Actions workflow will automatically create a release with the appropriate binaries.
+1. **Update the version**: Modify the `ServerVersion` constant in `pkg/server/server.go`
+   ```go
+   // ServerVersion is the version of the MCP server
+   ServerVersion = "1.13.0"
+   ```
+
+2. **Create a PR**: Submit the version update as a pull request to ensure it goes through review and testing
+
+3. **Merge to main**: Once the PR is approved and merged to the main branch
+
+4. **Create and push the release tag**: 
+   ```bash
+   # Ensure you're on the latest main branch
+   git checkout main
+   git pull origin main
+   
+   # Create and push the tag (must match the version in server.go)
+   git tag v1.13.0
+   git push origin v1.13.0
+   ```
+
+5. **Automated release**: The GitHub Actions workflow will automatically:
+   - Build binaries for all platforms with proper version information
+   - Create a GitHub release with the tag
+   - Attach the compiled binaries to the release
+
+### Version Information
+
+The `version` command displays:
+- **Version**: Read from `ServerVersion` constant in `pkg/server/server.go`
+- **Git commit**: Injected at build time from the current commit hash
+- **Build date**: Injected at build time with the current timestamp
+
+For development builds, git commit and build date will show "unknown".
 
 ## License
 
