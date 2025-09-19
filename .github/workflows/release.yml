@@ -22,7 +22,7 @@ jobs:
           check-latest: true
 
       - name: Build
-        run: go build -v ./...
+        run: go build -ldflags "-X github.com/geropl/linear-mcp-go/cmd.GitCommit=${{ github.sha }} -X github.com/geropl/linear-mcp-go/cmd.BuildDate=$(date -u +%Y-%m-%dT%H:%M:%SZ)" -v ./...
 
       - name: Test
         run: go test -v ./...
@@ -50,17 +50,17 @@ jobs:
 
       - name: Build for Linux
         run: |
-          GOOS=linux GOARCH=amd64 go build -o linear-mcp-go-linux-amd64 -v .
+          GOOS=linux GOARCH=amd64 go build -ldflags "-X github.com/geropl/linear-mcp-go/cmd.GitCommit=${{ github.sha }} -X github.com/geropl/linear-mcp-go/cmd.BuildDate=$(date -u +%Y-%m-%dT%H:%M:%SZ)" -o linear-mcp-go-linux-amd64 -v .
           chmod +x linear-mcp-go-linux-amd64
 
       - name: Build for macOS
         run: |
-          GOOS=darwin GOARCH=amd64 go build -o linear-mcp-go-darwin-amd64 -v .
+          GOOS=darwin GOARCH=amd64 go build -ldflags "-X github.com/geropl/linear-mcp-go/cmd.GitCommit=${{ github.sha }} -X github.com/geropl/linear-mcp-go/cmd.BuildDate=$(date -u +%Y-%m-%dT%H:%M:%SZ)" -o linear-mcp-go-darwin-amd64 -v .
           chmod +x linear-mcp-go-darwin-amd64
 
       - name: Build for Windows
         run: |
-          GOOS=windows GOARCH=amd64 go build -o linear-mcp-go-windows-amd64.exe -v .
+          GOOS=windows GOARCH=amd64 go build -ldflags "-X github.com/geropl/linear-mcp-go/cmd.GitCommit=${{ github.sha }} -X github.com/geropl/linear-mcp-go/cmd.BuildDate=$(date -u +%Y-%m-%dT%H:%M:%SZ)" -o linear-mcp-go-windows-amd64.exe -v .
 
       - name: Create Release
         id: create_release
