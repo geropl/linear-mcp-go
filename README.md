@@ -211,6 +211,8 @@ go test -v ./...
 
 Requires `LINEAR_API_KEY` to be set.
 
+***CAUTION***: When re-recording tests, please be deliberate about what tests to execute and in what mode. Because some of the tests have a dependency on the same test data this can cause unwanted false positive test errors. Be especially careful with running write-tests, as those modifications invalidate a lot of more tests. Only re-record those selectively when absolutely necessary.
+
 ```
 go test -v -record=true ./...
 ```
