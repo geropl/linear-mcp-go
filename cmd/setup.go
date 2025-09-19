@@ -226,6 +226,20 @@ func getOnaConfigPath(projectPath string) (string, error) {
 	return filepath.Join(baseDir, ".gitpod", "mcp-config.json"), nil
 }
 
+// extractTrailingWhitespace extracts trailing whitespace (newlines, spaces, tabs) from a string
+func extractTrailingWhitespace(content string) string {
+	// Find the last non-whitespace character
+	i := len(content) - 1
+	for i >= 0 && (content[i] == ' ' || content[i] == '\t' || content[i] == '\n' || content[i] == '\r') {
+		i--
+	}
+	// Return everything after the last non-whitespace character
+	if i < len(content)-1 {
+		return content[i+1:]
+	}
+	return ""
+}
+
 // setupOna sets up the Linear MCP server for Ona
 func setupOna(binaryPath, apiKey string, writeAccess bool, writeAccessChanged bool, autoApprove, projectPath string) error {
 	configPath, err := getOnaConfigPath(projectPath)
@@ -257,6 +271,7 @@ func setupOna(binaryPath, apiKey string, writeAccess bool, writeAccessChanged bo
 
 	// Read existing configuration or create new one
 	var config map[string]interface{}
+	var originalTrailingWhitespace string
 	data, err := os.ReadFile(configPath)
 	if err != nil {
 		if !os.IsNotExist(err) {
@@ -267,6 +282,10 @@ func setupOna(binaryPath, apiKey string, writeAccess bool, writeAccessChanged bo
 			"mcpServers": map[string]interface{}{},
 		}
 	} else {
+		// Preserve trailing whitespace from original file
+		originalContent := string(data)
+		originalTrailingWhitespace = extractTrailingWhitespace(originalContent)
+		
 		if err := json.Unmarshal(data, &config); err != nil {
 			return fmt.Errorf("failed to parse existing ona config: %w", err)
 		}
@@ -292,7 +311,10 @@ func setupOna(binaryPath, apiKey string, writeAccess bool, writeAccessChanged bo
 		return fmt.Errorf("failed to marshal ona config: %w", err)
 	}
 
-	if err := os.WriteFile(configPath, updatedData, 0644); err != nil {
+	// Append the original trailing whitespace to preserve formatting
+	finalData := append(updatedData, []byte(originalTrailingWhitespace)...)
+
+	if err := os.WriteFile(configPath, finalData, 0644); err != nil {
 		return fmt.Errorf("failed to write ona config: %w", err)
 	}
 
