@@ -1286,6 +1286,7 @@ func TestSetupCommand(t *testing.T) {
 				exitCode: 0,
 			},
 		},
+
 	}
 
 	// Run each test case
@@ -1604,4 +1605,118 @@ func copyFile(src, dst string) error {
 	}
 
 	return nil
+}
+
+// TestOnaNewlinePreservation specifically tests that the Ona setup preserves newlines and empty lines
+func TestOnaNewlinePreservation(t *testing.T) {
+	// Build the binary
+	binaryPath, err := buildBinary()
+	if err != nil {
+		t.Fatalf("Failed to build binary: %v", err)
+	}
+	defer os.RemoveAll(filepath.Dir(binaryPath))
+
+	// Create a temporary directory
+	rootDir, err := os.MkdirTemp("", "linear-mcp-go-newline-test-*")
+	if err != nil {
+		t.Fatalf("Failed to create temp dir: %v", err)
+	}
+	defer os.RemoveAll(rootDir)
+
+	// Set up the directory structure
+	homeDir := filepath.Join(rootDir, "home")
+	configDir := filepath.Join(rootDir, ".gitpod")
+	configPath := filepath.Join(configDir, "mcp-config.json")
+
+	// Create the config directory
+	if err := os.MkdirAll(configDir, 0755); err != nil {
+		t.Fatalf("Failed to create config directory: %v", err)
+	}
+
+	// Create pre-existing config with trailing newlines and empty lines
+	originalContent := `{
+  "mcpServers": {
+    "playwright": {
+      "name": "playwright",
+      "command": "npx",
+      "args": ["-y", "@executeautomation/playwright-mcp-server"]
+    }
+  }
+}
+
+
+`
+	if err := os.WriteFile(configPath, []byte(originalContent), 0644); err != nil {
+		t.Fatalf("Failed to create pre-existing config: %v", err)
+	}
+
+	// Copy the binary to the temp directory
+	tempBinaryPath := filepath.Join(rootDir, "linear-mcp-go")
+	if err := copyFile(binaryPath, tempBinaryPath); err != nil {
+		t.Fatalf("Failed to copy binary: %v", err)
+	}
+	if err := os.Chmod(tempBinaryPath, 0755); err != nil {
+		t.Fatalf("Failed to make binary executable: %v", err)
+	}
+
+	// Set environment variables
+	oldHome := os.Getenv("HOME")
+	os.Setenv("HOME", homeDir)
+	defer os.Setenv("HOME", oldHome)
+
+	oldApiKey := os.Getenv("LINEAR_API_KEY")
+	os.Setenv("LINEAR_API_KEY", "test-api-key")
+	defer os.Setenv("LINEAR_API_KEY", oldApiKey)
+
+	// Execute the setup command
+	cmd := exec.Command(tempBinaryPath, "setup", "--tool=ona", "--write-access=true")
+	cmd.Dir = rootDir
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+	err = cmd.Run()
+
+	if err != nil {
+		t.Fatalf("Setup command failed: %v\nStdout: %s\nStderr: %s", err, stdout.String(), stderr.String())
+	}
+
+	// Read the updated config file
+	updatedContent, err := os.ReadFile(configPath)
+	if err != nil {
+		t.Fatalf("Failed to read updated config: %v", err)
+	}
+
+	// Check if the trailing newlines are preserved
+	updatedStr := string(updatedContent)
+	if !strings.HasSuffix(updatedStr, "\n\n\n") {
+		t.Errorf("Expected config to end with three newlines, but got:\n%q", updatedStr[len(updatedStr)-10:])
+		t.Errorf("Full updated content:\n%q", updatedStr)
+	}
+
+	// Verify the JSON is still valid
+	var config map[string]interface{}
+	if err := json.Unmarshal(updatedContent, &config); err != nil {
+		t.Fatalf("Updated config is not valid JSON: %v", err)
+	}
+
+	// Verify the linear server was added
+	mcpServers, ok := config["mcpServers"].(map[string]interface{})
+	if !ok {
+		t.Fatalf("mcpServers not found in config")
+	}
+
+	linear, ok := mcpServers["linear"].(map[string]interface{})
+	if !ok {
+		t.Fatalf("linear server not found in mcpServers")
+	}
+
+	// Verify linear server configuration
+	if linear["disabled"] != false {
+		t.Errorf("Expected linear server to be enabled")
+	}
+
+	args, ok := linear["args"].([]interface{})
+	if !ok || len(args) != 2 || args[0] != "serve" || args[1] != "--write-access=true" {
+		t.Errorf("Expected linear server args to be [\"serve\", \"--write-access=true\"], got %v", args)
+	}
 }
