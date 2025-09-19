@@ -15,7 +15,7 @@ var UpdateCommentTool = mcp.NewTool("linear_update_issue_comment",
 	mcp.WithString("body", mcp.Required(), mcp.Description("New comment text in markdown format")),
 )
 
-// UpdateCommentHandler handles the linear_update_comment tool
+// UpdateCommentHandler handles the linear_update_issue_comment tool
 func UpdateCommentHandler(linearClient *linear.LinearClient) func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 	return func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		// Extract arguments

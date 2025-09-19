@@ -82,7 +82,14 @@ func GetIssueCommentsHandler(linearClient *linear.LinearClient) func(ctx context
 					hasReplies = true
 				}
 
-				resultText += fmt.Sprintf("- ID: %s\n  %s\n  CreatedAt: %s\n  HasReplies: %s\n  Body: %s\n",
+				// Extract short hash for CommentID field
+				shortHash := comment.ID
+				if len(comment.ID) >= 8 {
+					shortHash = comment.ID[:8]
+				}
+				
+				resultText += fmt.Sprintf("- CommentID: comment-%s\n  ID: %s\n  %s\n  CreatedAt: %s\n  HasReplies: %s\n  Body: %s\n",
+					shortHash,
 					formatCommentIdentifier(&comment),
 					formatUserIdentifier(comment.User),
 					createdAt,

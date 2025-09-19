@@ -138,5 +138,10 @@ func formatCommentIdentifier(comment *linear.Comment) string {
 		return "Unknown"
 	}
 	
-	return fmt.Sprintf(comment.ID)
+	// Extract short hash from UUID for readability (first 8 characters)
+	shortHash := comment.ID
+	if len(comment.ID) >= 8 {
+		shortHash = comment.ID[:8]
+	}
+	return fmt.Sprintf("comment-%s (UUID: %s)", shortHash, comment.ID)
 }
