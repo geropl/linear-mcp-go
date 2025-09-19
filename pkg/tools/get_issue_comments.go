@@ -3,6 +3,7 @@ package tools
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/geropl/linear-mcp-go/pkg/linear"
 	"github.com/mark3labs/mcp-go/mcp"
@@ -82,13 +83,19 @@ func GetIssueCommentsHandler(linearClient *linear.LinearClient) func(ctx context
 					hasReplies = true
 				}
 
-				// Extract short hash for CommentID field
-				shortHash := comment.ID
-				if len(comment.ID) >= 8 {
-					shortHash = comment.ID[:8]
+				// Extract hash from URL fragment (e.g., "#comment-ae3d62d6" -> "ae3d62d6")
+				shortHash := comment.ID[:8] // fallback to first 8 chars of UUID
+				if comment.URL != "" {
+					// Look for "#comment-" in the URL
+					if idx := strings.Index(comment.URL, "#comment-"); idx != -1 {
+						hashPart := comment.URL[idx+9:] // Skip "#comment-"
+						if hashPart != "" {
+							shortHash = hashPart
+						}
+					}
 				}
 				
-				resultText += fmt.Sprintf("- CommentID: comment-%s\n  ID: %s\n  %s\n  CreatedAt: %s\n  HasReplies: %s\n  Body: %s\n",
+				resultText += fmt.Sprintf("- CommentID: %s\n  ID: %s\n  %s\n  CreatedAt: %s\n  HasReplies: %s\n  Body: %s\n",
 					shortHash,
 					formatCommentIdentifier(&comment),
 					formatUserIdentifier(comment.User),

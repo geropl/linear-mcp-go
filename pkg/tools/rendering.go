@@ -138,10 +138,17 @@ func formatCommentIdentifier(comment *linear.Comment) string {
 		return "Unknown"
 	}
 	
-	// Extract short hash from UUID for readability (first 8 characters)
-	shortHash := comment.ID
-	if len(comment.ID) >= 8 {
-		shortHash = comment.ID[:8]
+	// Extract hash from URL fragment (e.g., "#comment-ae3d62d6" -> "ae3d62d6")
+	shortHash := comment.ID[:8] // fallback to first 8 chars of UUID
+	if comment.URL != "" {
+		// Look for "#comment-" in the URL
+		if idx := strings.Index(comment.URL, "#comment-"); idx != -1 {
+			hashPart := comment.URL[idx+9:] // Skip "#comment-"
+			if hashPart != "" {
+				shortHash = hashPart
+			}
+		}
 	}
-	return fmt.Sprintf("comment-%s (UUID: %s)", shortHash, comment.ID)
+	
+	return fmt.Sprintf("Comment: %s (UUID: %s)", shortHash, comment.ID)
 }
