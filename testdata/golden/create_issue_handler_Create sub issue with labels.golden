@@ -1,5 +1,5 @@
 err: ""
 output: |-
-    Created Issue: TEST-79 (UUID: cd9a5ab1-12cb-4f2e-8fc0-319077eccc0f)
+    Created Issue: TEST-92 (UUID: bff52c02-bc32-422b-ba31-719c9b0f525f)
     Title: Sub Issue with Labels
-    URL: https://linear.app/linear-mcp-go-test/issue/TEST-79/sub-issue-with-labels
+    URL: https://linear.app/linear-mcp-go-test/issue/TEST-92/sub-issue-with-labels

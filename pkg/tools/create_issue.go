@@ -19,6 +19,7 @@ var CreateIssueTool = mcp.NewTool("linear_create_issue",
 	mcp.WithString("status", mcp.Description("Issue status")),
 	mcp.WithString("parentIssue", mcp.Description("Optional parent issue ID or identifier (e.g., 'TEAM-123') to create a sub-issue")),
 	mcp.WithString("labels", mcp.Description("Optional comma-separated list of label IDs or names to assign")),
+	mcp.WithString("project", mcp.Description("Optional project identifier (ID, name, or slug) to assign the issue to")),
 )
 
 // CreateIssueHandler handles the linear_create_issue tool
@@ -83,6 +84,16 @@ func CreateIssueHandler(linearClient *linear.LinearClient) func(ctx context.Cont
 			}
 		}
 
+		// Extract project parameter and resolve it if needed
+		var projectID string
+		if project, err := request.RequireString("project"); err == nil && project != "" {
+			resolvedProjectID, err := resolveProjectIdentifier(linearClient, project)
+			if err != nil {
+				return &mcp.CallToolResult{IsError: true, Content: []mcp.Content{mcp.TextContent{Type: "text", Text: fmt.Sprintf("Failed to resolve project: %v", err)}}}, nil
+			}
+			projectID = resolvedProjectID
+		}
+
 		// Create the issue
 		input := linear.CreateIssueInput{
 			Title:       title,
@@ -92,6 +103,7 @@ func CreateIssueHandler(linearClient *linear.LinearClient) func(ctx context.Cont
 			Status:      status,
 			ParentID:    parentID,
 			LabelIDs:    labelIDs,
+			ProjectID:   projectID,
 		}
 
 		issue, err := linearClient.CreateIssue(input)

@@ -211,6 +211,7 @@ type CreateIssueInput struct {
 	Status      string   `json:"status,omitempty"`
 	ParentID    *string  `json:"parentId,omitempty"`
 	LabelIDs    []string `json:"labelIds,omitempty"`
+	ProjectID   string   `json:"projectId,omitempty"`
 }
 
 // UpdateIssueInput represents input for updating an issue

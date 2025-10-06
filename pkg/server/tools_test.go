@@ -109,6 +109,46 @@ func TestHandlers(t *testing.T) {
 		},
 		{
 			handler: "create_issue",
+			name:    "Create issue with project ID",
+			args: map[string]interface{}{
+				"title":   "Issue with Project ID",
+				"team":    TEAM_ID,
+				"project": PROJECT_ID,
+			},
+			write: true,
+		},
+		{
+			handler: "create_issue",
+			name:    "Create issue with project name",
+			args: map[string]interface{}{
+				"title":   "Issue with Project Name",
+				"team":    TEAM_ID,
+				"project": "MCP tool investigation",
+			},
+			write: true,
+		},
+		{
+			handler: "create_issue",
+			name:    "Create issue with project slug",
+			args: map[string]interface{}{
+				"title":   "Issue with Project Slug",
+				"team":    TEAM_ID,
+				"project": "mcp-tool-investigation-ae44897e42a7",
+			},
+			write: true,
+		},
+		{
+			handler: "create_issue",
+			name:    "Create issue with invalid project",
+			args: map[string]interface{}{
+				"title":   "Issue with Invalid Project",
+				"team":    TEAM_ID,
+				"project": "non-existent-project",
+			},
+			write: true,
+		},
+		{
+			handler: "create_issue",
 			name:    "Missing title",
 			args: map[string]interface{}{
 				"team": TEAM_ID,

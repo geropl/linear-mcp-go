@@ -173,3 +173,19 @@ func resolveTeamIdentifier(linearClient *linear.LinearClient, identifier string)
 
 	return "", fmt.Errorf("no team found with identifier '%s'", identifier)
 }
+
+// resolveProjectIdentifier resolves a project identifier (UUID, name, or slug) to a project ID
+func resolveProjectIdentifier(linearClient *linear.LinearClient, identifier string) (string, error) {
+	// If it's a valid UUID, use it directly
+	if isValidUUID(identifier) {
+		return identifier, nil
+	}
+
+	// Otherwise, try to get the project by identifier (name or slug)
+	project, err := linearClient.GetProject(identifier)
+	if err != nil {
+		return "", fmt.Errorf("failed to resolve project identifier '%s': %v", identifier, err)
+	}
+
+	return project.ID, nil
+}

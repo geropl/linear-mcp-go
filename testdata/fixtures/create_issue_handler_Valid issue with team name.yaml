@@ -76,7 +76,7 @@ interactions:
         content_length: -1
         uncompressed: true
         body: |
-            {"data":{"issueCreate":{"success":true,"issue":{"id":"9a8d22ad-d6e8-47aa-8a32-a8e980b4d092","identifier":"TEST-74","title":"Test Issue with team name","description":null,"priority":0,"url":"https://linear.app/linear-mcp-go-test/issue/TEST-74/test-issue-with-team-name","createdAt":"2025-06-28T20:13:53.459Z","updatedAt":"2025-06-28T20:13:53.459Z","state":{"id":"42f7ad15-fca3-4d11-b349-0e3c1385c256","name":"Backlog"},"team":{"id":"234c5451-a839-4c8f-98d9-da00973f1060","name":"Test Team","key":"TEST"},"labels":{"nodes":[]},"project":null,"projectMilestone":null}}}}
+            {"data":{"issueCreate":{"success":true,"issue":{"id":"aaf77828-2cd0-413f-977d-1e66968de5f6","identifier":"TEST-87","title":"Test Issue with team name","description":null,"priority":0,"url":"https://linear.app/linear-mcp-go-test/issue/TEST-87/test-issue-with-team-name","createdAt":"2025-10-06T09:44:13.623Z","updatedAt":"2025-10-06T09:44:13.623Z","state":{"id":"42f7ad15-fca3-4d11-b349-0e3c1385c256","name":"Backlog"},"team":{"id":"234c5451-a839-4c8f-98d9-da00973f1060","name":"Test Team","key":"TEST"},"labels":{"nodes":[]},"project":null,"projectMilestone":null}}}}
         headers:
             Alt-Svc:
                 - h3=":443"; ma=86400
@@ -87,7 +87,7 @@ interactions:
             Content-Type:
                 - application/json; charset=utf-8
             Etag:
-                - W/"238-0sU2IEeom3ovy4U19R1/ynQSJQc"
+                - W/"238-a41QzB6Eb98+OtI+B5Rg9E9GPa0"
             Server:
                 - cloudflare
             Vary:

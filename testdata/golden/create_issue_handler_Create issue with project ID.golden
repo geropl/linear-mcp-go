@@ -1,0 +1,5 @@
+err: ""
+output: |-
+    Created Issue: TEST-93 (UUID: 5015a1d4-b382-4962-b8be-aa434b6b496d)
+    Title: Issue with Project ID
+    URL: https://linear.app/linear-mcp-go-test/issue/TEST-93/issue-with-project-id

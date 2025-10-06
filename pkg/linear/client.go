@@ -1319,6 +1319,10 @@ func (c *LinearClient) CreateIssue(input CreateIssueInput) (*Issue, error) {
 		variables["input"].(map[string]interface{})["labelIds"] = input.LabelIDs
 	}
 
+	if input.ProjectID != "" {
+		variables["input"].(map[string]interface{})["projectId"] = input.ProjectID
+	}
+
 	resp, err := c.executeGraphQL(query, variables)
 	if err != nil {
 		return nil, err
