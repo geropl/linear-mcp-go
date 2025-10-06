@@ -15,8 +15,8 @@ import (
 func NewTestClient(t *testing.T, cassetteName string, record bool) (*LinearClient, func()) {
 	if record {
 		// Ensure API key is set when recording
-		if os.Getenv("LINEAR_API_KEY") == "" {
-			t.Fatal("LINEAR_API_KEY environment variable is required for recording")
+		if os.Getenv("TEST_LINEAR_API_KEY") == "" {
+			t.Fatal("TEST_LINEAR_API_KEY environment variable is required for recording")
 		}
 	}
 
@@ -60,7 +60,7 @@ func NewTestClient(t *testing.T, cassetteName string, record bool) (*LinearClien
 	}
 
 	// Create a Linear client that uses the recorder's HTTP client
-	apiKey := os.Getenv("LINEAR_API_KEY")
+	apiKey := os.Getenv("TEST_LINEAR_API_KEY")
 	client := &LinearClient{
 		apiKey:      apiKey,
 		httpClient:  r.GetDefaultClient(),

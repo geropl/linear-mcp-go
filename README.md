@@ -209,7 +209,7 @@ go test -v ./...
 
 #### Re-recording test:
 
-Requires `LINEAR_API_KEY` to be set.
+Requires `TEST_LINEAR_API_KEY` to be set for the test workspace.
 
 ```
 go test -v -record=true ./...
