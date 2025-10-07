@@ -10,10 +10,10 @@ import (
 
 // AddCommentTool is the tool definition for adding a comment
 var AddCommentTool = mcp.NewTool("linear_add_comment",
-	mcp.WithDescription("Adds a comment to a Linear issue."),
+	mcp.WithDescription("Add/post a comment to a Linear issue. To reply to an existing comment, use linear_get_issue_comments to get the comment ID, then pass it in 'thread'."),
 	mcp.WithString("issue", mcp.Required(), mcp.Description("ID or identifier (e.g., 'TEAM-123') of the issue to comment on")),
+	mcp.WithString("thread", mcp.Description("Optional UUID of parent comment to reply to. Discover from linear_get_issue_comments output or comment URL. Creates a threaded reply instead of top-level comment.")),
 	mcp.WithString("body", mcp.Required(), mcp.Description("Comment text in markdown format")),
-	mcp.WithString("thread", mcp.Description("Optional ID of a parent comment / thread to reply to")),
 	mcp.WithString("createAsUser", mcp.Description("Optional custom username to show for the comment")),
 )
 

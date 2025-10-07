@@ -10,8 +10,8 @@ import (
 
 // UpdateCommentTool is the tool definition for updating a comment
 var UpdateCommentTool = mcp.NewTool("linear_update_issue_comment",
-	mcp.WithDescription("Updates an existing comment on a Linear issue."),
-	mcp.WithString("comment", mcp.Required(), mcp.Description("ID or shorthand identifier (e.g., 'comment-53099b37') of the comment to update")),
+	mcp.WithDescription("Updates an existing comment on a Linear issue. Use linear_get_issue_comments to retrieve the comment UUID first."),
+	mcp.WithString("comment", mcp.Required(), mcp.Description("UUID or shorthand identifier (e.g., 'comment-53099b37') of the comment to update. Extract from comment URL or use linear_get_issue_comments to get the UUID.")),
 	mcp.WithString("body", mcp.Required(), mcp.Description("New comment text in markdown format")),
 )
 

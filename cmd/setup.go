@@ -223,7 +223,7 @@ func getOnaConfigPath(projectPath string) (string, error) {
 		}
 	}
 
-	return filepath.Join(baseDir, ".gitpod", "mcp-config.json"), nil
+	return filepath.Join(baseDir, ".ona", "mcp-config.json"), nil
 }
 
 // extractTrailingWhitespace extracts trailing whitespace (newlines, spaces, tabs) from a string
@@ -247,9 +247,9 @@ func setupOna(binaryPath, apiKey string, writeAccess bool, writeAccessChanged bo
 		return err
 	}
 
-	// Create the .gitpod directory if it doesn't exist
+	// Create the .ona directory if it doesn't exist
 	if err := os.MkdirAll(filepath.Dir(configPath), 0755); err != nil {
-		return fmt.Errorf("failed to create .gitpod directory: %w", err)
+		return fmt.Errorf("failed to create .ona directory: %w", err)
 	}
 
 	// Prepare server arguments

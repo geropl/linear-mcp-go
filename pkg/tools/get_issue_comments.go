@@ -10,9 +10,9 @@ import (
 
 // GetIssueCommentsTool is the tool definition for getting paginated comments for an issue
 var GetIssueCommentsTool = mcp.NewTool("linear_get_issue_comments",
-	mcp.WithDescription("Retrieves paginated comments for a Linear issue. Supports navigating through comment threads and pagination."),
+	mcp.WithDescription("Retrieves comments for a Linear issue. Use this tool to: 1) View all comments on an issue, 2) Get a comment's UUID to reply to it with linear_add_comment, 3) Navigate comment threads by passing a comment UUID in 'thread' parameter. The output includes comment UUIDs needed for replying."),
 	mcp.WithString("issue", mcp.Required(), mcp.Description("ID or identifier (e.g., 'TEAM-123') of the issue to retrieve comments for")),
-	mcp.WithString("thread", mcp.Description("Optional UUID of the parent comment / thread to retrieve replies for. If not provided, returns top-level comments.")),
+	mcp.WithString("thread", mcp.Description("Optional UUID of a parent comment to retrieve its replies. If not provided, returns top-level comments. Extract UUIDs from comment URLs (e.g., https://linear.app/.../comment/UUID) or from this tool's output.")),
 	mcp.WithNumber("limit", mcp.Description("Maximum number of comments to return (default: 10)")),
 	mcp.WithString("after", mcp.Description("Cursor for pagination, to get comments after this point")),
 )

@@ -1000,7 +1000,7 @@ func TestSetupCommand(t *testing.T) {
 			expect: expectations{
 				files: map[string]fileExpectation{
 					"ona": {
-						path:      ".gitpod/mcp-config.json",
+						path:      ".ona/mcp-config.json",
 						mustExist: true,
 						content: `{
 							"mcpServers": {
@@ -1024,7 +1024,7 @@ func TestSetupCommand(t *testing.T) {
 			expect: expectations{
 				files: map[string]fileExpectation{
 					"ona": {
-						path:      "/workspace/test-project/.gitpod/mcp-config.json",
+						path:      "/workspace/test-project/.ona/mcp-config.json",
 						mustExist: true,
 						content: `{
 							"mcpServers": {
@@ -1046,7 +1046,7 @@ func TestSetupCommand(t *testing.T) {
 			writeAccess: true,
 			preExistingFiles: map[string]preExistingFile{
 				"ona": {
-					path: ".gitpod/mcp-config.json",
+					path: ".ona/mcp-config.json",
 					content: `{
 						"mcpServers": {
 							"playwright": {
@@ -1061,7 +1061,7 @@ func TestSetupCommand(t *testing.T) {
 			expect: expectations{
 				files: map[string]fileExpectation{
 					"ona": {
-						path:      ".gitpod/mcp-config.json",
+						path:      ".ona/mcp-config.json",
 						mustExist: true,
 						content: `{
 							"mcpServers": {
@@ -1088,7 +1088,7 @@ func TestSetupCommand(t *testing.T) {
 			writeAccess: false,
 			preExistingFiles: map[string]preExistingFile{
 				"ona": {
-					path: ".gitpod/mcp-config.json",
+					path: ".ona/mcp-config.json",
 					content: `{
 						"version": "1.0.0",
 						"metadata": {
@@ -1184,7 +1184,7 @@ func TestSetupCommand(t *testing.T) {
 			expect: expectations{
 				files: map[string]fileExpectation{
 					"ona": {
-						path:      ".gitpod/mcp-config.json",
+						path:      ".ona/mcp-config.json",
 						mustExist: true,
 						content: `{
 							"version": "1.0.0",
@@ -1625,7 +1625,7 @@ func TestOnaNewlinePreservation(t *testing.T) {
 
 	// Set up the directory structure
 	homeDir := filepath.Join(rootDir, "home")
-	configDir := filepath.Join(rootDir, ".gitpod")
+	configDir := filepath.Join(rootDir, ".ona")
 	configPath := filepath.Join(configDir, "mcp-config.json")
 
 	// Create the config directory
