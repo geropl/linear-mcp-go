@@ -1,28 +1,25 @@
 err: ""
 output: |
     Issue: TEST-10 (UUID: 1c2de93f-4321-4015-bfde-ee893ef7976f)
-    Thread: root (top-level comments)
+    Thread: none (top-level comments)
 
     Comments:
-    - ID: 272b238c-8065-4b61-975c-903b2fb9825a
-      Thread: 272b238c-8065-4b61-975c-903b2fb9825a
+    - Comment: 6b337bfa-a7df-4b5c-9d6d-a0c8c6212301
       User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
-      CreatedAt: 2025-03-30 14:16:58
+      CreatedAt: 2025-10-07 16:03:19
       HasReplies: no
       Body: This is a reply to the comment
-    - ID: e4668cd7-c87c-4305-bfc2-a2f0167435e9
-      Thread: e4668cd7-c87c-4305-bfc2-a2f0167435e9
+    - Comment: 1bc6bceb-1f2c-4a52-8f23-155aeb966ee2
       User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
-      CreatedAt: 2025-03-30 14:15:49
+      CreatedAt: 2025-10-07 15:00:53
       HasReplies: no
-      Body: This is a reply to the comment
-    - ID: 9d24080c-b7d0-4a23-8b3a-5cd7fe1eafd9
-      Thread: 9d24080c-b7d0-4a23-8b3a-5cd7fe1eafd9
+      Body: Reply using shorthand
+    - Comment: 5c1c0a90-6778-41f4-94b4-fce69d894bb7
       User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
-      CreatedAt: 2025-03-30 14:11:59
+      CreatedAt: 2025-10-07 15:00:53
       HasReplies: no
-      Body: This is a reply to the comment
+      Body: Reply using comment URL
 
     Pagination:
     Has more comments: yes
-    Next cursor: 9d24080c-b7d0-4a23-8b3a-5cd7fe1eafd9
+    Next cursor: 5c1c0a90-6778-41f4-94b4-fce69d894bb7

@@ -10,9 +10,9 @@ import (
 
 // GetIssueCommentsTool is the tool definition for getting paginated comments for an issue
 var GetIssueCommentsTool = mcp.NewTool("linear_get_issue_comments",
-	mcp.WithDescription("Retrieves comments for a Linear issue. Use this tool to: 1) View all comments on an issue, 2) Get a comment's UUID to reply to it with linear_add_comment, 3) Navigate comment threads by passing a comment UUID in 'thread' parameter. The output includes comment UUIDs needed for replying."),
-	mcp.WithString("issue", mcp.Required(), mcp.Description("ID or identifier (e.g., 'TEAM-123') of the issue to retrieve comments for")),
-	mcp.WithString("thread", mcp.Description("Optional UUID of a parent comment to retrieve its replies. If not provided, returns top-level comments. Extract UUIDs from comment URLs (e.g., https://linear.app/.../comment/UUID) or from this tool's output.")),
+	mcp.WithDescription("Retrieves a flat list of comments for a Linear issue and thread. Use to list all replies in a thread or all top-level comments."),
+	mcp.WithString("issue", mcp.Required(), mcp.Description("issue identifier (e.g., 'TEAM-123')")),
+	mcp.WithString("thread", mcp.Description("Optional thread identifier. Accepts: full URL, UUID, shorthand (comment-abc123), or hash (abc123). If not provided, all top-level comments are returned.")),
 	mcp.WithNumber("limit", mcp.Description("Maximum number of comments to return (default: 10)")),
 	mcp.WithString("after", mcp.Description("Cursor for pagination, to get comments after this point")),
 )
@@ -60,11 +60,11 @@ func GetIssueCommentsHandler(linearClient *linear.LinearClient) func(ctx context
 		var resultText string
 
 		// Add issue information
-		resultText += fmt.Sprintf("Issue: %s (UUID: %s)\n", issue.Identifier, issue.ID)
+		resultText += formatIssueIdentifier(issue) + "\n"
 
 		// Add thread information
 		if parentID == "" {
-			resultText += "Thread: root (top-level comments)\n"
+			resultText += "Thread: none (top-level comments)\n"
 		} else {
 			resultText += fmt.Sprintf("Thread: %s (replies to comment)\n", parentID)
 		}
@@ -82,8 +82,7 @@ func GetIssueCommentsHandler(linearClient *linear.LinearClient) func(ctx context
 					hasReplies = true
 				}
 
-				resultText += fmt.Sprintf("- ID: %s\n  Thread: %s\n  %s\n  CreatedAt: %s\n  HasReplies: %s\n  Body: %s\n",
-					comment.ID,
+				resultText += fmt.Sprintf("- Comment: %s\n  %s\n  CreatedAt: %s\n  HasReplies: %s\n  Body: %s\n",
 					comment.ID,
 					formatUserIdentifier(comment.User),
 					createdAt,

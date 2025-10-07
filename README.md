@@ -193,7 +193,7 @@ Adds a comment to an existing Linear issue. Supports replying to existing commen
 - `thread`: Optional comment identifier to reply to. Accepts: full Linear comment URL, UUID, shorthand (comment-abc123), or hash (abc123). Creates a threaded reply instead of a top-level comment.
 - `createAsUser`: Optional custom username to show for the comment
 
-**URL Support:** You can pass a full Linear comment URL (e.g., `https://linear.app/.../issue/TEST-10/...#comment-abc123`) directly to the `thread` parameter, eliminating the need to extract the comment ID manually.
+**URL Support:** You can pass a full Linear comment URL (e.g., `https://linear.app/.../issue/TEST-10/...#comment-abc123`) directly to the `thread` parameter. The tool automatically resolves URLs to UUIDs before calling the API.
 
 ### linear_reply_to_comment
 
@@ -204,7 +204,32 @@ Convenience tool for replying to an existing comment. Automatically resolves the
 - `body` (required): Reply text in markdown format
 - `createAsUser`: Optional custom username to show for the reply
 
-**Why use this tool?** When you have a comment URL or ID and want to reply, this tool is simpler than `linear_add_comment` because you don't need to specify the issue separately.
+**Why use this tool?** When you have a comment URL or ID and want to reply, this tool is simpler than `linear_add_comment` because you don't need to specify the issue separately. The tool automatically looks up the issue from the comment.
+
+### linear_get_issue_comments
+
+Retrieves comments for a Linear issue with support for pagination and thread navigation.
+
+**Parameters:**
+- `issue` (required): ID or identifier (e.g., 'TEAM-123') of the issue to retrieve comments for
+- `thread`: Optional UUID of a parent comment to retrieve its replies. If not provided, returns top-level comments
+- `limit`: Maximum number of comments to return (default: 10)
+- `after`: Cursor for pagination, to get comments after this point
+
+**Use Cases:**
+- View all comments on an issue
+- Navigate comment threads by passing a comment UUID in the `thread` parameter
+- Get comment UUIDs for replying (though with URL support in `linear_add_comment`, this is less necessary)
+
+### linear_update_issue_comment
+
+Updates an existing comment on a Linear issue.
+
+**Parameters:**
+- `comment` (required): Comment identifier to update. Accepts: full Linear comment URL, UUID, shorthand (comment-abc123), or hash (abc123)
+- `body` (required): New comment text in markdown format
+
+**URL Support:** Like other comment tools, this accepts full Linear comment URLs and automatically resolves them to UUIDs.
 
 ### linear_get_teams
 

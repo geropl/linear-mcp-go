@@ -1,2 +1,6 @@
-err: 'Failed to add comment: failed to execute request: Post "https://api.linear.app/graphql": requested interaction not found'
-output: ""
+err: ""
+output: |-
+    Replied with Comment: 3c4e53f0-6fef-4d32-a03d-388333aa0157
+    to Thread: ae3d62d6-3f40-4990-867b-5c97dd265a40
+    on Issue: TEST-10 (UUID: 1c2de93f-4321-4015-bfde-ee893ef7976f)
+    URL: https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue#comment-3c4e53f0

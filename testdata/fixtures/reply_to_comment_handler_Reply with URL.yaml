@@ -6,54 +6,6 @@ interactions:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 322
-        transfer_encoding: []
-        trailer: {}
-        host: api.linear.app
-        remote_addr: ""
-        request_uri: ""
-        body: '{"query":"\n\t\tquery GetIssueByIdentifier($teamKey: String!, $number: Float!) {\n\t\t\tissues(filter: { team: { key: { eq: $teamKey } }, number: { eq: $number } }, first: 1) {\n\t\t\t\tnodes {\n\t\t\t\t\tid\n\t\t\t\t\tidentifier\n\t\t\t\t\ttitle\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"number":10,"teamKey":"TEST"}}'
-        form: {}
-        headers:
-            Content-Type:
-                - application/json
-        url: https://api.linear.app/graphql
-        method: POST
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
-        content_length: -1
-        uncompressed: true
-        body: |
-            {"data":{"issues":{"nodes":[{"id":"1c2de93f-4321-4015-bfde-ee893ef7976f","identifier":"TEST-10","title":"Updated Test Issue"}]}}}
-        headers:
-            Alt-Svc:
-                - h3=":443"; ma=86400
-            Cache-Control:
-                - no-store
-            Cf-Cache-Status:
-                - DYNAMIC
-            Content-Type:
-                - application/json; charset=utf-8
-            Etag:
-                - W/"82-w0K/VnjlqJtYAurPyBwU/9QgAFo"
-            Server:
-                - cloudflare
-            Vary:
-                - Accept-Encoding
-            Via:
-                - 1.1 google
-        status: 200 OK
-        code: 200
-        duration: 0s
-    - id: 1
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
         content_length: 255
         transfer_encoding: []
         trailer: {}
@@ -97,18 +49,18 @@ interactions:
         status: 200 OK
         code: 200
         duration: 0s
-    - id: 2
+    - id: 1
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 568
+        content_length: 333
         transfer_encoding: []
         trailer: {}
         host: api.linear.app
         remote_addr: ""
         request_uri: ""
-        body: '{"query":"\n\t\tmutation AddComment($input: CommentCreateInput!) {\n\t\t\tcommentCreate(input: $input) {\n\t\t\t\tsuccess\n\t\t\t\tcomment {\n\t\t\t\t\tid\n\t\t\t\t\tbody\n\t\t\t\t\turl\n\t\t\t\t\tcreatedAt\n\t\t\t\t\tuser {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t}\n\t\t\t\t\tissue {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tidentifier\n\t\t\t\t\t\ttitle\n\t\t\t\t\t\turl\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"input":{"body":"Reply using comment URL","issueId":"1c2de93f-4321-4015-bfde-ee893ef7976f","parentId":"ae3d62d6-3f40-4990-867b-5c97dd265a40"}}}'
+        body: '{"query":"\n\t\tquery GetComment($id: String!) {\n\t\t\tcomment(id: $id) {\n\t\t\t\tid\n\t\t\t\tbody\n\t\t\t\turl\n\t\t\t\tcreatedAt\n\t\t\t\tuser {\n\t\t\t\t\tid\n\t\t\t\t\tname\n\t\t\t\t}\n\t\t\t\tissue {\n\t\t\t\t\tid\n\t\t\t\t\tidentifier\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"id":"ae3d62d6-3f40-4990-867b-5c97dd265a40"}}'
         form: {}
         headers:
             Content-Type:
@@ -124,7 +76,7 @@ interactions:
         content_length: -1
         uncompressed: true
         body: |
-            {"data":{"commentCreate":{"success":true,"comment":{"id":"3c4e53f0-6fef-4d32-a03d-388333aa0157","body":"Reply using comment URL","url":"https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue#comment-3c4e53f0","createdAt":"2025-10-07T16:13:07.925Z","user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"},"issue":{"id":"1c2de93f-4321-4015-bfde-ee893ef7976f","identifier":"TEST-10","title":"Updated Test Issue","url":"https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue"}}}}}
+            {"data":{"comment":{"id":"ae3d62d6-3f40-4990-867b-5c97dd265a40","body":"Updated comment text via hash","url":"https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue#comment-ae3d62d6","createdAt":"2025-03-30T13:37:20.666Z","user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"},"issue":{"id":"1c2de93f-4321-4015-bfde-ee893ef7976f","identifier":"TEST-10"}}}}
         headers:
             Alt-Svc:
                 - h3=":443"; ma=86400
@@ -135,7 +87,55 @@ interactions:
             Content-Type:
                 - application/json; charset=utf-8
             Etag:
-                - W/"212-gMY3ZFQiv9fC2AkRJXlMJ63RLWo"
+                - W/"18b-JtoAyZ6gspXHMOEbvedWimpK4Y0"
+            Server:
+                - cloudflare
+            Vary:
+                - Accept-Encoding
+            Via:
+                - 1.1 google
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 578
+        transfer_encoding: []
+        trailer: {}
+        host: api.linear.app
+        remote_addr: ""
+        request_uri: ""
+        body: '{"query":"\n\t\tmutation AddComment($input: CommentCreateInput!) {\n\t\t\tcommentCreate(input: $input) {\n\t\t\t\tsuccess\n\t\t\t\tcomment {\n\t\t\t\t\tid\n\t\t\t\t\tbody\n\t\t\t\t\turl\n\t\t\t\t\tcreatedAt\n\t\t\t\t\tuser {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tname\n\t\t\t\t\t}\n\t\t\t\t\tissue {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tidentifier\n\t\t\t\t\t\ttitle\n\t\t\t\t\t\turl\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t","variables":{"input":{"body":"Reply using URL in dedicated tool","issueId":"1c2de93f-4321-4015-bfde-ee893ef7976f","parentId":"ae3d62d6-3f40-4990-867b-5c97dd265a40"}}}'
+        form: {}
+        headers:
+            Content-Type:
+                - application/json
+        url: https://api.linear.app/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: |
+            {"data":{"commentCreate":{"success":true,"comment":{"id":"9f06f784-4132-4fae-bf2c-9065365759e3","body":"Reply using URL in dedicated tool","url":"https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue#comment-9f06f784","createdAt":"2025-10-07T13:55:14.826Z","user":{"id":"cc24eee4-9edc-4bfe-b91b-fedde125ba85","name":"Gero Leinemann"},"issue":{"id":"1c2de93f-4321-4015-bfde-ee893ef7976f","identifier":"TEST-10","title":"Updated Test Issue","url":"https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue"}}}}}
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=86400
+            Cache-Control:
+                - no-store
+            Cf-Cache-Status:
+                - DYNAMIC
+            Content-Type:
+                - application/json; charset=utf-8
+            Etag:
+                - W/"21c-IIg5wnDeEvhS6hopc1qa1TAVMgM"
             Server:
                 - cloudflare
             Vary:

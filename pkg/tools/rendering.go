@@ -140,3 +140,29 @@ func formatCommentIdentifier(comment *linear.Comment) string {
 	
 	return fmt.Sprintf(comment.ID)
 }
+
+// formatNewComment returns a consistently formatted response for a newly created comment
+// parentID should be the UUID of the parent comment if this is a reply, empty string otherwise
+func formatNewComment(comment *linear.Comment, issue *linear.Issue, parentID string) string {
+	if comment == nil || issue == nil {
+		return "Error: Invalid comment or issue"
+	}
+	
+	var result strings.Builder
+	
+	// Format based on whether this is a reply or top-level comment
+	if parentID != "" {
+		// This is a reply
+		result.WriteString(fmt.Sprintf("Replied with Comment: %s\n", comment.ID))
+		result.WriteString(fmt.Sprintf("to Thread: %s\n", parentID))
+		result.WriteString(fmt.Sprintf("on %s\n", formatIssueIdentifier(issue)))
+	} else {
+		// This is a top-level comment
+		result.WriteString(fmt.Sprintf("Added Comment: %s\n", comment.ID))
+		result.WriteString(fmt.Sprintf("to %s\n", formatIssueIdentifier(issue)))
+	}
+	
+	result.WriteString(fmt.Sprintf("URL: %s", comment.URL))
+	
+	return result.String()
+}

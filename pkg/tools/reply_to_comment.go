@@ -10,8 +10,8 @@ import (
 
 // ReplyToCommentTool is a specialized tool for replying to comments
 var ReplyToCommentTool = mcp.NewTool("linear_reply_to_comment",
-	mcp.WithDescription("Reply to an existing comment on a Linear issue. Convenience tool that automatically resolves the issue from the comment. Accepts comment URLs, UUIDs, or shorthand identifiers."),
-	mcp.WithString("thread", mcp.Required(), mcp.Description("Comment to reply to. Accepts: full Linear comment URL, UUID, shorthand (comment-abc123), or hash (abc123).")),
+	mcp.WithDescription("Reply to an existing comment on a Linear issue."),
+	mcp.WithString("thread", mcp.Required(), mcp.Description("Comment to reply to. Accepts: full URL, UUID, shorthand (comment-abc123), or hash (abc123).")),
 	mcp.WithString("body", mcp.Required(), mcp.Description("Reply text in markdown format")),
 	mcp.WithString("createAsUser", mcp.Description("Optional custom username to show for the reply")),
 )
@@ -61,12 +61,8 @@ func ReplyToCommentHandler(linearClient *linear.LinearClient) func(ctx context.C
 			return &mcp.CallToolResult{IsError: true, Content: []mcp.Content{mcp.TextContent{Type: "text", Text: fmt.Sprintf("Failed to add reply: %v", err)}}}, nil
 		}
 
-		// Return the result
-		resultText := fmt.Sprintf("Added reply to comment on %s\n", formatIssueIdentifier(issue))
-		resultText += fmt.Sprintf("In reply to thread: %s\n", parentCommentID)
-		resultText += fmt.Sprintf("Comment ID: %s\n", comment.ID)
-		resultText += fmt.Sprintf("Thread (for replies): %s\n", parentCommentID)
-		resultText += fmt.Sprintf("URL: %s", comment.URL)
+		// Return the result using the unified format
+		resultText := formatNewComment(comment, issue, parentCommentID)
 		return &mcp.CallToolResult{Content: []mcp.Content{mcp.TextContent{Type: "text", Text: resultText}}}, nil
 	}
 }

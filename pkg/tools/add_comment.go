@@ -10,7 +10,7 @@ import (
 
 // AddCommentTool is the tool definition for adding a comment
 var AddCommentTool = mcp.NewTool("linear_add_comment",
-	mcp.WithDescription("Add/post a comment to a Linear issue. To reply to an existing comment, use linear_reply_to_comment or pass comment identifier in 'thread'. Supports comment URLs, UUIDs, and shorthand formats."),
+	mcp.WithDescription("Add/post a comment to a Linear issue. To reply to an existing comment, use linear_get_issue_comments to get the comment identifier or URL, then pass it in 'thread'."),
 	mcp.WithString("issue", mcp.Required(), mcp.Description("ID or identifier (e.g., 'TEAM-123') of the issue to comment on")),
 	mcp.WithString("thread", mcp.Description("Optional comment identifier to reply to. Accepts: full Linear comment URL, UUID, shorthand (comment-abc123), or hash (abc123). Creates a threaded reply.")),
 	mcp.WithString("body", mcp.Required(), mcp.Description("Comment text in markdown format")),
@@ -39,7 +39,17 @@ func AddCommentHandler(linearClient *linear.LinearClient) func(ctx context.Conte
 
 		// Extract optional arguments
 		createAsUser := request.GetString("createAsUser", "")
-		parentID := request.GetString("thread", "")
+		threadIdentifier := request.GetString("thread", "")
+		
+		// Resolve thread identifier to UUID if provided
+		var parentID string
+		if threadIdentifier != "" {
+			resolvedParentID, err := resolveCommentIdentifier(linearClient, threadIdentifier)
+			if err != nil {
+				return &mcp.CallToolResult{IsError: true, Content: []mcp.Content{mcp.TextContent{Type: "text", Text: fmt.Sprintf("Failed to resolve thread comment: %v", err)}}}, nil
+			}
+			parentID = resolvedParentID
+		}
 
 		// Add the comment
 		input := linear.AddCommentInput{
@@ -54,19 +64,8 @@ func AddCommentHandler(linearClient *linear.LinearClient) func(ctx context.Conte
 			return &mcp.CallToolResult{IsError: true, Content: []mcp.Content{mcp.TextContent{Type: "text", Text: fmt.Sprintf("Failed to add comment: %v", err)}}}, nil
 		}
 
-		// Return the result
-		resultText := fmt.Sprintf("Added comment to %s\n", formatIssueIdentifier(issue))
-		if parentID != "" {
-			resultText += fmt.Sprintf("In reply to thread: %s\n", parentID)
-		}
-		resultText += fmt.Sprintf("Comment ID: %s\n", comment.ID)
-		// Thread ID for replies: if this is a reply, use the parent; otherwise use this comment's ID
-		threadID := comment.ID
-		if parentID != "" {
-			threadID = parentID
-		}
-		resultText += fmt.Sprintf("Thread (for replies): %s\n", threadID)
-		resultText += fmt.Sprintf("URL: %s", comment.URL)
+		// Return the result using the unified format
+		resultText := formatNewComment(comment, issue, parentID)
 		return &mcp.CallToolResult{Content: []mcp.Content{mcp.TextContent{Type: "text", Text: resultText}}}, nil
 	}
 }

@@ -1,0 +1,6 @@
+err: ""
+output: |-
+    Replied with Comment: 243e8a79-e8cc-4617-848a-573758dcdfd5
+    to Thread: ae3d62d6-3f40-4990-867b-5c97dd265a40
+    on Issue: TEST-10 (UUID: 1c2de93f-4321-4015-bfde-ee893ef7976f)
+    URL: https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue#comment-243e8a79

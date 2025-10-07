@@ -122,7 +122,6 @@ func isValidUUID(uuidStr string) bool {
 // Supports:
 //   - https://linear.app/.../issue/TEST-10/...#comment-abc123
 //   - #comment-abc123
-//   - comment-abc123
 func extractCommentHashFromURL(identifier string) string {
 	// Check if it contains a URL fragment with comment
 	if strings.Contains(identifier, "#comment-") {
@@ -132,12 +131,6 @@ func extractCommentHashFromURL(identifier string) string {
 			return parts[1]
 		}
 	}
-	
-	// Check if it starts with comment- prefix
-	if strings.HasPrefix(identifier, "comment-") {
-		return strings.TrimPrefix(identifier, "comment-")
-	}
-	
 	return ""
 }
 
@@ -150,19 +143,16 @@ func resolveCommentIdentifier(linearClient *linear.LinearClient, identifier stri
 
 	// Try to extract hash from URL or fragment
 	var hash string
-	if strings.Contains(identifier, "linear.app") || strings.Contains(identifier, "#comment-") || strings.HasPrefix(identifier, "comment-") {
+	if strings.HasPrefix(identifier, "comment-") {
+		hash = strings.TrimPrefix(identifier, "comment-")
+	} else if strings.Contains(identifier, "linear.app") && strings.Contains(identifier, "#comment-") {
 		hash = extractCommentHashFromURL(identifier)
-		if hash != "" {
-			comment, err := linearClient.GetCommentByHash(hash)
-			if err != nil {
-				return "", fmt.Errorf("failed to resolve comment from URL '%s' (hash: %s): %v", identifier, hash, err)
-			}
-			return comment.ID, nil
-		}
 	}
 
-	// Fallback: assume it's already just the hash part
-	hash = identifier
+	if hash == "" {
+		// Fallback: assume it's already just the hash part
+		hash = identifier
+	}
 	comment, err := linearClient.GetCommentByHash(hash)
 	if err != nil {
 		return "", fmt.Errorf("failed to resolve comment identifier '%s': %v", identifier, err)
