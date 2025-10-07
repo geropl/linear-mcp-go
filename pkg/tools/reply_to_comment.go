@@ -65,7 +65,7 @@ func ReplyToCommentHandler(linearClient *linear.LinearClient) func(ctx context.C
 		resultText := fmt.Sprintf("Added reply to comment on %s\n", formatIssueIdentifier(issue))
 		resultText += fmt.Sprintf("In reply to thread: %s\n", parentCommentID)
 		resultText += fmt.Sprintf("Comment ID: %s\n", comment.ID)
-		resultText += fmt.Sprintf("Thread (for replies): %s\n", comment.ID)
+		resultText += fmt.Sprintf("Thread (for replies): %s\n", parentCommentID)
 		resultText += fmt.Sprintf("URL: %s", comment.URL)
 		return &mcp.CallToolResult{Content: []mcp.Content{mcp.TextContent{Type: "text", Text: resultText}}}, nil
 	}

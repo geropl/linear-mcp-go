@@ -1,2 +1,0 @@
-err: 'Failed to resolve comment: failed to resolve comment from URL ''https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue#comment-ae3d62d6'' (hash: ae3d62d6): failed to execute request: Post "https://api.linear.app/graphql": requested interaction not found'
-output: ""

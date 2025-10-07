@@ -1,2 +1,0 @@
-err: 'Failed to get parent comment: failed to execute request: Post "https://api.linear.app/graphql": requested interaction not found'
-output: ""
