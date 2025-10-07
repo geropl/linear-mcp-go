@@ -331,6 +331,59 @@ func TestHandlers(t *testing.T) {
 				"issue": ISSUE_ID,
 			},
 		},
+		{
+			handler: "add_comment",
+			name:    "Reply with URL",
+			write:   true,
+			args: map[string]interface{}{
+				"issue":  ISSUE_ID,
+				"body":   "Reply using comment URL",
+				"thread": "https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue#comment-ae3d62d6",
+			},
+		},
+		{
+			handler: "add_comment",
+			name:    "Reply with shorthand",
+			write:   true,
+			args: map[string]interface{}{
+				"issue":  ISSUE_ID,
+				"body":   "Reply using shorthand",
+				"thread": "comment-ae3d62d6",
+			},
+		},
+		// ReplyToCommentHandler test cases
+		{
+			handler: "reply_to_comment",
+			name:    "Valid reply",
+			write:   true,
+			args: map[string]interface{}{
+				"thread": "ae3d62d6-3f40-4990-867b-5c97dd265a40",
+				"body":   "This is a reply using the dedicated tool",
+			},
+		},
+		{
+			handler: "reply_to_comment",
+			name:    "Reply with URL",
+			write:   true,
+			args: map[string]interface{}{
+				"thread": "https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue#comment-ae3d62d6",
+				"body":   "Reply using URL in dedicated tool",
+			},
+		},
+		{
+			handler: "reply_to_comment",
+			name:    "Missing thread",
+			args: map[string]interface{}{
+				"body": "Reply without thread",
+			},
+		},
+		{
+			handler: "reply_to_comment",
+			name:    "Missing body",
+			args: map[string]interface{}{
+				"thread": "ae3d62d6-3f40-4990-867b-5c97dd265a40",
+			},
+		},
 		// UpdateCommentHandler test cases
 		{
 			handler: "update_comment",
@@ -705,6 +758,8 @@ func TestHandlers(t *testing.T) {
 				handler = tools.GetIssueCommentsHandler(client)
 			case "add_comment":
 				handler = tools.AddCommentHandler(client)
+			case "reply_to_comment":
+				handler = tools.ReplyToCommentHandler(client)
 			case "update_comment":
 				handler = tools.UpdateCommentHandler(client)
 			case "get_project":

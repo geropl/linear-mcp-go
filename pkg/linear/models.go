@@ -140,6 +140,7 @@ type Comment struct {
 	URL       string             `json:"url,omitempty"`
 	Parent    *Comment           `json:"parent,omitempty"`
 	Children  *CommentConnection `json:"children,omitempty"`
+	Issue     *Issue             `json:"issue,omitempty"`
 }
 
 // IssueRelationConnection represents a connection of issue relations

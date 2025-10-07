@@ -6,7 +6,8 @@ A Model Context Protocol (MCP) server for Linear, written in Go. This server pro
 
 - Create, update, and search Linear issues
 - Get issues assigned to a user
-- Add comments to issues
+- Add comments to issues and reply to existing comments
+- **URL-aware comment operations** - paste Linear comment URLs directly, no manual ID extraction needed
 - Retrieve team information
 - Rate-limited API requests to respect Linear's API limits
 
@@ -120,6 +121,8 @@ By default, the server runs in read-only mode, which means the following tools a
 - `linear_create_issue`
 - `linear_update_issue`
 - `linear_add_comment`
+- `linear_reply_to_comment`
+- `linear_update_issue_comment`
 
 To enable these tools, use the `--write-access=true` flag.
 
@@ -182,13 +185,26 @@ Retrieves a single Linear issue by its ID.
 
 ### linear_add_comment
 
-Adds a comment to an existing Linear issue.
+Adds a comment to an existing Linear issue. Supports replying to existing comments by passing a comment identifier in the `thread` parameter.
 
 **Parameters:**
-- `issueId` (required): ID of the issue to comment on
+- `issue` (required): ID or identifier (e.g., 'TEAM-123') of the issue to comment on
 - `body` (required): Comment text in markdown format
+- `thread`: Optional comment identifier to reply to. Accepts: full Linear comment URL, UUID, shorthand (comment-abc123), or hash (abc123). Creates a threaded reply instead of a top-level comment.
 - `createAsUser`: Optional custom username to show for the comment
-- `displayIconUrl`: Optional avatar URL for the comment
+
+**URL Support:** You can pass a full Linear comment URL (e.g., `https://linear.app/.../issue/TEST-10/...#comment-abc123`) directly to the `thread` parameter, eliminating the need to extract the comment ID manually.
+
+### linear_reply_to_comment
+
+Convenience tool for replying to an existing comment. Automatically resolves the issue from the comment, so you only need to provide the comment identifier and reply text.
+
+**Parameters:**
+- `thread` (required): Comment to reply to. Accepts: full Linear comment URL, UUID, shorthand (comment-abc123), or hash (abc123)
+- `body` (required): Reply text in markdown format
+- `createAsUser`: Optional custom username to show for the reply
+
+**Why use this tool?** When you have a comment URL or ID and want to reply, this tool is simpler than `linear_add_comment` because you don't need to specify the issue separately.
 
 ### linear_get_teams
 

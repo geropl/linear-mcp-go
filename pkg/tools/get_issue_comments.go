@@ -82,8 +82,9 @@ func GetIssueCommentsHandler(linearClient *linear.LinearClient) func(ctx context
 					hasReplies = true
 				}
 
-				resultText += fmt.Sprintf("- ID: %s\n  %s\n  CreatedAt: %s\n  HasReplies: %s\n  Body: %s\n",
-					formatCommentIdentifier(&comment),
+				resultText += fmt.Sprintf("- ID: %s\n  Thread: %s\n  %s\n  CreatedAt: %s\n  HasReplies: %s\n  Body: %s\n",
+					comment.ID,
+					comment.ID,
 					formatUserIdentifier(comment.User),
 					createdAt,
 					formatBool(hasReplies),

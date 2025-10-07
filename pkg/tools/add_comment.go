@@ -10,9 +10,9 @@ import (
 
 // AddCommentTool is the tool definition for adding a comment
 var AddCommentTool = mcp.NewTool("linear_add_comment",
-	mcp.WithDescription("Add/post a comment to a Linear issue. To reply to an existing comment, use linear_get_issue_comments to get the comment ID, then pass it in 'thread'."),
+	mcp.WithDescription("Add/post a comment to a Linear issue. To reply to an existing comment, use linear_reply_to_comment or pass comment identifier in 'thread'. Supports comment URLs, UUIDs, and shorthand formats."),
 	mcp.WithString("issue", mcp.Required(), mcp.Description("ID or identifier (e.g., 'TEAM-123') of the issue to comment on")),
-	mcp.WithString("thread", mcp.Description("Optional UUID of parent comment to reply to. Discover from linear_get_issue_comments output or comment URL. Creates a threaded reply instead of top-level comment.")),
+	mcp.WithString("thread", mcp.Description("Optional comment identifier to reply to. Accepts: full Linear comment URL, UUID, shorthand (comment-abc123), or hash (abc123). Creates a threaded reply.")),
 	mcp.WithString("body", mcp.Required(), mcp.Description("Comment text in markdown format")),
 	mcp.WithString("createAsUser", mcp.Description("Optional custom username to show for the comment")),
 )
@@ -57,9 +57,10 @@ func AddCommentHandler(linearClient *linear.LinearClient) func(ctx context.Conte
 		// Return the result
 		resultText := fmt.Sprintf("Added comment to %s\n", formatIssueIdentifier(issue))
 		if parentID != "" {
-			resultText += fmt.Sprintf("Thread: %s\n", parentID)
+			resultText += fmt.Sprintf("In reply to thread: %s\n", parentID)
 		}
-		resultText += fmt.Sprintf("Comment: %s\n", formatCommentIdentifier(comment))
+		resultText += fmt.Sprintf("Comment ID: %s\n", comment.ID)
+		resultText += fmt.Sprintf("Thread (for replies): %s\n", comment.ID)
 		resultText += fmt.Sprintf("URL: %s", comment.URL)
 		return &mcp.CallToolResult{Content: []mcp.Content{mcp.TextContent{Type: "text", Text: resultText}}}, nil
 	}

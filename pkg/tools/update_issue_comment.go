@@ -10,8 +10,8 @@ import (
 
 // UpdateCommentTool is the tool definition for updating a comment
 var UpdateCommentTool = mcp.NewTool("linear_update_issue_comment",
-	mcp.WithDescription("Updates an existing comment on a Linear issue. Use linear_get_issue_comments to retrieve the comment UUID first."),
-	mcp.WithString("comment", mcp.Required(), mcp.Description("UUID or shorthand identifier (e.g., 'comment-53099b37') of the comment to update. Extract from comment URL or use linear_get_issue_comments to get the UUID.")),
+	mcp.WithDescription("Updates an existing comment on a Linear issue. Supports comment URLs, UUIDs, and shorthand identifiers."),
+	mcp.WithString("comment", mcp.Required(), mcp.Description("Comment identifier to update. Accepts: full Linear comment URL, UUID, shorthand (comment-abc123), or hash (abc123).")),
 	mcp.WithString("body", mcp.Required(), mcp.Description("New comment text in markdown format")),
 )
 
@@ -48,7 +48,8 @@ func UpdateCommentHandler(linearClient *linear.LinearClient) func(ctx context.Co
 
 		// Return the result
 		resultText := fmt.Sprintf("Updated comment on %s\n", formatIssueIdentifier(issue))
-		resultText += fmt.Sprintf("Comment: %s\n", formatCommentIdentifier(comment))
+		resultText += fmt.Sprintf("Comment ID: %s\n", comment.ID)
+		resultText += fmt.Sprintf("Thread (for replies): %s\n", comment.ID)
 		resultText += fmt.Sprintf("URL: %s", comment.URL)
 		return &mcp.CallToolResult{Content: []mcp.Content{mcp.TextContent{Type: "text", Text: resultText}}}, nil
 	}

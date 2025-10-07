@@ -118,23 +118,51 @@ func isValidUUID(uuidStr string) bool {
 	return uuid.Validate(uuidStr) == nil
 }
 
-// resolveCommentIdentifier resolves a comment identifier (UUID or shorthand like "comment-53099b37") to a UUID
+// extractCommentHashFromURL extracts the comment hash from various URL formats
+// Supports:
+//   - https://linear.app/.../issue/TEST-10/...#comment-abc123
+//   - #comment-abc123
+//   - comment-abc123
+func extractCommentHashFromURL(identifier string) string {
+	// Check if it contains a URL fragment with comment
+	if strings.Contains(identifier, "#comment-") {
+		// Extract everything after #comment-
+		parts := strings.Split(identifier, "#comment-")
+		if len(parts) >= 2 {
+			return parts[1]
+		}
+	}
+	
+	// Check if it starts with comment- prefix
+	if strings.HasPrefix(identifier, "comment-") {
+		return strings.TrimPrefix(identifier, "comment-")
+	}
+	
+	return ""
+}
+
+// resolveCommentIdentifier resolves a comment identifier (UUID, URL, or shorthand like "comment-53099b37") to a UUID
 func resolveCommentIdentifier(linearClient *linear.LinearClient, identifier string) (string, error) {
 	// If it's a valid UUID, use it directly
 	if isValidUUID(identifier) {
 		return identifier, nil
 	}
 
-	// Handle shorthand format like "comment-53099b37" or just "53099b37"
+	// Try to extract hash from URL or fragment
 	var hash string
-	if strings.HasPrefix(identifier, "comment-") {
-		hash = strings.TrimPrefix(identifier, "comment-")
-	} else {
-		// Assume it's already just the hash part
-		hash = identifier
+	if strings.Contains(identifier, "linear.app") || strings.Contains(identifier, "#comment-") || strings.HasPrefix(identifier, "comment-") {
+		hash = extractCommentHashFromURL(identifier)
+		if hash != "" {
+			comment, err := linearClient.GetCommentByHash(hash)
+			if err != nil {
+				return "", fmt.Errorf("failed to resolve comment from URL '%s' (hash: %s): %v", identifier, hash, err)
+			}
+			return comment.ID, nil
+		}
 	}
 
-	// Try to get the comment by hash
+	// Fallback: assume it's already just the hash part
+	hash = identifier
 	comment, err := linearClient.GetCommentByHash(hash)
 	if err != nil {
 		return "", fmt.Errorf("failed to resolve comment identifier '%s': %v", identifier, err)

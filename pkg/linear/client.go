@@ -1885,6 +1885,56 @@ func (c *LinearClient) UpdateComment(input UpdateCommentInput) (*Comment, *Issue
 	return &comment, &issue, nil
 }
 
+// GetComment gets a comment by its ID
+func (c *LinearClient) GetComment(commentID string) (*Comment, error) {
+	query := `
+		query GetComment($id: String!) {
+			comment(id: $id) {
+				id
+				body
+				url
+				createdAt
+				user {
+					id
+					name
+				}
+				issue {
+					id
+					identifier
+				}
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"id": commentID,
+	}
+
+	resp, err := c.executeGraphQL(query, variables)
+	if err != nil {
+		return nil, err
+	}
+
+	// Extract the comment from the response
+	commentData, ok := resp.Data["comment"].(map[string]interface{})
+	if !ok || commentData == nil {
+		return nil, errors.New("comment not found")
+	}
+
+	// Parse the comment data
+	var comment Comment
+	commentBytes, err := json.Marshal(commentData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal comment data: %w", err)
+	}
+
+	if err := json.Unmarshal(commentBytes, &comment); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal comment data: %w", err)
+	}
+
+	return &comment, nil
+}
+
 // GetCommentByHash gets a comment by its hash (shorthand ID)
 func (c *LinearClient) GetCommentByHash(hash string) (*Comment, error) {
 	query := `

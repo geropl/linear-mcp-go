@@ -5,51 +5,61 @@ output: |
 
     Comments:
     - ID: 272b238c-8065-4b61-975c-903b2fb9825a
+      Thread: 272b238c-8065-4b61-975c-903b2fb9825a
       User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
       CreatedAt: 2025-03-30 14:16:58
       HasReplies: no
       Body: This is a reply to the comment
     - ID: e4668cd7-c87c-4305-bfc2-a2f0167435e9
+      Thread: e4668cd7-c87c-4305-bfc2-a2f0167435e9
       User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
       CreatedAt: 2025-03-30 14:15:49
       HasReplies: no
       Body: This is a reply to the comment
     - ID: 9d24080c-b7d0-4a23-8b3a-5cd7fe1eafd9
+      Thread: 9d24080c-b7d0-4a23-8b3a-5cd7fe1eafd9
       User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
       CreatedAt: 2025-03-30 14:11:59
       HasReplies: no
       Body: This is a reply to the comment
     - ID: 7539ff3c-1c61-4ac3-9203-bb51ec376c7e
+      Thread: 7539ff3c-1c61-4ac3-9203-bb51ec376c7e
       User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
       CreatedAt: 2025-03-30 13:41:41
       HasReplies: no
       Body: This is a reply to the comment
     - ID: ae3d62d6-3f40-4990-867b-5c97dd265a40
+      Thread: ae3d62d6-3f40-4990-867b-5c97dd265a40
       User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
       CreatedAt: 2025-03-30 13:37:20
       HasReplies: yes
       Body: Test comment
     - ID: 58e45bbb-c519-4e0a-9d84-60deef1bdf75
+      Thread: 58e45bbb-c519-4e0a-9d84-60deef1bdf75
       User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
       CreatedAt: 2025-03-30 10:09:36
       HasReplies: no
       Body: Test comment
     - ID: 4ba4cbeb-beb9-4d19-8c51-f40b67bbccdc
+      Thread: 4ba4cbeb-beb9-4d19-8c51-f40b67bbccdc
       User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
       CreatedAt: 2025-03-30 09:34:56
       HasReplies: no
       Body: Test comment
     - ID: 71c0e60c-3cbf-4a8b-b6e4-3ed4eeabf7a2
+      Thread: 71c0e60c-3cbf-4a8b-b6e4-3ed4eeabf7a2
       User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
       CreatedAt: 2025-03-30 07:56:59
       HasReplies: no
       Body: Test comment
     - ID: dedcedbf-2b66-4e08-b46b-59b0ed86a953
+      Thread: dedcedbf-2b66-4e08-b46b-59b0ed86a953
       User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
       CreatedAt: 2025-03-30 06:05:06
       HasReplies: no
       Body: Test comment
     - ID: b463d538-9b98-4a5f-8421-b2a997d81345
+      Thread: b463d538-9b98-4a5f-8421-b2a997d81345
       User: Gero Leinemann (UUID: cc24eee4-9edc-4bfe-b91b-fedde125ba85)
       CreatedAt: 2025-03-24 16:05:32
       HasReplies: no
