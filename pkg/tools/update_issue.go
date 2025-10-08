@@ -14,7 +14,7 @@ var UpdateIssueTool = mcp.NewTool("linear_update_issue",
 	mcp.WithString("issue", mcp.Required(), mcp.Description("Issue ID or identifier (e.g., 'TEAM-123')")),
 	mcp.WithString("title", mcp.Description("New title")),
 	mcp.WithString("description", mcp.Description("New description")),
-	mcp.WithNumber("priority", mcp.Description("New priority (0-4)")),
+	mcp.WithString("priority", getPriorityOptions()...),
 	mcp.WithString("status", mcp.Description("New status")),
 	mcp.WithString("team", mcp.Description("New team (UUID, name, or key)")),
 	mcp.WithString("projectId", mcp.Description("New project ID")),
@@ -41,7 +41,11 @@ func UpdateIssueHandler(linearClient *linear.LinearClient) func(ctx context.Cont
 		description := request.GetString("description", "")
 
 		var priority *int
-		if p, err := request.RequireInt("priority"); err == nil {
+		if priorityStr, err := request.RequireString("priority"); err == nil && priorityStr != "" {
+			p, err := parsePriority(priorityStr)
+			if err != nil {
+				return &mcp.CallToolResult{IsError: true, Content: []mcp.Content{mcp.TextContent{Type: "text", Text: fmt.Sprintf("Invalid priority: %v", err)}}}, nil
+			}
 			priority = &p
 		}
 

@@ -3,7 +3,7 @@ output: |
     Issue: TEST-10 (UUID: 1c2de93f-4321-4015-bfde-ee893ef7976f)
     Title: Updated Test Issue
     URL: https://linear.app/linear-mcp-go-test/issue/TEST-10/updated-test-issue
-    Priority: None
+    Priority: No priority
     Status: Backlog
     Labels: None
     Description: None

@@ -136,7 +136,7 @@ Creates a new Linear issue with specified details. **Supports creating parent-ch
 - `title` (required): Issue title
 - `team` (required): Team identifier (key, UUID or name)
 - `description`: Issue description
-- `priority`: Priority (0-4)
+- `priority`: Priority. Accepts: 0/'no priority', 1/'urgent', 2/'high', 3/'medium', 4/'low'
 - `status`: Issue status
 - `makeSubissueOf`: **Create a sub-issue by specifying the parent issue ID or identifier** (e.g., 'TEAM-123'). This establishes a parent-child relationship in Linear.
 - `labels`: Optional comma-separated list of label IDs or names to assign
@@ -160,7 +160,7 @@ Updates an existing Linear issue's properties.
 - `id` (required): Issue ID
 - `title`: New title
 - `description`: New description
-- `priority`: New priority (0-4)
+- `priority`: Priority. Accepts: 0/'no priority', 1/'urgent', 2/'high', 3/'medium', 4/'low'
 - `status`: New status
 
 ### linear_search_issues
@@ -173,7 +173,7 @@ Searches Linear issues using flexible criteria.
 - `status`: Filter by status name (e.g., 'In Progress', 'Done')
 - `assigneeId`: Filter by assignee's user ID
 - `labels`: Filter by label names (comma-separated)
-- `priority`: Filter by priority (1=urgent, 2=high, 3=normal, 4=low)
+- `priority`: Priority. Accepts: 0/'no priority', 1/'urgent', 2/'high', 3/'medium', 4/'low'
 - `estimate`: Filter by estimate points
 - `includeArchived`: Include archived issues in results (default: false)
 - `limit`: Max results to return (default: 10)

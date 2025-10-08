@@ -20,11 +20,7 @@ func formatIssue(issue *linear.Issue) string {
 	result.WriteString(fmt.Sprintf("Title: %s\n", issue.Title))
 	result.WriteString(fmt.Sprintf("URL: %s\n", issue.URL))
 	
-	priorityStr := "None"
-	if issue.Priority > 0 {
-		priorityStr = fmt.Sprintf("%d", issue.Priority)
-	}
-	result.WriteString(fmt.Sprintf("Priority: %s\n", priorityStr))
+	result.WriteString(fmt.Sprintf("Priority: %s\n", priorityToString(issue.Priority)))
 	
 	statusStr := "None"
 	if issue.Status != "" {

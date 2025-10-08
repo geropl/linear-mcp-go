@@ -3,7 +3,7 @@ output: |
     Issue: TEST-12 (UUID: 9407c793-5fd8-4730-9280-0e17ffddf320)
     Title: Comments issue
     URL: https://linear.app/linear-mcp-go-test/issue/TEST-12/comments-issue
-    Priority: None
+    Priority: No priority
     Status: Todo
     Labels: None
     Description: This is the description

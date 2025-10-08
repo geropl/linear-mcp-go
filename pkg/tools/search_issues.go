@@ -3,7 +3,6 @@ package tools
 import (
 	"context"
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/geropl/linear-mcp-go/pkg/linear"
@@ -18,7 +17,7 @@ var SearchIssuesTool = mcp.NewTool("linear_search_issues",
 	mcp.WithString("status", mcp.Description("Filter by status name (e.g., 'In Progress', 'Done')")),
 	mcp.WithString("assignee", mcp.Description("Filter by assignee identifier (UUID, name, or email)")),
 	mcp.WithString("labels", mcp.Description("Filter by label names (comma-separated)")),
-	mcp.WithNumber("priority", mcp.Description("Filter by priority (1=urgent, 2=high, 3=normal, 4=low)")),
+	mcp.WithString("priority", getPriorityOptions()...),
 	mcp.WithNumber("estimate", mcp.Description("Filter by estimate points")),
 	mcp.WithBoolean("includeArchived", mcp.Description("Include archived issues in results (default: false)")),
 	mcp.WithNumber("limit", mcp.Description("Max results to return (default: 10)")),
@@ -64,7 +63,11 @@ func SearchIssuesHandler(linearClient *linear.LinearClient) func(ctx context.Con
 			input.Labels = labels
 		}
 
-		if priority, err := request.RequireInt("priority"); err == nil {
+		if priorityStr, err := request.RequireString("priority"); err == nil && priorityStr != "" {
+			priority, err := parsePriority(priorityStr)
+			if err != nil {
+				return &mcp.CallToolResult{IsError: true, Content: []mcp.Content{mcp.TextContent{Type: "text", Text: fmt.Sprintf("Invalid priority: %v", err)}}}, nil
+			}
 			input.Priority = &priority
 		}
 
@@ -90,10 +93,7 @@ func SearchIssuesHandler(linearClient *linear.LinearClient) func(ctx context.Con
 				Identifier: issue.Identifier,
 			}
 
-			priorityStr := "None"
-			if issue.Priority > 0 {
-				priorityStr = strconv.Itoa(issue.Priority)
-			}
+			priorityStr := priorityToString(issue.Priority)
 
 			statusStr := "None"
 			if issue.Status != "" {

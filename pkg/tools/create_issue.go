@@ -15,7 +15,7 @@ var CreateIssueTool = mcp.NewTool("linear_create_issue",
 	mcp.WithString("title", mcp.Required(), mcp.Description("Issue title")),
 	mcp.WithString("team", mcp.Required(), mcp.Description("Team identifier (key, UUID or name)")),
 	mcp.WithString("description", mcp.Description("Issue description")),
-	mcp.WithNumber("priority", mcp.Description("Priority (0-4)")),
+	mcp.WithString("priority", getPriorityOptions()...),
 	mcp.WithString("status", mcp.Description("Issue status")),
 	mcp.WithString("makeSubissueOf", mcp.Description("Makes this issue a sub-issue of the specified parent. Accepts issue ID (UUID) or identifier (e.g., 'TEAM-123'). Creates a parent-child relationship in Linear.")),
 	mcp.WithString("labels", mcp.Description("Optional comma-separated list of label IDs or names to assign")),
@@ -46,7 +46,11 @@ func CreateIssueHandler(linearClient *linear.LinearClient) func(ctx context.Cont
 		description := request.GetString("description", "")
 
 		var priority *int
-		if p, err := request.RequireInt("priority"); err == nil {
+		if priorityStr, err := request.RequireString("priority"); err == nil && priorityStr != "" {
+			p, err := parsePriority(priorityStr)
+			if err != nil {
+				return &mcp.CallToolResult{IsError: true, Content: []mcp.Content{mcp.TextContent{Type: "text", Text: fmt.Sprintf("Invalid priority: %v", err)}}}, nil
+			}
 			priority = &p
 		}
 

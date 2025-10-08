@@ -3,7 +3,6 @@ package tools
 import (
 	"context"
 	"fmt"
-	"strconv"
 
 	"github.com/geropl/linear-mcp-go/pkg/linear"
 	"github.com/mark3labs/mcp-go/mcp"
@@ -50,11 +49,6 @@ func GetUserIssuesHandler(linearClient *linear.LinearClient) func(ctx context.Co
 				Identifier: issue.Identifier,
 			}
 
-			priorityStr := "None"
-			if issue.Priority > 0 {
-				priorityStr = strconv.Itoa(issue.Priority)
-			}
-
 			statusStr := "None"
 			if issue.Status != "" {
 				statusStr = issue.Status
@@ -64,7 +58,7 @@ func GetUserIssuesHandler(linearClient *linear.LinearClient) func(ctx context.Co
 
 			resultText += fmt.Sprintf("- %s\n", formatIssueIdentifier(tempIssue))
 			resultText += fmt.Sprintf("  Title: %s\n", issue.Title)
-			resultText += fmt.Sprintf("  Priority: %s\n", priorityStr)
+			resultText += fmt.Sprintf("  Priority: %s\n", priorityToString(issue.Priority))
 			resultText += fmt.Sprintf("  Status: %s\n", statusStr)
 			resultText += fmt.Sprintf("  URL: %s\n", issue.URL)
 		}
