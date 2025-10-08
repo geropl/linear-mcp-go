@@ -130,7 +130,7 @@ To enable these tools, use the `--write-access=true` flag.
 
 ### linear_create_issue
 
-Creates a new Linear issue with specified details. Supports creating sub-issues and assigning labels.
+Creates a new Linear issue with specified details. **Supports creating parent-child relationships** (sub-issues) and assigning labels.
 
 **Parameters:**
 - `title` (required): Issue title
@@ -138,8 +138,19 @@ Creates a new Linear issue with specified details. Supports creating sub-issues 
 - `description`: Issue description
 - `priority`: Priority (0-4)
 - `status`: Issue status
-- `parentIssue`: Optional parent issue ID to create a sub-issue
-- `labels`: Optional comma-separated list of label IDs to assign
+- `makeSubissueOf`: **Create a sub-issue by specifying the parent issue ID or identifier** (e.g., 'TEAM-123'). This establishes a parent-child relationship in Linear.
+- `labels`: Optional comma-separated list of label IDs or names to assign
+- `project`: Optional project identifier (ID, name, or slug) to assign the issue to
+
+**Example: Creating a sub-issue**
+```json
+{
+  "title": "Implement login form validation",
+  "team": "ENG",
+  "makeSubissueOf": "ENG-42",
+  "description": "Add client-side validation for the login form"
+}
+```
 
 ### linear_update_issue
 

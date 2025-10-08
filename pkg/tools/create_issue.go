@@ -17,7 +17,7 @@ var CreateIssueTool = mcp.NewTool("linear_create_issue",
 	mcp.WithString("description", mcp.Description("Issue description")),
 	mcp.WithNumber("priority", mcp.Description("Priority (0-4)")),
 	mcp.WithString("status", mcp.Description("Issue status")),
-	mcp.WithString("parentIssue", mcp.Description("Optional parent issue ID or identifier (e.g., 'TEAM-123') to create a sub-issue")),
+	mcp.WithString("makeSubissueOf", mcp.Description("Makes this issue a sub-issue of the specified parent. Accepts issue ID (UUID) or identifier (e.g., 'TEAM-123'). Creates a parent-child relationship in Linear.")),
 	mcp.WithString("labels", mcp.Description("Optional comma-separated list of label IDs or names to assign")),
 	mcp.WithString("project", mcp.Description("Optional project identifier (ID, name, or slug) to assign the issue to")),
 )
@@ -52,9 +52,9 @@ func CreateIssueHandler(linearClient *linear.LinearClient) func(ctx context.Cont
 
 		status := request.GetString("status", "")
 
-		// Extract parentIssue parameter and resolve it if needed
+		// Extract makeSubissueOf parameter and resolve it if needed
 		var parentID *string
-		if parentIssue, err := request.RequireString("parentIssue"); err == nil && parentIssue != "" {
+		if parentIssue, err := request.RequireString("makeSubissueOf"); err == nil && parentIssue != "" {
 			resolvedParentID, err := resolveIssueIdentifier(linearClient, parentIssue)
 			if err != nil {
 				return &mcp.CallToolResult{IsError: true, Content: []mcp.Content{mcp.TextContent{Type: "text", Text: fmt.Sprintf("Failed to resolve parent issue: %v", err)}}}, nil

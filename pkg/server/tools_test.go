@@ -70,9 +70,9 @@ func TestHandlers(t *testing.T) {
 			handler: "create_issue",
 			name:    "Create sub issue",
 			args: map[string]interface{}{
-				"title":       "Sub Issue",
-				"team":        TEAM_ID,
-				"parentIssue": "1c2de93f-4321-4015-bfde-ee893ef7976f", // UUID for TEST-10
+				"title":          "Sub Issue",
+				"team":           TEAM_ID,
+				"makeSubissueOf": "1c2de93f-4321-4015-bfde-ee893ef7976f", // UUID for TEST-10
 			},
 			write: true,
 		},
@@ -80,9 +80,9 @@ func TestHandlers(t *testing.T) {
 			handler: "create_issue",
 			name:    "Create sub issue from identifier",
 			args: map[string]interface{}{
-				"title":       "Sub Issue",
-				"team":        TEAM_ID,
-				"parentIssue": "TEST-10",
+				"title":          "Sub Issue",
+				"team":           TEAM_ID,
+				"makeSubissueOf": "TEST-10",
 			},
 			write: true,
 		},
@@ -100,10 +100,10 @@ func TestHandlers(t *testing.T) {
 			handler: "create_issue",
 			name:    "Create sub issue with labels",
 			args: map[string]interface{}{
-				"title":       "Sub Issue with Labels",
-				"team":        TEAM_ID,
-				"parentIssue": "1c2de93f-4321-4015-bfde-ee893ef7976f", // UUID for TEST-10
-				"labels":      "ws-label 2,Feature",
+				"title":          "Sub Issue with Labels",
+				"team":           TEAM_ID,
+				"makeSubissueOf": "1c2de93f-4321-4015-bfde-ee893ef7976f", // UUID for TEST-10
+				"labels":         "ws-label 2,Feature",
 			},
 			write: true,
 		},
