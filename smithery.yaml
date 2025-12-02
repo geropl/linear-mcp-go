@@ -1,0 +1,36 @@
+# Smithery configuration file: https://smithery.ai/docs/config#smitheryyaml
+
+startCommand:
+  type: stdio
+  configSchema:
+    # JSON Schema defining the configuration options for the MCP.
+    type: object
+    required:
+      - linearApiKey
+    properties:
+      linearApiKey:
+        type: string
+        description: Your Linear API key.
+      writeAccess:
+        type: boolean
+        default: false
+        description: Set to true to run the server with write access.
+  commandFunction:
+    # A JS function that produces the CLI command based on the given config to start the MCP on stdio.
+    |-
+    (config) => {
+      const args = ['serve'];
+      if (config.writeAccess) {
+        args.push('--write-access=true');
+      }
+      return {
+        command: './linear-mcp-go',
+        args,
+        env: {
+          LINEAR_API_KEY: config.linearApiKey
+        }
+      };
+    }
+  exampleConfig:
+    linearApiKey: sk_test_1234567890
+    writeAccess: false
